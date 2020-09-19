@@ -1,16 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace PuzzleGame
 {
     public class Room : MonoBehaviour
     {
-        Interactable[] _interactables = null;
+        Actor[] _actors = null;
+        [SerializeField] GameObject _painting = null;
+        Vector2 _paintingSize;
+        
+        Room _next = null;
+        Room _prev = null;
 
         private void Awake()
         {
-            _interactables = GetComponentsInChildren<Interactable>();
+            _actors = GetComponentsInChildren<Actor>();
+            foreach(var actor in _actors)
+            {
+                actor.room = this;
+            }
         }
 
         // Start is called before the first frame update

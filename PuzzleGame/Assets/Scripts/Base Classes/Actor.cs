@@ -6,6 +6,8 @@ namespace PuzzleGame
 {
     public class Actor : MonoBehaviour
     {
+        public Room room { get; set; }
+
         private void Awake()
         {
             //init work before game systems are initialized

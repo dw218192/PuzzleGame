@@ -7,7 +7,8 @@ namespace PuzzleGame
 {
     public enum EInteractType
     {
-
+        MOVABLE,
+        GENERIC_EVENT,
     }
 
     public class Interactable : Actor
