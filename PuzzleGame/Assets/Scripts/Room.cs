@@ -6,6 +6,13 @@ namespace PuzzleGame
 {
     public class Room : MonoBehaviour
     {
+        Interactable[] _interactables = null;
+
+        private void Awake()
+        {
+            _interactables = GetComponentsInChildren<Interactable>();
+        }
+
         // Start is called before the first frame update
         void Start()
         {

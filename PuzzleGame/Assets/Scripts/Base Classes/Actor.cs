@@ -6,14 +6,21 @@ namespace PuzzleGame
 {
     public class Actor : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
+            //init work before game systems are initialized
 
         }
 
-        // Update is called once per frame
-        void Update()
+        private void Start()
+        {
+            //put common init work here
+
+            //class dependent init work
+            Init();
+        }
+
+        protected virtual void Init()
         {
 
         }

@@ -44,6 +44,6 @@ TagManager:
   - name: Deco
     uniqueID: 260683345
     locked: 0
-  - name: Furniture
+  - name: Interactable
     uniqueID: 3908487683
     locked: 0
