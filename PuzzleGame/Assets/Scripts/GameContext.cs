@@ -18,5 +18,6 @@ namespace PuzzleGame
     public static class GameConst
     {
         public const string k_interactableSpriteLayer = "Interactable";
+        public const int k_pixelPerWorldUnit = 16;
     }
 }

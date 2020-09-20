@@ -43,7 +43,7 @@ namespace PuzzleGame.Editor
             {
                 if(GUI.Button(new Rect(10, 10, 100, 32), new GUIContent("加东西")))
                 {
-                    EditorWindow.GetWindow<InteractableWindow>();
+                    EditorWindow.GetWindow<InteractableWindow>("add new interactable", true);
                 }
             }
             Handles.EndGUI();

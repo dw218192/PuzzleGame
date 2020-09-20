@@ -6,12 +6,13 @@ namespace PuzzleGame
 {
     public class Actor : MonoBehaviour
     {
-        public Room room { get; set; }
+        public Room room { get; set; } = null;
+        public SpriteRenderer spriteRenderer { get; private set; } = null;
 
         private void Awake()
         {
             //init work before game systems are initialized
-
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void Start()
