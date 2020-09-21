@@ -19,10 +19,15 @@ namespace PuzzleGame
         private void Start()
         {
             Room r = GameObject.Find("Room").GetComponent<Room>();
+            r.roomIndex = 0;
             r.SpawnNext();
             r.next.SpawnNext();
             r.next.next.SpawnNext();
             r.next.next.next.SpawnNext();
+            r.SpawnPrev();
+            r.prev.SpawnPrev();
+            r.prev.prev.SpawnPrev();
+            r.prev.prev.prev.SpawnPrev();
         }
     }
 }

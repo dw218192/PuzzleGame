@@ -11,6 +11,7 @@ namespace PuzzleGame.Editor
         public static Room editingRoom { get; private set; } = null;
 
         static bool _showRoomLayout;
+        static bool _showCameraSetting;
 
         [InitializeOnLoadMethod]
         static void Init()
@@ -50,17 +51,38 @@ namespace PuzzleGame.Editor
 
                 if(_showRoomLayout)
                 {
-                    if(GUI.Button(new Rect(10, 42, 100, 32), new GUIContent("关房间布局")))
+                    if(GUI.Button(new Rect(10, 50, 100, 32), new GUIContent("关房间布局")))
                     {
                         _showRoomLayout = false;
                     }
                 }
                 else
                 {
-                    if (GUI.Button(new Rect(10, 42, 100, 32), new GUIContent("开房间布局")))
+                    if (GUI.Button(new Rect(10, 50, 100, 32), new GUIContent("开房间布局")))
                     {
                         _showRoomLayout = true;
                     }
+                }
+
+                if (_showCameraSetting)
+                {
+                    if (GUI.Button(new Rect(10, 90, 100, 32), new GUIContent("关camera视野")))
+                    {
+                        _showCameraSetting = false;
+                    }
+                }
+                else
+                {
+                    if (GUI.Button(new Rect(10, 90, 100, 32), new GUIContent("开camera视野")))
+                    {
+                        _showCameraSetting = true;
+                    }
+                }
+
+                if(GUI.Button(new Rect(10, 130, 100, 32), new GUIContent("应用camera")))
+                {
+                    Camera.main.orthographicSize = editingRoom.cameraViewDist / 2;
+                    Camera.main.transform.position = new Vector3(editingRoom.viewCenterPos.x, editingRoom.viewCenterPos.y, -5);
                 }
             }
             Handles.EndGUI();
@@ -88,6 +110,13 @@ namespace PuzzleGame.Editor
             {
                 DrawRect(editingRoom.paintingArea, Color.red, "画");
                 DrawRect(editingRoom.visibleArea, Color.green, "画里可见区域");
+            }
+
+            if(_showCameraSetting)
+            {
+                Vector2 topLeftCamPos = editingRoom.viewCenterPos + new Vector2(-editingRoom.cameraViewDist/2f, editingRoom.cameraViewDist/2f);
+                Rect cameraView = new Rect(topLeftCamPos, editingRoom.cameraViewDist * Vector2.one);
+                DrawRect(cameraView, Color.blue, "camera view");
             }
         }
     }
