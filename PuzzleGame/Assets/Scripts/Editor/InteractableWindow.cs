@@ -14,7 +14,7 @@ namespace PuzzleGame.Editor
 
         private void OnGUI()
         {
-            if (!RoomDesignTool.editingStage)
+            if (!RoomDesignTool.editingRoom)
             {
                 EditorGUILayout.LabelField("open Assets/Prefabs/Room first");
                 return;
@@ -36,8 +36,8 @@ namespace PuzzleGame.Editor
                     rend.sprite = _sprite;
                     rend.sortingLayerName = GameConst.k_interactableSpriteLayer;
 
-                    EditorSceneManager.MoveGameObjectToScene(go, RoomDesignTool.editingStage.scene);
-                    go.transform.parent = RoomDesignTool.editingStage.prefabContentsRoot.transform;
+                    EditorSceneManager.MoveGameObjectToScene(go, RoomDesignTool.editingRoom.gameObject.scene);
+                    go.transform.parent = RoomDesignTool.editingRoom.contentRoot;
                     go.transform.localPosition = Vector3.zero;
 
                     Selection.activeTransform = go.transform;

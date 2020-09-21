@@ -21,6 +21,8 @@ namespace PuzzleGame
             Room r = GameObject.Find("Room").GetComponent<Room>();
             r.SpawnNext();
             r.next.SpawnNext();
+            r.next.next.SpawnNext();
+            r.next.next.next.SpawnNext();
         }
     }
 }
