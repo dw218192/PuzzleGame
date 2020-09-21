@@ -75,7 +75,11 @@ namespace PuzzleGame
 
             _contentRoot.localPosition = parentPos + offset;
 
+            //enable sprite masking
+            _roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+
             //sprite mask size is the same as parent's painting size
+            _paintingMask.SetActive(true);
             _paintingMask.transform.localScale = new Vector3(
                 _paintingArea.width * parentLossyScale,
                 _paintingArea.height * parentLossyScale, 1f);
@@ -94,10 +98,14 @@ namespace PuzzleGame
 
             _roomSize = new Vector2Int(_roomTile.size.x, _roomTile.size.y);
 
-            _paintingMask = Instantiate(_paintingMask);
+            //Note: painting mask is for the display of current room in the previous room
+            //so it's only activated when we spawn a child or a parent
+            _paintingMask = Instantiate(_paintingMask, transform);
             _spriteMask = _paintingMask.GetComponentInChildren<SpriteMask>();
             _spriteMask.isCustomRangeActive = false;
-            _roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            _paintingMask.SetActive(false);
+
+            _roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.None;
         }
 
         public void SpawnNext()
