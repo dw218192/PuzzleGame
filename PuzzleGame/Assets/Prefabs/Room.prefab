@@ -190,7 +190,7 @@ MonoBehaviour:
   _paintingArea:
     serializedVersion: 2
     x: 5
-    y: -0.5
+    y: 0.5
     width: 6
     height: 4
   _visibleArea:
@@ -200,7 +200,7 @@ MonoBehaviour:
     width: 12
     height: 8
   _cameraViewDist: 8
-  _viewCenterPos: {x: 6, y: -4}
+  _viewCenterPos: {x: 7, y: -4}
   _playerSpawnPos: {x: 0, y: 0}
 --- !u!1 &3105149999681976115
 GameObject:

@@ -89,13 +89,12 @@ namespace PuzzleGame.Editor
 
             void DrawRect(in Rect rect, Color color, string label)
             {
-                //Room uses a left-top coordinate system
                 Vector3[] points = new Vector3[5]
                 {
                     rect.position,
                     rect.position + Vector2.right * rect.width,
-                    rect.position + new Vector2(rect.width, -rect.height),
-                    rect.position + Vector2.down * rect.height,
+                    rect.position + new Vector2(rect.width, rect.height),
+                    rect.position + Vector2.up * rect.height,
                     rect.position
                 };
                 Handles.color = color;

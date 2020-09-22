@@ -34,14 +34,29 @@ namespace PuzzleGame
         [SerializeField] Vector2 _viewCenterPos;
         [SerializeField] Vector2 _playerSpawnPos;
 
-        Vector2Int _roomSize = Vector2Int.zero;
         ERoomState _state = ERoomState.NORMAL;
 
-        public int cameraViewDist { get { return _cameraViewDist; } }
-        public Vector2 playerSpawnPos { get { return _playerSpawnPos; } }
-        public Vector2 viewCenterPos { get { return _viewCenterPos; } }
-        public Rect paintingArea { get { return _paintingArea; } }
-        public Rect visibleArea { get { return _visibleArea; } }
+        //conversion methods
+        private Vector2 roomPointToWorldPoint(Vector2 roomSpacePos)
+        {
+            float scale = _contentRoot.lossyScale.x;
+            return new Vector2(_contentRoot.localPosition.x + roomSpacePos.x * scale, _contentRoot.localPosition.y - roomSpacePos.y * scale);
+        }
+        public Vector2 roomDirToWorldDir(Vector2 dir)
+        {
+            float scale = _contentRoot.lossyScale.x;
+            return new Vector2(dir.x * scale, -dir.y * scale);
+        }
+        public float roomUnitToWorldUnit(float length)
+        {
+            return length * _contentRoot.lossyScale.x;
+        }
+
+        public float cameraViewDist { get { return roomUnitToWorldUnit(_cameraViewDist); } }
+        public Vector2 playerSpawnPos { get { return roomPointToWorldPoint(_playerSpawnPos); } }
+        public Vector2 viewCenterPos { get { return roomPointToWorldPoint(_viewCenterPos); } }
+        public Rect paintingArea { get { return new Rect(roomPointToWorldPoint(_paintingArea.position), roomDirToWorldDir(_paintingArea.size)); } }
+        public Rect visibleArea { get { return new Rect(roomPointToWorldPoint(_visibleArea.position), roomDirToWorldDir(_visibleArea.size)); } }
         public Transform contentRoot { get { return _contentRoot; } }
         public Room next { get; private set; } = null;
         public Room prev { get; private set; } = null;
@@ -78,22 +93,18 @@ namespace PuzzleGame
 
             //scale and move the room to painting position
             //such that visible area fits the painting area
-            Vector2 parentPos = parent._contentRoot.localPosition;
-            Vector2 offset = _paintingArea.position - _visibleArea.position * scale;
-            offset *= parentLossyScale;
+            _contentRoot.localPosition = parent.roomPointToWorldPoint(_paintingArea.position) - this.roomDirToWorldDir(_visibleArea.position);
 
-            _contentRoot.localPosition = parentPos + offset;
-
-            //enable sprite masking for myself
+            //enable sprite masking for this room
             _roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            foreach (var actor in _actors)
+                actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
 
-            //sprite mask size is the same as parent's painting size
+            //put a sprite mask at parent's painting position and scale it to the painting's size
             _paintingMask.SetActive(true);
-            _paintingMask.transform.localScale = new Vector3(
-                _paintingArea.width * parentLossyScale,
-                _paintingArea.height * parentLossyScale, 1f);
-
-            _paintingMask.transform.localPosition = parentPos + _paintingArea.position * parentLossyScale;
+            Vector2 parentPaintingSize = _paintingArea.size * parentLossyScale;
+            _paintingMask.transform.localScale = new Vector3(parentPaintingSize.x, parentPaintingSize.y, 1f);
+            _paintingMask.transform.localPosition = parent.paintingArea.position;
         }
 
         public void SetFromPainting(Room child)
@@ -102,22 +113,19 @@ namespace PuzzleGame
             float childLossyScale = child._contentRoot.lossyScale.x;
             _contentRoot.localScale = new Vector3(childLossyScale * scale, childLossyScale * scale, 1f);
 
-            float lossyScale = _contentRoot.lossyScale.x;
-            Vector2 childPos = child._contentRoot.localPosition;
-            childPos += child.visibleArea.position * childLossyScale;
-            _contentRoot.localPosition = childPos - _paintingArea.position * lossyScale;
+            _contentRoot.localPosition = child.roomPointToWorldPoint(_visibleArea.position) - this.roomDirToWorldDir(_paintingArea.position);
 
             //enable sprite masking for child
             child._roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            foreach (var actor in child._actors)
+                actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
 
-            //sprite mask size is the same as parent's painting size
             child._paintingMask.SetActive(true);
+            float lossyScale = _contentRoot.lossyScale.x;
             child._paintingMask.transform.localScale = new Vector3(
                 _paintingArea.width * lossyScale,
                 _paintingArea.height * lossyScale, 1f);
-
-            Vector2 parentPos = _contentRoot.localPosition;
-            child._paintingMask.transform.localPosition = parentPos + _paintingArea.position * lossyScale;
+            child._paintingMask.transform.localPosition = paintingArea.position;
         }
 
         private void Awake()
@@ -127,9 +135,9 @@ namespace PuzzleGame
             foreach(var actor in _actors)
             {
                 actor.room = this;
+                actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.None;
             }
 
-            _roomSize = new Vector2Int(_roomTile.size.x, _roomTile.size.y);
 
             //Note: painting mask is for the display of current room in the previous room
             //so it's only activated when we spawn a child or a parent
@@ -163,6 +171,16 @@ namespace PuzzleGame
             prev.SetFromPainting(this);
             prev.roomIndex = roomIndex - 1;
             prev.next = this;
+        }
+
+        public void RotateNext()
+        {
+
+        }
+
+        private void OnDrawGizmos()
+        {
+            //Gizmos.DrawSphere(paintingArea.position + 0.5f * paintingArea.size, 0.5f);
         }
     }
 }
