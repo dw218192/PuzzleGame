@@ -22,10 +22,10 @@ namespace PuzzleGame
         [SerializeField] Transform _contentRoot = null;
         [SerializeField] Tilemap _roomTile = null;
 
+        //relative to the room, top-left (0,0)
         //unscaled painting size
         [SerializeField] Rect _paintingArea;
 
-        //relative to the room, top-left (0,0)
         //unscaled visible size
         [SerializeField] Rect _visibleArea;
 
@@ -137,7 +137,6 @@ namespace PuzzleGame
                 actor.room = this;
                 actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.None;
             }
-
 
             //Note: painting mask is for the display of current room in the previous room
             //so it's only activated when we spawn a child or a parent
