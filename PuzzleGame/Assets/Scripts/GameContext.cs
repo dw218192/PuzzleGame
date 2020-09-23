@@ -11,6 +11,7 @@ namespace PuzzleGame
     {
         public static GameManager s_gameMgr;
         public static Player s_player;
+        public static Vector2 s_right = Vector2.right, s_up = Vector2.up;
     }
 
     /// <summary>
@@ -23,13 +24,15 @@ namespace PuzzleGame
 
         //layers are set in project and used for collision rules
         //rule: boundary collides with everything
-        //      tile only collides with props
-        //      player collides with props
-        //      playerJumping only collides with boundary
+        //      ground collides with props but does not collide with player or jumping player
+        //      wall   collides with props and player but does not collide with jumping player
+        //      props  collide with player and jumping player
+
         public const int k_playerLayer = 8;
         public const int k_playerJumpingLayer = 9;
         public const int k_propLayer = 10;
-        public const int k_tileLayer = 11;
-        public const int k_boundaryLayer = 12;
+        public const int k_wallLayer = 11;
+        public const int k_groundLayer = 12; //not used for now
+        public const int k_boundaryLayer = 13;
     }
 }

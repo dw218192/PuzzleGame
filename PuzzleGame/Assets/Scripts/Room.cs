@@ -22,22 +22,24 @@ namespace PuzzleGame
         Rigidbody2D[] _rigidBodies = null;
 
         [SerializeField] GameObject _paintingMask = null;
+        [SerializeField] GameObject _wallBoundary = null;
         SpriteMask _spriteMask = null;
 
         [SerializeField] Transform _contentRoot = null;
         [SerializeField] Tilemap _roomTile = null;
 
+        //TODO: refactor this
         //relative to the room, top-left (0,0)
         //unscaled painting size
         [SerializeField] Rect _paintingArea;
-
         //unscaled visible size
         [SerializeField] Rect _visibleArea;
         Vector2 _roomSize;
         //room camera settings
         [SerializeField] int _cameraViewDist;
         [SerializeField] Vector2 _viewCenterPos;
-        [SerializeField] Vector2 _playerSpawnPos;
+
+        [SerializeField] Transform _playerSpawnPos;
 
         ERoomState _state = ERoomState.NORMAL;
 
@@ -57,8 +59,13 @@ namespace PuzzleGame
             return length * _contentRoot.lossyScale.x;
         }
 
+        public bool IsOnFloor(Vector3 position)
+        {
+            return _contentRoot.InverseTransformPoint(position).y > _wallBoundary.transform.localPosition.y;
+        }
+
         public float cameraViewDist { get { return roomUnitToWorldUnit(_cameraViewDist); } }
-        public Vector2 playerSpawnPos { get { return roomPointToWorldPoint(_playerSpawnPos); } }
+        public Vector2 playerSpawnPos { get { return _playerSpawnPos.position; } }
         public Vector2 viewCenterPos { get { return roomPointToWorldPoint(_viewCenterPos); } }
         public Rect paintingArea { get { return new Rect(roomPointToWorldPoint(_paintingArea.position), roomDirToWorldDir(_paintingArea.size)); } }
         public Rect visibleArea { get { return new Rect(roomPointToWorldPoint(_visibleArea.position), roomDirToWorldDir(_visibleArea.size)); } }
