@@ -13,11 +13,11 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - PlayerJumping
+  - Props
+  - Tiles
+  - Boundary
   - 
   - 
   - 
@@ -46,4 +46,7 @@ TagManager:
     locked: 0
   - name: Interactable
     uniqueID: 3908487683
+    locked: 0
+  - name: Character
+    uniqueID: 1389035605
     locked: 0

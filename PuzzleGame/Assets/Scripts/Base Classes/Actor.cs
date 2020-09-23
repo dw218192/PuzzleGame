@@ -12,6 +12,7 @@ namespace PuzzleGame
         private void Awake()
         {
             //init work before game systems are initialized
+            gameObject.layer = GameConst.k_propLayer;
         }
 
         private void Start()

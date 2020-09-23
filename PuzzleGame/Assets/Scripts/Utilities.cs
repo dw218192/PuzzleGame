@@ -26,10 +26,10 @@ namespace PuzzleGame.EventSystem
 
         static Messenger()
         {
-            SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
+            SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
         }
 
-        private static void SceneManager_activeSceneChanged(Scene scene1, Scene scene2)
+        private static void SceneManager_sceneUnloaded(Scene scene)
         {
             Cleanup();
         }

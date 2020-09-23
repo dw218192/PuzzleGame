@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Rendering;
 
+using PuzzleGame.EventSystem;
+
 namespace PuzzleGame
 {
     public enum ERoomState
@@ -16,6 +18,9 @@ namespace PuzzleGame
     public class Room : MonoBehaviour
     {
         Actor[] _actors = null;
+        Collider2D[] _colliders = null;
+        Rigidbody2D[] _rigidBodies = null;
+
         [SerializeField] GameObject _paintingMask = null;
         SpriteMask _spriteMask = null;
 
@@ -28,7 +33,7 @@ namespace PuzzleGame
 
         //unscaled visible size
         [SerializeField] Rect _visibleArea;
-
+        Vector2 _roomSize;
         //room camera settings
         [SerializeField] int _cameraViewDist;
         [SerializeField] Vector2 _viewCenterPos;
@@ -57,6 +62,7 @@ namespace PuzzleGame
         public Vector2 viewCenterPos { get { return roomPointToWorldPoint(_viewCenterPos); } }
         public Rect paintingArea { get { return new Rect(roomPointToWorldPoint(_paintingArea.position), roomDirToWorldDir(_paintingArea.size)); } }
         public Rect visibleArea { get { return new Rect(roomPointToWorldPoint(_visibleArea.position), roomDirToWorldDir(_visibleArea.size)); } }
+        public Rect roomArea { get { return new Rect(_contentRoot.position, roomDirToWorldDir(_roomSize)); } }
         public Transform contentRoot { get { return _contentRoot; } }
         public Room next { get; private set; } = null;
         public Room prev { get; private set; } = null;
@@ -85,6 +91,13 @@ namespace PuzzleGame
                 return;
         }
 
+        private void SetSpriteMasking(SpriteMaskInteraction interaction)
+        {
+            _roomTile.GetComponent<TilemapRenderer>().maskInteraction = interaction;
+            foreach (var actor in _actors)
+                actor.spriteRenderer.maskInteraction = interaction;
+        }
+
         public void SetToPainting(Room parent)
         {
             float scale = _paintingArea.width / _visibleArea.width;
@@ -96,9 +109,7 @@ namespace PuzzleGame
             _contentRoot.localPosition = parent.roomPointToWorldPoint(_paintingArea.position) - this.roomDirToWorldDir(_visibleArea.position);
 
             //enable sprite masking for this room
-            _roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-            foreach (var actor in _actors)
-                actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            SetSpriteMasking(SpriteMaskInteraction.VisibleInsideMask);
 
             //put a sprite mask at parent's painting position and scale it to the painting's size
             _paintingMask.SetActive(true);
@@ -116,9 +127,7 @@ namespace PuzzleGame
             _contentRoot.localPosition = child.roomPointToWorldPoint(_visibleArea.position) - this.roomDirToWorldDir(_paintingArea.position);
 
             //enable sprite masking for child
-            child._roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-            foreach (var actor in child._actors)
-                actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            SetSpriteMasking(SpriteMaskInteraction.VisibleInsideMask);
 
             child._paintingMask.SetActive(true);
             float lossyScale = _contentRoot.lossyScale.x;
@@ -131,11 +140,12 @@ namespace PuzzleGame
         private void Awake()
         {
             _actors = GetComponentsInChildren<Actor>();
+            _colliders = GetComponentsInChildren<Collider2D>();
+            _rigidBodies = GetComponentsInChildren<Rigidbody2D>();
 
-            foreach(var actor in _actors)
+            foreach (var actor in _actors)
             {
                 actor.room = this;
-                actor.spriteRenderer.maskInteraction = SpriteMaskInteraction.None;
             }
 
             //Note: painting mask is for the display of current room in the previous room
@@ -145,7 +155,8 @@ namespace PuzzleGame
             _spriteMask.isCustomRangeActive = false;
             _paintingMask.SetActive(false);
 
-            _roomTile.GetComponent<TilemapRenderer>().maskInteraction = SpriteMaskInteraction.None;
+            SetSpriteMasking(SpriteMaskInteraction.None);
+            _roomSize = new Vector2(_roomTile.size.x, _roomTile.size.y - 1);
         }
 
         public void SpawnNext()
@@ -175,6 +186,73 @@ namespace PuzzleGame
         public void RotateNext()
         {
 
+        }
+
+        private void SetRoomCollision(bool enable)
+        {
+            foreach (var collider in _colliders)
+                collider.enabled = enable;
+
+            foreach (var rigidbody in _rigidBodies)
+            {
+                if (enable)
+                    rigidbody.WakeUp();
+                else
+                    rigidbody.Sleep();
+            }
+        }
+
+        private void Hide()
+        {
+            _contentRoot.gameObject.SetActive(false);
+            _paintingMask.SetActive(false);
+        }
+
+        /// <summary>
+        /// initializes a room as the current room
+        /// note: for transition, use GoToNext or GoToPrev instead
+        /// </summary>
+        public void SetCurrent()
+        {
+            Room ptr = prev;
+            //hide parent rooms
+            while(ptr)
+            {
+                ptr.Hide();
+                ptr = ptr.prev;
+            }
+            //disable children room collisions
+            ptr = next;
+            while(ptr)
+            {
+                ptr.SetRoomCollision(false);
+                ptr = ptr.next;
+            }
+
+            //disable masking of the current room
+            SetSpriteMasking(SpriteMaskInteraction.None);
+
+            //callbacks
+            Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(this));
+        }
+
+        public void GoToNext()
+        {
+            if (!next)
+                return;
+
+            //disable masking
+            next.SetSpriteMasking(SpriteMaskInteraction.None);
+            next.SetRoomCollision(true);
+
+            Hide();
+
+            Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(next));
+        }
+
+        public void GoToPrev()
+        {
+            throw new NotImplementedException();
         }
 
         private void OnDrawGizmos()
