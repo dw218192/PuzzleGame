@@ -5,6 +5,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 
+namespace PuzzleGame
+{
+    public static class MathExtension
+    {
+
+    }
+
+    public static class TransformExtension
+    {
+
+    }
+}
+
 namespace PuzzleGame.EventSystem
 {
     public abstract class MessengerEventData

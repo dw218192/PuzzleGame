@@ -34,5 +34,13 @@ namespace PuzzleGame
         public const int k_wallLayer = 11;
         public const int k_groundLayer = 12; //not used for now
         public const int k_boundaryLayer = 13;
+
+        //animator variables
+        public static readonly int k_PlayerXSpeed_AnimParam = Animator.StringToHash("HorizontalSpeed");
+        public static readonly int k_PlayerYSpeed_AnimParam = Animator.StringToHash("VerticalSpeed");
+
+        public static readonly int k_PlayerWalking_AnimParam = Animator.StringToHash("Walking");
+        public static readonly int k_PlayerAirborne_AnimParam = Animator.StringToHash("Airborne");
+
     }
 }

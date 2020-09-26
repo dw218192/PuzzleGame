@@ -8,23 +8,36 @@ using Object = UnityEngine.Object;
 
 namespace PuzzleGame
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(Animator))]
+    [RequireComponent(typeof(SpriteRenderer))]
     public class PlayerController : MonoBehaviour
     {
+        #region Ground Check
         [SerializeField] Transform _groundCheckAnchor;
+        Vector2 _groundCheckSize;
+        bool _grounded = false;
+        float _groundCheckTimer;
+        #endregion
 
+        #region Interaction
+        [SerializeField] GenericTrigger _interactionTrigger;
+        Interactable _curInteractable;
+        float _interactionTriggerX;
+        #endregion
+
+        #region Components
         Rigidbody2D _rgbody;
         BoxCollider2D _collider;
-        float _jumpStartY;
-        float _groundCheckThreshold;
-
-        bool _airBorne = false, _grounded = false, _lastGrounded;
+        Animator _animator;
+        SpriteRenderer _spriteRenderer;
+        #endregion
 
         [Serializable]
         public class MovementConfig
         {
             public float speed = 1f;
             public float jumpThrust = 20f;
+            public float airBorneSpeed = 0.5f;
         }
 
         [SerializeField] MovementConfig _moveConfig = new MovementConfig();
@@ -43,7 +56,36 @@ namespace PuzzleGame
         {
             _rgbody = GetComponent<Rigidbody2D>();
             _collider = GetComponent<BoxCollider2D>();
-            _groundCheckThreshold = _groundCheckAnchor.localPosition.magnitude; //_collider.bounds.size.x;
+            _animator = GetComponent<Animator>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+
+            _groundCheckSize = new Vector2(_collider.size.x * 0.9f, 0.2f);
+
+            _interactionTrigger.onTriggerEnter += (Collider2D collider) => 
+            {
+                if(!_curInteractable)
+                    _curInteractable = collider.GetComponent<Interactable>();
+            };
+            _interactionTrigger.onTriggerExit += (Collider2D collider) => 
+            {
+                if(Object.ReferenceEquals(collider.GetComponent<Interactable>(), _curInteractable))
+                    _curInteractable = null;
+            };
+
+            _interactionTriggerX = _interactionTrigger.transform.localPosition.x;
+        }
+
+        void TurnAround(float horizontalVelocity)
+        {
+            if (!Mathf.Approximately(0, horizontalVelocity))
+            {
+                float sign = Mathf.Sign(horizontalVelocity);
+                _spriteRenderer.flipX = sign < 0;
+
+                Vector2 pos = _interactionTrigger.transform.localPosition;
+                pos.x = sign * _interactionTriggerX;
+                _interactionTrigger.transform.localPosition = pos;
+            }
         }
 
         // Update is called once per frame
@@ -58,57 +100,72 @@ namespace PuzzleGame
 
         void MovementUpdate()
         {
-            _lastGrounded = _grounded;
-            _grounded = CheckGrounded();
+            _groundCheckTimer = Mathf.Max(_groundCheckTimer - Time.deltaTime, 0);
 
-            if (!_lastGrounded && _grounded)
+            if(Mathf.Approximately(0, _groundCheckTimer))
             {
-                _airBorne = false;
+                _grounded = CheckGrounded();
             }
+
+            float vertical = 0, horizontal = 0;
+
             if (_grounded)
             {
-                if(!_airBorne)
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    float vertical = 0, horizontal = 0;
+                    vertical = _moveConfig.jumpThrust;
 
-                    if (Input.GetKeyDown(KeyCode.Space))
-                    {
-                        vertical = _moveConfig.jumpThrust;
-                        _airBorne = true;
-                    }
-                    if (Input.GetKey(KeyCode.A))
-                    {
-                        horizontal = -_moveConfig.speed;
-                    }
-                    if (Input.GetKey(KeyCode.D))
-                    {
-                        horizontal = _moveConfig.speed;
-                    }
-
-                    _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * vertical;
+                    _grounded = false;
+                    _groundCheckTimer = Time.deltaTime * 10f;
                 }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    horizontal = -_moveConfig.speed;
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    horizontal = _moveConfig.speed;
+                }
+
+                _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * vertical;
             }
+            else
+            {
+                if (Input.GetKey(KeyCode.A))
+                {
+                    horizontal = -_moveConfig.airBorneSpeed;
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    horizontal = _moveConfig.airBorneSpeed;
+                }
+
+                _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * Vector2.Dot(GameContext.s_up, _rgbody.velocity);
+            }
+
+            _animator.SetBool(GameConst.k_PlayerAirborne_AnimParam, !_grounded);
+            _animator.SetBool(GameConst.k_PlayerWalking_AnimParam, !Mathf.Approximately(0, horizontal));
+
+            _animator.SetFloat(GameConst.k_PlayerXSpeed_AnimParam, horizontal);
+            _animator.SetFloat(GameConst.k_PlayerYSpeed_AnimParam, _rgbody.velocity.y);
+
+            TurnAround(horizontal);
         }
 
         bool CheckGrounded()
         {
-            RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, new Vector2(_collider.size.x, 0.2f), 0, -GameContext.s_up, _groundCheckThreshold, 
+            return Physics2D.OverlapBox(_groundCheckAnchor.position, _groundCheckSize, 
+                Vector2.Angle(Vector2.up, GameContext.s_up),
                 1 << GameConst.k_boundaryLayer | 1 << GameConst.k_propLayer);
-
-            if(hits.Length > 0)
-            {
-                foreach(var hit in hits)
-                {
-                    if (!Object.ReferenceEquals(hit.collider, _collider))
-                        return true;
-                }
-            }
-
-            return false;
         }
-        
+
+        void InteractionUpdate()
+        {
+
+        }
 
         //NOTE: TODO: the below code is only for demo
+#if false
         Interactable _paintingInteractable=null, _key=null;
         bool _showPrompt = false;
         int _demoPhase = 0;
@@ -171,12 +228,23 @@ namespace PuzzleGame
                 Application.Quit();
             }
         }
+#endif
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawCube(_groundCheckAnchor.position, _groundCheckSize);
+        }
 
         private void OnGUI()
         {
+            GUI.color = Color.green;
             GUI.Label(new Rect(10, 50, 200, 32), $"velocity: {_rgbody.velocity.ToString()}");
             GUI.Label(new Rect(10, 90, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
 
+            if(_curInteractable)
+                GUI.Label(new Rect(10, 130, 200, 32), $"cur interactable: {_curInteractable.gameObject.name}");
+
+#if false
             if(_showPrompt)
             {
                 GUIStyle style = new GUIStyle();
@@ -190,6 +258,8 @@ namespace PuzzleGame
                 style.richText = true;
                 GUI.Label(new Rect(Screen.width / 2 - 70, Screen.height / 2 - 16, 400, 32), "<size=20><color=red>You Win! End of Demo!</color></size>");
             }
+
+#endif
         }
     }
 }
