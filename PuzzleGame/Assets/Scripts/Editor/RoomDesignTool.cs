@@ -113,8 +113,8 @@ namespace PuzzleGame.Editor
 
             if(_showCameraSetting)
             {
-                Vector2 topLeftCamPos = editingRoom.viewCenterPos + new Vector2(-editingRoom.cameraViewDist/2f, editingRoom.cameraViewDist/2f);
-                Rect cameraView = new Rect(topLeftCamPos, editingRoom.cameraViewDist * Vector2.one);
+                Vector2 bottomLeft = editingRoom.viewCenterPos + new Vector2(-editingRoom.cameraViewDist/2f, -editingRoom.cameraViewDist/2f);
+                Rect cameraView = new Rect(bottomLeft, editingRoom.cameraViewDist * Vector2.one);
                 DrawRect(cameraView, Color.blue, "camera view");
             }
         }

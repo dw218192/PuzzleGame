@@ -18,7 +18,7 @@ namespace PuzzleGame.EventSystem
 
     public enum M_EventType
     {
-        ON_BEFORE_ENTER_ROOM,
+        ON_BEFORE_ENTER_ROOM, //ON_BEFORE_ENTER_ROOM will trigger ON_ENTER_ROOM
         ON_ENTER_ROOM,
         ON_EXIT_ROOM,
     }

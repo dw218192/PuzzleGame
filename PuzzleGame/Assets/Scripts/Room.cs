@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 
 using PuzzleGame.EventSystem;
 
+using Object = UnityEngine.Object;
 namespace PuzzleGame
 {
     public enum ERoomState
@@ -28,7 +29,6 @@ namespace PuzzleGame
         [SerializeField] Transform _contentRoot = null;
         [SerializeField] Tilemap _roomTile = null;
 
-        //TODO: refactor this
         //relative to the room, top-left (0,0)
         //unscaled painting size
         [SerializeField] Rect _paintingArea;
@@ -37,22 +37,30 @@ namespace PuzzleGame
         Vector2 _roomSize;
         //room camera settings
         [SerializeField] int _cameraViewDist;
-        [SerializeField] Vector2 _viewCenterPos;
-
+        [SerializeField] Transform _viewCenterPos;
         [SerializeField] Transform _playerSpawnPos;
 
         ERoomState _state = ERoomState.NORMAL;
 
         //conversion methods
-        private Vector2 roomPointToWorldPoint(Vector2 roomSpacePos)
+        //NOTE: room space starts at top-left (0,0) and ends at bottom-right (max_x, max_y)
+        public Vector2 worldToRoomPoint(Vector2 worldPos)
         {
-            float scale = _contentRoot.lossyScale.x;
-            return new Vector2(_contentRoot.localPosition.x + roomSpacePos.x * scale, _contentRoot.localPosition.y - roomSpacePos.y * scale);
+            Vector2 pos = _contentRoot.InverseTransformPoint(worldPos);
+            pos.y = -pos.y;
+            return pos;
+        }
+        public Vector2 roomPointToWorldPoint(Vector2 roomSpacePos)
+        {
+            //float scale = _contentRoot.lossyScale.x;
+            //return new Vector2(_contentRoot.localPosition.x + roomSpacePos.x * scale, _contentRoot.localPosition.y - roomSpacePos.y * scale);
+            return _contentRoot.TransformPoint(roomSpacePos.x, -roomSpacePos.y, 0f);
         }
         public Vector2 roomDirToWorldDir(Vector2 dir)
         {
-            float scale = _contentRoot.lossyScale.x;
-            return new Vector2(dir.x * scale, -dir.y * scale);
+            //float scale = _contentRoot.lossyScale.x;
+            //return new Vector2(dir.x * scale, -dir.y * scale);
+            return _contentRoot.TransformVector(dir.x, -dir.y, 0f);
         }
         public float roomUnitToWorldUnit(float length)
         {
@@ -66,7 +74,7 @@ namespace PuzzleGame
 
         public float cameraViewDist { get { return roomUnitToWorldUnit(_cameraViewDist); } }
         public Vector2 playerSpawnPos { get { return _playerSpawnPos.position; } }
-        public Vector2 viewCenterPos { get { return roomPointToWorldPoint(_viewCenterPos); } }
+        public Vector2 viewCenterPos { get { return _viewCenterPos.position; } }
         public Rect paintingArea { get { return new Rect(roomPointToWorldPoint(_paintingArea.position), roomDirToWorldDir(_paintingArea.size)); } }
         public Rect visibleArea { get { return new Rect(roomPointToWorldPoint(_visibleArea.position), roomDirToWorldDir(_visibleArea.size)); } }
         public Rect roomArea { get { return new Rect(_contentRoot.position, roomDirToWorldDir(_roomSize)); } }
@@ -104,7 +112,11 @@ namespace PuzzleGame
             foreach (var actor in _actors)
                 actor.spriteRenderer.maskInteraction = interaction;
         }
-
+        
+        /// <summary>
+        /// make the room contained in the parent's painting
+        /// </summary>
+        /// <param name="parent"></param>
         public void SetToPainting(Room parent)
         {
             float scale = _paintingArea.width / _visibleArea.width;
@@ -125,6 +137,10 @@ namespace PuzzleGame
             _paintingMask.transform.localPosition = parent.paintingArea.position;
         }
 
+        /// <summary>
+        /// make the room contain the child in its painting
+        /// </summary>
+        /// <param name="child"></param>
         public void SetFromPainting(Room child)
         {
             float scale = _visibleArea.width / _paintingArea.width;
@@ -134,7 +150,7 @@ namespace PuzzleGame
             _contentRoot.localPosition = child.roomPointToWorldPoint(_visibleArea.position) - this.roomDirToWorldDir(_paintingArea.position);
 
             //enable sprite masking for child
-            SetSpriteMasking(SpriteMaskInteraction.VisibleInsideMask);
+            child.SetSpriteMasking(SpriteMaskInteraction.VisibleInsideMask);
 
             child._paintingMask.SetActive(true);
             float lossyScale = _contentRoot.lossyScale.x;
@@ -164,6 +180,8 @@ namespace PuzzleGame
 
             SetSpriteMasking(SpriteMaskInteraction.None);
             _roomSize = new Vector2(_roomTile.size.x, _roomTile.size.y - 1);
+
+            Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
         }
 
         public void SpawnNext()
@@ -248,14 +266,9 @@ namespace PuzzleGame
             if (!next)
                 return;
 
-            //disable masking
-            next.SetSpriteMasking(SpriteMaskInteraction.None);
-            next.SetRoomCollision(true);
-
-            Hide();
-
             Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(next));
         }
+
 
         public void GoToPrev()
         {
@@ -266,5 +279,18 @@ namespace PuzzleGame
         {
             //Gizmos.DrawSphere(paintingArea.position + 0.5f * paintingArea.size, 0.5f);
         }
+
+        #region GAME EVENTS
+        private void OnEnterRoom(RoomEventData data)
+        {
+            if (Object.ReferenceEquals(data.room, next))
+            {
+                Hide();
+                //disable masking
+                next.SetSpriteMasking(SpriteMaskInteraction.None);
+                next.SetRoomCollision(true);
+            }
+        }
+        #endregion
     }
 }

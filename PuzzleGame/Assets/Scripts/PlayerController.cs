@@ -4,30 +4,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using PuzzleGame.EventSystem;
 
+using Object = UnityEngine.Object;
+
 namespace PuzzleGame
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
     public class PlayerController : MonoBehaviour
     {
-        enum EControlState
-        {
-            NORMAL,
-            JUMP
-        }
+        [SerializeField] Transform _groundCheckAnchor;
 
         Rigidbody2D _rgbody;
-        Collider2D _collider;
+        BoxCollider2D _collider;
         float _jumpStartY;
+        float _groundCheckThreshold;
+
+        bool _airBorne = false, _grounded = false, _lastGrounded;
 
         [Serializable]
         public class MovementConfig
         {
             public float speed = 1f;
+            public float jumpThrust = 20f;
         }
 
         [SerializeField] MovementConfig _moveConfig = new MovementConfig();
-        EControlState _state = EControlState.NORMAL;
-        Vector2 _curMoveVector = Vector2.zero;
         
         public Vector2 curVelocity { get { return _rgbody.velocity; } }
         public bool controlEnabled { get; private set; } = true;
@@ -42,7 +42,8 @@ namespace PuzzleGame
         void Start()
         {
             _rgbody = GetComponent<Rigidbody2D>();
-            _collider = GetComponent<Collider2D>();
+            _collider = GetComponent<BoxCollider2D>();
+            _groundCheckThreshold = _groundCheckAnchor.localPosition.magnitude; //_collider.bounds.size.x;
         }
 
         // Update is called once per frame
@@ -51,147 +52,144 @@ namespace PuzzleGame
             if (!controlEnabled)
                 return;
 
-            //TODO: demo forbids 2.5D movements
-            NormalUpdate();
-
-            /*
-            switch (_state)
-            {
-                case EControlState.NORMAL:
-                    NormalUpdate();
-                    break;
-                case EControlState.JUMP:
-                    JumpUpdate();
-                    break;
-            }
-            */
+            MovementUpdate();
+            InteractionUpdate();
         }
 
-        void GoToState(EControlState state)
+        void MovementUpdate()
         {
-            _state = state;
+            _lastGrounded = _grounded;
+            _grounded = CheckGrounded();
 
-            switch(state)
+            if (!_lastGrounded && _grounded)
             {
-                case EControlState.NORMAL:
-                    OnNormal();
-                    break;
-                case EControlState.JUMP:
-                    OnEnterJump();
-                    break;
+                _airBorne = false;
             }
-        }
-
-
-        public void StopFalling()
-        {
-            if (_rgbody.velocity.y < 0)
+            if (_grounded)
             {
-                Vector2 vel = _rgbody.velocity;
-                vel.y = 0;
-                _rgbody.velocity = vel;
+                if(!_airBorne)
+                {
+                    float vertical = 0, horizontal = 0;
+
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        vertical = _moveConfig.jumpThrust;
+                        _airBorne = true;
+                    }
+                    if (Input.GetKey(KeyCode.A))
+                    {
+                        horizontal = -_moveConfig.speed;
+                    }
+                    if (Input.GetKey(KeyCode.D))
+                    {
+                        horizontal = _moveConfig.speed;
+                    }
+
+                    _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * vertical;
+                }
             }
-        }
-
-        void OnEnterJump()
-        {
-            gameObject.layer = GameConst.k_playerJumpingLayer;
-            _jumpStartY = transform.position.y;
-
-            Vector2 right = Vector3.Cross(Vector3.forward, Physics2D.gravity).normalized;
-            //kill vertical velocity
-            _rgbody.velocity = right * _rgbody.velocity.x;
-            _rgbody.AddForce(-Physics2D.gravity, ForceMode2D.Impulse);
-        }
-
-        void OnNormal()
-        {
-            gameObject.layer = GameConst.k_playerLayer;
-        }
-
-        void JumpUpdate()
-        {
-            if(transform.position.y < _jumpStartY && _rgbody.velocity.y < 0)
-            {
-                Vector2 pos = transform.position;
-                pos.y = _jumpStartY;
-                transform.position = pos;
-
-                Vector2 vel = _rgbody.velocity;
-                vel.y = 0;
-                _rgbody.velocity = vel;
-
-                GoToState(EControlState.NORMAL);
-                return;
-            }
-
-            //we must have landed on something
-            if(Mathf.Approximately(_rgbody.velocity.y, 0.0f))
-            {
-                GoToState(EControlState.NORMAL);
-                return;
-            }
-
-            //apply gravity
-            _rgbody.AddForce(Physics2D.gravity, ForceMode2D.Force);
         }
 
         bool CheckGrounded()
         {
-            return Physics2D.Raycast(transform.position, -GameContext.s_up, _collider.bounds.extents.y + 1e-2f);
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, new Vector2(_collider.size.x, 0.2f), 0, -GameContext.s_up, _groundCheckThreshold, 
+                1 << GameConst.k_boundaryLayer | 1 << GameConst.k_propLayer);
+
+            if(hits.Length > 0)
+            {
+                foreach(var hit in hits)
+                {
+                    if (!Object.ReferenceEquals(hit.collider, _collider))
+                        return true;
+                }
+            }
+
+            return false;
         }
+        
 
-        Vector2 GetInput()
+        //NOTE: TODO: the below code is only for demo
+        Interactable _paintingInteractable=null, _key=null;
+        bool _showPrompt = false;
+        int _demoPhase = 0;
+        void InteractionUpdate()
         {
-            Vector2 moveVector = Vector2.zero;
-            if (Input.GetKey(KeyCode.A))
+            if (_demoPhase == 0)
             {
-                moveVector += Vector2.left;
+                if (!_paintingInteractable || !_key)
+                {
+                    Transform child = GameContext.s_gameMgr.curRoom.contentRoot.Find("PaintingTrigger");
+                    _paintingInteractable = child.GetComponent<Interactable>();
+
+                    child = GameContext.s_gameMgr.curRoom.next.contentRoot.Find("Key");
+                    _key = child.GetComponent<Interactable>();
+                }
+
+                if (_grounded)
+                {
+                    if (Vector2.Distance(transform.position, _paintingInteractable.transform.position) < 1f)
+                    {
+                        _showPrompt = true;
+
+                        if (Input.GetKeyDown(KeyCode.E))
+                        {
+                            GameContext.s_gameMgr.curRoom.GoToNext();
+                            _showPrompt = false;
+                            _demoPhase = 1;
+                        }
+                    }
+                    else
+                    {
+                        _showPrompt = false;
+                    }
+                }
             }
-            if (Input.GetKey(KeyCode.D))
+            else if (_demoPhase == 1)
             {
-                moveVector += Vector2.right;
+                if (Vector2.Distance(transform.position, _key.transform.position) < 1f)
+                {
+                    _showPrompt = true;
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        Destroy(_key.gameObject);
+                        _showPrompt = false;
+                        _demoPhase = 2;
+
+                        StartCoroutine(_endGameRoutine());
+                    }
+                }
+                else
+                {
+                    _showPrompt = false;
+                }
             }
 
-            //TODO: demo forbids 2.5D movements
-            /*
-            if (Input.GetKey(KeyCode.W))
+            IEnumerator _endGameRoutine()
             {
-                moveVector += Vector2.up;
+                yield return new WaitForSecondsRealtime(4f);
+                Application.Quit();
             }
-            if (Input.GetKey(KeyCode.S))
-            {
-                moveVector += Vector2.down;
-            }
-            */
-
-            return moveVector;
-        }
-
-        void DampenExtraSpeed()
-        {
-            //TODO: 2.5d movement is not implemented for now
-        }
-
-        void NormalUpdate()
-        {
-            if (CheckGrounded() && Input.GetKeyDown(KeyCode.Space))
-                _rgbody.AddForce(-Physics2D.gravity, ForceMode2D.Impulse);
-
-            _curMoveVector = GetInput();
-            //TODO: 2.5d movement is not implemented for now
-            float horizontalMove = _curMoveVector.x;
-
-            if(Vector2.Dot(GameContext.s_right, _rgbody.velocity) < _moveConfig.speed)
-                _rgbody.AddForce(GameContext.s_right * horizontalMove, ForceMode2D.Force);
-
-            DampenExtraSpeed();
         }
 
         private void OnGUI()
         {
-            GUI.Label(new Rect(10, 10, 100, 32), _state.ToString());
-            GUI.Label(new Rect(10, 50, 100, 32), _rgbody.velocity.ToString());
+            GUI.Label(new Rect(10, 50, 200, 32), $"velocity: {_rgbody.velocity.ToString()}");
+            GUI.Label(new Rect(10, 90, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
+
+            if(_showPrompt)
+            {
+                GUIStyle style = new GUIStyle();
+                style.richText = true;
+                GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 400, 32), "<size=20><color=red>Press E to interact</color></size>");
+            }
+
+            if(_demoPhase == 2)
+            {
+                GUIStyle style = new GUIStyle();
+                style.richText = true;
+                GUI.Label(new Rect(Screen.width / 2 - 70, Screen.height / 2 - 16, 400, 32), "<size=20><color=red>You Win! End of Demo!</color></size>");
+            }
         }
     }
 }

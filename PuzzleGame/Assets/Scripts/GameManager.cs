@@ -27,6 +27,7 @@ namespace PuzzleGame
         private void Start()
         {
             curRoom.SetCurrent();
+            //TestRoomTransition();
         }
 
         //messenger events
@@ -36,7 +37,6 @@ namespace PuzzleGame
                 GameContext.s_player = Instantiate(playerPrefab, curRoom.playerSpawnPos, Quaternion.identity);
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
-
             //TODO: gravity changes, etc.
         }
 
@@ -56,10 +56,16 @@ namespace PuzzleGame
 
         void TestRoomTransition()
         {
+            Room outermost = curRoom.prev.prev.prev.prev;
+
             IEnumerator _gotoRoomRoutine()
             {
-                yield return new WaitForSecondsRealtime(6f);
-                curRoom.GoToNext();
+                while(outermost)
+                {
+                    yield return new WaitForSecondsRealtime(2f);
+                    outermost.GoToNext();
+                    outermost = outermost.next;
+                }
             }
 
             StartCoroutine(_gotoRoomRoutine());
