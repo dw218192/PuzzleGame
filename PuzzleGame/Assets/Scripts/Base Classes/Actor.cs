@@ -7,7 +7,16 @@ namespace PuzzleGame
     public class Actor : MonoBehaviour
     {
         public Room room { get; set; } = null;
-        public SpriteRenderer spriteRenderer { get { return GetComponent<SpriteRenderer>(); } }
+        public SpriteRenderer spriteRenderer 
+        {
+            get
+            {
+                if (!_spriteRenderer)
+                    _spriteRenderer = GetComponent<SpriteRenderer>();
+                return _spriteRenderer;
+            }
+        }
+        private SpriteRenderer _spriteRenderer = null;
 
         private void Awake()
         {

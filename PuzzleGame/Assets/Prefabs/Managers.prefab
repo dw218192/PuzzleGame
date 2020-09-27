@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6044774712470159980}
   - component: {fileID: 6044774712470159983}
+  - component: {fileID: 593198061}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,3 +46,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomPrefab: {fileID: 3927815213173337841, guid: 3dd6c523fd2ca4c419753299de78c660, type: 3}
   playerPrefab: {fileID: 7845882885185920104, guid: 2f507b5cc563519469e4d89361b8c808, type: 3}
+--- !u!114 &593198061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6044774712470159982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2f08cebfefc23a409710be0596d393d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _arrowGameObj: {fileID: 6979143467118763389, guid: 8ac21a2c1041c494ba5eb4c47e7f9530, type: 3}

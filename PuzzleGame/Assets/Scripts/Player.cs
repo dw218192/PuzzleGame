@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PuzzleGame
 {
-    [RequireComponent(typeof(PlayerController), typeof(Actor), typeof(BoxCollider))]
+    [RequireComponent(typeof(PlayerController))]
     public class Player : MonoBehaviour
     {
         public PlayerController controller { get; private set; }

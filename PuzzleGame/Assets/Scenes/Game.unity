@@ -239,6 +239,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8855503443781692466, guid: 3dd6c523fd2ca4c419753299de78c660, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 40.960003
+      objectReference: {fileID: 0}
+    - target: {fileID: 8855503443781692466, guid: 3dd6c523fd2ca4c419753299de78c660, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 19.36
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3dd6c523fd2ca4c419753299de78c660, type: 3}
 --- !u!1001 &6044774712471460462
@@ -294,7 +302,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6044774712470159982, guid: b4dd88b4c71811543bdc2e2cc21f8a96, type: 3}
       propertyPath: m_Name
-      value: GameManager
+      value: Managers
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4dd88b4c71811543bdc2e2cc21f8a96, type: 3}

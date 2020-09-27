@@ -11,30 +11,36 @@ namespace PuzzleGame.Editor
         public enum ECreateTarget
         {
             STATIC_OBJ,
-            INTERACTABLE,
+            GENERIC_INTERACTABLE,
+            PICK_UP
         }
 
         ECreateTarget _createTarget;
 
-        EInteractType _type;
         string _name;
         Sprite _sprite;
 
-        private void DrawInteractableGUI()
+        private void DrawInteractableGUI(ECreateTarget targetType)
         {
             _name = EditorGUILayout.TextField("name", _name);
-            _type = (EInteractType)EditorGUILayout.EnumPopup("interaction type", _type);
             _sprite = (Sprite)EditorGUILayout.ObjectField(_sprite, typeof(Sprite), allowSceneObjects: true);
 
             if (GUILayout.Button("create"))
             {
-                GameObject go = new GameObject(_name);
-                Interactable interactable = go.AddComponent<Interactable>();
-                interactable.type = _type;
+                GameObject go = null;
+                if (targetType == ECreateTarget.PICK_UP)
+                    go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Interaction/Interactable.prefab"));
+                else if (targetType == ECreateTarget.GENERIC_INTERACTABLE)
+                    go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Interaction/StaticInteraction.prefab"));
+                
+                if(!go)
+                {
+                    EditorUtility.DisplayDialog("Error", $"unknown creation type {targetType} for interactables", "yes");
+                    return;
+                }
 
-                SpriteRenderer rend = go.AddComponent<SpriteRenderer>();
-                rend.sprite = _sprite;
-                rend.sortingLayerName = GameConst.k_interactableSpriteLayer;
+                go.name = _name;
+                go.GetComponent<SpriteRenderer>().sprite = _sprite;
 
                 EditorSceneManager.MoveGameObjectToScene(go, RoomDesignTool.editingRoom.gameObject.scene);
                 go.transform.parent = RoomDesignTool.editingRoom.contentRoot;
@@ -63,6 +69,10 @@ namespace PuzzleGame.Editor
                 go.transform.parent = RoomDesignTool.editingRoom.contentRoot;
                 go.transform.localPosition = Vector3.zero;
 
+                go.AddComponent<BoxCollider2D>();
+                Rigidbody2D rgBody = go.AddComponent<Rigidbody2D>();
+                rgBody.bodyType = RigidbodyType2D.Static;
+
                 Selection.activeTransform = go.transform;
             }
         }
@@ -83,8 +93,9 @@ namespace PuzzleGame.Editor
                     case ECreateTarget.STATIC_OBJ:
                         DrawStaticObjGUI();
                         break;
-                    case ECreateTarget.INTERACTABLE:
-                        DrawInteractableGUI();
+                    case ECreateTarget.GENERIC_INTERACTABLE:
+                    case ECreateTarget.PICK_UP:
+                        DrawInteractableGUI(_createTarget);
                         break;
                 }
             }

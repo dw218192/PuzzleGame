@@ -177,8 +177,8 @@ namespace PuzzleGame
             _spriteMask = _paintingMask.GetComponentInChildren<SpriteMask>();
             _spriteMask.isCustomRangeActive = false;
             _paintingMask.SetActive(false);
-
             SetSpriteMasking(SpriteMaskInteraction.None);
+
             _roomSize = new Vector2(_roomTile.size.x, _roomTile.size.y - 1);
 
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
@@ -283,6 +283,7 @@ namespace PuzzleGame
         #region GAME EVENTS
         private void OnEnterRoom(RoomEventData data)
         {
+            //is this the room the player entered?
             if (Object.ReferenceEquals(data.room, next))
             {
                 Hide();

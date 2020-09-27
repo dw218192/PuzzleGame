@@ -10,6 +10,7 @@ namespace PuzzleGame
     public static class GameContext
     {
         public static GameManager s_gameMgr;
+        public static EffectManager s_effectMgr;
         public static Player s_player;
         public static Vector2 s_right = Vector2.right, s_up = Vector2.up;
     }

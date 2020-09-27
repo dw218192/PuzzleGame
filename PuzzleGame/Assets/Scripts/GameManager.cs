@@ -19,13 +19,12 @@ namespace PuzzleGame
             else
                 GameContext.s_gameMgr = this;
 
-
-            TestRoomSpawn();
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
         }
 
         private void Start()
         {
+            TestRoomSpawn();
             curRoom.SetCurrent();
             //TestRoomTransition();
         }
@@ -38,6 +37,8 @@ namespace PuzzleGame
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
             //TODO: gravity changes, etc.
+
+            curRoom = data.room;
         }
 
         void TestRoomSpawn()

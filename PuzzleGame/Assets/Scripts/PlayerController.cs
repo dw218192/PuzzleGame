@@ -10,6 +10,7 @@ namespace PuzzleGame
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(Animator))]
     [RequireComponent(typeof(SpriteRenderer))]
+    [RequireComponent(typeof(Player))]
     public class PlayerController : MonoBehaviour
     {
         #region Ground Check
@@ -30,6 +31,7 @@ namespace PuzzleGame
         BoxCollider2D _collider;
         Animator _animator;
         SpriteRenderer _spriteRenderer;
+        Player _player;
         #endregion
 
         [Serializable]
@@ -58,18 +60,27 @@ namespace PuzzleGame
             _collider = GetComponent<BoxCollider2D>();
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
+            _player = GetComponent<Player>();
 
             _groundCheckSize = new Vector2(_collider.size.x * 0.9f, 0.2f);
 
             _interactionTrigger.onTriggerEnter += (Collider2D collider) => 
             {
-                if(!_curInteractable)
-                    _curInteractable = collider.GetComponent<Interactable>();
+                Interactable interactable = collider.GetComponent<Interactable>();
+                if (interactable && !_curInteractable)
+                {
+                    _curInteractable = interactable;
+                    _curInteractable.OnEnterRange();
+                }
             };
             _interactionTrigger.onTriggerExit += (Collider2D collider) => 
             {
-                if(Object.ReferenceEquals(collider.GetComponent<Interactable>(), _curInteractable))
+                Interactable interactable = collider.GetComponent<Interactable>();
+                if (interactable && Object.ReferenceEquals(interactable, _curInteractable))
+                {
+                    _curInteractable.OnExitRange();
                     _curInteractable = null;
+                }
             };
 
             _interactionTriggerX = _interactionTrigger.transform.localPosition.x;
@@ -154,81 +165,20 @@ namespace PuzzleGame
 
         bool CheckGrounded()
         {
-            return Physics2D.OverlapBox(_groundCheckAnchor.position, _groundCheckSize, 
+            Collider2D collider = Physics2D.OverlapBox(_groundCheckAnchor.position, _groundCheckSize, 
                 Vector2.Angle(Vector2.up, GameContext.s_up),
                 1 << GameConst.k_boundaryLayer | 1 << GameConst.k_propLayer);
+
+            return collider && !collider.isTrigger && !Object.ReferenceEquals(collider, _collider);
         }
 
         void InteractionUpdate()
         {
-
-        }
-
-        //NOTE: TODO: the below code is only for demo
-#if false
-        Interactable _paintingInteractable=null, _key=null;
-        bool _showPrompt = false;
-        int _demoPhase = 0;
-        void InteractionUpdate()
-        {
-            if (_demoPhase == 0)
+            if(Input.GetKeyDown(KeyCode.E))
             {
-                if (!_paintingInteractable || !_key)
-                {
-                    Transform child = GameContext.s_gameMgr.curRoom.contentRoot.Find("PaintingTrigger");
-                    _paintingInteractable = child.GetComponent<Interactable>();
-
-                    child = GameContext.s_gameMgr.curRoom.next.contentRoot.Find("Key");
-                    _key = child.GetComponent<Interactable>();
-                }
-
-                if (_grounded)
-                {
-                    if (Vector2.Distance(transform.position, _paintingInteractable.transform.position) < 1f)
-                    {
-                        _showPrompt = true;
-
-                        if (Input.GetKeyDown(KeyCode.E))
-                        {
-                            GameContext.s_gameMgr.curRoom.GoToNext();
-                            _showPrompt = false;
-                            _demoPhase = 1;
-                        }
-                    }
-                    else
-                    {
-                        _showPrompt = false;
-                    }
-                }
-            }
-            else if (_demoPhase == 1)
-            {
-                if (Vector2.Distance(transform.position, _key.transform.position) < 1f)
-                {
-                    _showPrompt = true;
-
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        Destroy(_key.gameObject);
-                        _showPrompt = false;
-                        _demoPhase = 2;
-
-                        StartCoroutine(_endGameRoutine());
-                    }
-                }
-                else
-                {
-                    _showPrompt = false;
-                }
-            }
-
-            IEnumerator _endGameRoutine()
-            {
-                yield return new WaitForSecondsRealtime(4f);
-                Application.Quit();
+                _curInteractable.OnInteract(_player);
             }
         }
-#endif
 
         private void OnDrawGizmos()
         {
@@ -239,27 +189,10 @@ namespace PuzzleGame
         {
             GUI.color = Color.green;
             GUI.Label(new Rect(10, 50, 200, 32), $"velocity: {_rgbody.velocity.ToString()}");
-            GUI.Label(new Rect(10, 90, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
+            GUI.Label(new Rect(10, 80, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
 
             if(_curInteractable)
-                GUI.Label(new Rect(10, 130, 200, 32), $"cur interactable: {_curInteractable.gameObject.name}");
-
-#if false
-            if(_showPrompt)
-            {
-                GUIStyle style = new GUIStyle();
-                style.richText = true;
-                GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 400, 32), "<size=20><color=red>Press E to interact</color></size>");
-            }
-
-            if(_demoPhase == 2)
-            {
-                GUIStyle style = new GUIStyle();
-                style.richText = true;
-                GUI.Label(new Rect(Screen.width / 2 - 70, Screen.height / 2 - 16, 400, 32), "<size=20><color=red>You Win! End of Demo!</color></size>");
-            }
-
-#endif
+                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}");
         }
     }
 }
