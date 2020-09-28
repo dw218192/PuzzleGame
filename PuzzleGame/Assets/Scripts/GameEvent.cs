@@ -16,10 +16,27 @@ namespace PuzzleGame.EventSystem
         public Room room;
     }
 
+    [Serializable]
+    public class InventoryChangeEventData : MessengerEventData
+    {
+        private InventoryChangeEventData() { }
+        public InventoryChangeEventData(EItemID itemID, int slotIndex, int curItemQuantity)
+        {
+            this.itemID = itemID;
+            this.slotIndex = slotIndex;
+            this.curItemQuantity = curItemQuantity;
+        }
+
+        public EItemID itemID;
+        public int slotIndex;
+        public int curItemQuantity;
+    }
+
     public enum M_EventType
     {
         ON_BEFORE_ENTER_ROOM, //ON_BEFORE_ENTER_ROOM will trigger ON_ENTER_ROOM
         ON_ENTER_ROOM,
         ON_EXIT_ROOM,
+        ON_INVENTORY_CHANGE
     }
 }

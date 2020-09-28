@@ -216,9 +216,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _groundCheckAnchor: {fileID: 2090459526879984741}
   _interactionTrigger: {fileID: 2477844575106455296}
+  _exitPaintInteractTime: 2
   _moveConfig:
-    speed: 4
-    jumpThrust: 6.4
+    speed: 3
+    jumpThrust: 6.5
     airBorneSpeed: 2
 --- !u!114 &7845882885185920104
 MonoBehaviour:

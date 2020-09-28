@@ -36,6 +36,7 @@ namespace PuzzleGame
                 GameContext.s_player = Instantiate(playerPrefab, curRoom.playerSpawnPos, Quaternion.identity);
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
+            
             //TODO: gravity changes, etc.
 
             curRoom = data.room;

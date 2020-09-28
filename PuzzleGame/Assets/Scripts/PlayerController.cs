@@ -22,6 +22,9 @@ namespace PuzzleGame
 
         #region Interaction
         [SerializeField] GenericTrigger _interactionTrigger;
+        [SerializeField] [Range(0.2f, 5f)] float _exitPaintInteractTime = 2f;
+        float _exitPaintkeyHoldTimer = 0;
+        bool _exitPaintkeyDownLastFrame;
         Interactable _curInteractable;
         float _interactionTriggerX;
         #endregion
@@ -176,8 +179,36 @@ namespace PuzzleGame
         {
             if(Input.GetKeyDown(KeyCode.E))
             {
-                _curInteractable.OnInteract(_player);
+                if(_curInteractable)
+                    _curInteractable.OnInteract(_player);
             }
+
+            bool exitPaintingkeyDown = Input.GetKey(KeyCode.Q);
+            //go out of the painting
+            if (_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
+            {
+                _exitPaintkeyHoldTimer = Mathf.Min(_exitPaintInteractTime, _exitPaintkeyHoldTimer + Time.deltaTime);
+                GameContext.s_effectMgr.SetProgress(_exitPaintkeyHoldTimer / _exitPaintInteractTime);
+
+                if(Mathf.Approximately(_exitPaintkeyHoldTimer, _exitPaintInteractTime))
+                {
+                    GameContext.s_effectMgr.HideProgressBar();
+                    GameContext.s_gameMgr.curRoom.GoToPrev();
+                }
+            }
+            else if (!_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
+            {
+                _exitPaintkeyHoldTimer = 0;
+                GameContext.s_effectMgr.ShowProgressBar((Vector2)transform.position + Vector2.up, 
+                    Quaternion.identity, transform);
+                GameContext.s_effectMgr.SetProgress(0);
+            }
+            else if (_exitPaintkeyDownLastFrame && !exitPaintingkeyDown)
+            {
+                GameContext.s_effectMgr.HideProgressBar();
+            }
+
+            _exitPaintkeyDownLastFrame = exitPaintingkeyDown;
         }
 
         private void OnDrawGizmos()
@@ -192,7 +223,7 @@ namespace PuzzleGame
             GUI.Label(new Rect(10, 80, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
 
             if(_curInteractable)
-                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}");
+                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}, id:{_curInteractable.itemID}");
         }
     }
 }

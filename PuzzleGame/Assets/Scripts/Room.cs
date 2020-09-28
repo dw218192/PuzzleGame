@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Rendering;
+using UnityEngine.Assertions;
 
 using PuzzleGame.EventSystem;
 
@@ -18,9 +19,7 @@ namespace PuzzleGame
 
     public class Room : MonoBehaviour
     {
-        Actor[] _actors = null;
-        Collider2D[] _colliders = null;
-        Rigidbody2D[] _rigidBodies = null;
+        LinkedList<Actor> _actors = null;
 
         [SerializeField] GameObject _paintingMask = null;
         [SerializeField] GameObject _wallBoundary = null;
@@ -110,7 +109,10 @@ namespace PuzzleGame
         {
             _roomTile.GetComponent<TilemapRenderer>().maskInteraction = interaction;
             foreach (var actor in _actors)
-                actor.spriteRenderer.maskInteraction = interaction;
+            {
+                if(actor.spriteRenderer)
+                    actor.spriteRenderer.maskInteraction = interaction;
+            }
         }
         
         /// <summary>
@@ -162,9 +164,7 @@ namespace PuzzleGame
 
         private void Awake()
         {
-            _actors = GetComponentsInChildren<Actor>();
-            _colliders = GetComponentsInChildren<Collider2D>();
-            _rigidBodies = GetComponentsInChildren<Rigidbody2D>();
+            _actors = new LinkedList<Actor>(GetComponentsInChildren<Actor>());
 
             foreach (var actor in _actors)
             {
@@ -182,6 +182,7 @@ namespace PuzzleGame
             _roomSize = new Vector2(_roomTile.size.x, _roomTile.size.y - 1);
 
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
+            Messenger.AddListener<RoomEventData>(M_EventType.ON_BEFORE_ENTER_ROOM, OnBeforeEnterRoom);
         }
 
         public void SpawnNext()
@@ -191,6 +192,7 @@ namespace PuzzleGame
 
             GameObject clone = Instantiate(GameContext.s_gameMgr.roomPrefab.gameObject);
             next = clone.GetComponent<Room>();
+            
             next.SetToPainting(this);
             next.roomIndex = roomIndex + 1;
             next.prev = this;
@@ -215,26 +217,31 @@ namespace PuzzleGame
 
         private void SetRoomCollision(bool enable)
         {
-            foreach (var collider in _colliders)
-                collider.enabled = enable;
-
-            foreach (var rigidbody in _rigidBodies)
+            foreach (var actor in _actors)
             {
-                if (enable)
-                    rigidbody.WakeUp();
-                else
-                    rigidbody.Sleep();
+                if(actor.actorCollider)
+                {
+                    actor.actorCollider.enabled = enable;
+                }
+
+                if (actor.actorRigidBody)
+                {
+                    if (enable)
+                        actor.actorRigidBody.WakeUp();
+                    else
+                        actor.actorRigidBody.Sleep();
+                }
             }
         }
 
-        private void Hide()
+        private void SetActive(bool enable)
         {
-            _contentRoot.gameObject.SetActive(false);
-            _paintingMask.SetActive(false);
+            _contentRoot.gameObject.SetActive(enable);
+            _paintingMask.SetActive(enable);
         }
 
         /// <summary>
-        /// initializes a room as the current room
+        /// initializes a room as the "root" room
         /// note: for transition, use GoToNext or GoToPrev instead
         /// </summary>
         public void SetCurrent()
@@ -243,7 +250,7 @@ namespace PuzzleGame
             //hide parent rooms
             while(ptr)
             {
-                ptr.Hide();
+                ptr.SetActive(false);
                 ptr = ptr.prev;
             }
             //disable children room collisions
@@ -257,6 +264,12 @@ namespace PuzzleGame
             //disable masking of the current room
             SetSpriteMasking(SpriteMaskInteraction.None);
 
+            //reinit item ids
+            foreach(var actor in _actors)
+            {
+                actor.RoomInit();
+            }
+
             //callbacks
             Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(this));
         }
@@ -266,13 +279,68 @@ namespace PuzzleGame
             if (!next)
                 return;
 
+            // we don't hide the current room here, i.e. this.SetActive(false) 
+            // after we entered the next room
+            // this is done in OnEnterRoom event handler
+
             Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(next));
         }
 
-
         public void GoToPrev()
         {
-            throw new NotImplementedException();
+            if (!prev)
+                return;
+
+            SetSpriteMasking(SpriteMaskInteraction.VisibleInsideMask);
+            prev.SetActive(true);
+
+            Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(prev));
+        }
+
+        public void RemoveItemThisRoomOnly(EItemID itemID)
+        {
+            Assert.IsTrue(itemID != EItemID.INVALID, "Invalid Item ID");
+
+            Interactable interactable = null;
+
+            for(var it = _actors.First; it != null; it = it.Next)
+            {
+                if(it.Value is Interactable)
+                {
+                    Interactable inter = (Interactable)it.Value;
+                    if(inter.itemID == itemID)
+                    {
+                        interactable = inter;
+                        _actors.Remove(it);
+                        break;
+                    }
+                }
+            }
+
+            Assert.IsTrue(interactable, "Invalid Item ID");
+
+            Destroy(interactable.gameObject);
+        }
+
+        public void RemoveItemDownwards(EItemID itemID)
+        {
+            RemoveItemThisRoomOnly(itemID);
+            if(next)
+            {
+                next.RemoveItemDownwards(itemID);
+            }
+        }
+
+        public void RemoveItemAll(EItemID itemID)
+        {
+            RemoveItemDownwards(itemID);
+
+            Room cur = prev;
+            while(cur)
+            {
+                cur.RemoveItemThisRoomOnly(itemID);
+                cur = cur.prev;
+            }
         }
 
         private void OnDrawGizmos()
@@ -281,15 +349,30 @@ namespace PuzzleGame
         }
 
         #region GAME EVENTS
+        private void OnBeforeEnterRoom(RoomEventData data)
+        {
+
+        }
+
         private void OnEnterRoom(RoomEventData data)
         {
-            //is this the room the player entered?
+            //is this the parent of the room that the player entered?
             if (Object.ReferenceEquals(data.room, next))
             {
-                Hide();
-                //disable masking
-                next.SetSpriteMasking(SpriteMaskInteraction.None);
-                next.SetRoomCollision(true);
+                SetRoomCollision(false);
+                SetActive(false);
+            }
+            //is this the room that the player entered?
+            else if(Object.ReferenceEquals(data.room, this))
+            {
+                //disable masking, enable collision
+                SetSpriteMasking(SpriteMaskInteraction.None);
+                SetRoomCollision(true);
+            }
+            //is this the child of the room that the player entered?
+            else if(Object.ReferenceEquals(data.room, prev))
+            {
+                SetRoomCollision(false);
             }
         }
         #endregion

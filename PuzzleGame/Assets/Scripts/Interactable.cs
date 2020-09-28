@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Assertions;
 
 namespace PuzzleGame
 {
@@ -10,6 +11,38 @@ namespace PuzzleGame
         MOVABLE,
         GENERIC_EVENT,
         PICK_UP
+    }
+
+    public enum EItemID
+    {
+        INVALID,
+        KEY_1,
+        KEY_2,
+        KEY_3,
+        KEY_4,
+        KEY_5
+    }
+
+    public static class ItemDatabase
+    {
+        public struct ItemData
+        {
+            public Sprite inventoryIcon;
+            public string description;
+        }
+
+        static Dictionary<EItemID, ItemData> _itemDataMap = new Dictionary<EItemID, ItemData>();
+
+        public static void RegisterItem(EItemID id, ItemData data)
+        {
+            Assert.IsTrue(!_itemDataMap.ContainsKey(id));
+            _itemDataMap.Add(id, data);
+        }
+        public static ItemData GetItemData(EItemID id)
+        {
+            Assert.IsTrue(_itemDataMap.ContainsKey(id));
+            return _itemDataMap[id];
+        }
     }
 
     public class Interactable : Actor
@@ -21,14 +54,25 @@ namespace PuzzleGame
         [SerializeField] bool _alwaysShowOutline = false;
         [SerializeField] bool _showArrow = false;
         [SerializeField] Transform _arrowIconTransform;
+        [SerializeField] EItemID _itemID = EItemID.INVALID;
 
         public EInteractType type { get { return _type; } }
         public Color outlineColor { get { return _outlineColor; } }
         public bool alwaysShowOutline { get { return _alwaysShowOutline; } }
+        public EItemID itemID { get { return _itemID; } }
 
-        protected override void Init()
+        protected override void Start()
         {
+            base.Start();
             SetOutline(false);
+        }
+
+        public override void RoomInit()
+        {
+            base.RoomInit();
+
+            if (itemID != EItemID.INVALID)
+                ItemDatabase.RegisterItem(itemID, new ItemDatabase.ItemData() { inventoryIcon = spriteRenderer.sprite });
         }
 
         public void OnEnterRange()

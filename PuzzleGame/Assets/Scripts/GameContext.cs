@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
@@ -11,6 +12,8 @@ namespace PuzzleGame
     {
         public static GameManager s_gameMgr;
         public static EffectManager s_effectMgr;
+        public static UIManager s_UIMgr;
+
         public static Player s_player;
         public static Vector2 s_right = Vector2.right, s_up = Vector2.up;
     }
@@ -39,9 +42,7 @@ namespace PuzzleGame
         //animator variables
         public static readonly int k_PlayerXSpeed_AnimParam = Animator.StringToHash("HorizontalSpeed");
         public static readonly int k_PlayerYSpeed_AnimParam = Animator.StringToHash("VerticalSpeed");
-
         public static readonly int k_PlayerWalking_AnimParam = Animator.StringToHash("Walking");
         public static readonly int k_PlayerAirborne_AnimParam = Animator.StringToHash("Airborne");
-
     }
 }

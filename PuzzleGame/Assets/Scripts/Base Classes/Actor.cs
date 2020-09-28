@@ -16,23 +16,43 @@ namespace PuzzleGame
                 return _spriteRenderer;
             }
         }
+        public Rigidbody2D actorRigidBody
+        {
+            get
+            {
+                if (!_rigidBody)
+                    _rigidBody = GetComponent<Rigidbody2D>();
+                return _rigidBody;
+            }
+        }
+        public Collider2D actorCollider
+        {
+            get
+            {
+                if (!_collider)
+                    _collider = GetComponent<Collider2D>();
+                return _collider;
+            }
+        }
         private SpriteRenderer _spriteRenderer = null;
+        private Collider2D _collider = null;
+        private Rigidbody2D _rigidBody = null;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             //init work before game systems are initialized
             gameObject.layer = GameConst.k_propLayer;
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             //put common init work here
-
-            //class dependent init work
-            Init();
         }
 
-        protected virtual void Init()
+        /// <summary>
+        /// only called once on the root room
+        /// </summary>
+        public virtual void RoomInit()
         {
 
         }
