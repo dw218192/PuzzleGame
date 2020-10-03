@@ -27,6 +27,7 @@ namespace PuzzleGame
             TestRoomSpawn();
             curRoom.SetCurrent();
             //TestRoomTransition();
+            TestRoomRotation();
         }
 
         //messenger events
@@ -54,6 +55,12 @@ namespace PuzzleGame
             curRoom.prev.SpawnPrev();
             curRoom.prev.prev.SpawnPrev();
             curRoom.prev.prev.prev.SpawnPrev();
+        }
+
+        void TestRoomRotation()
+        {
+            curRoom.RotateNext(0);
+            //curRoom.next.next.RotateNext(-180);
         }
 
         void TestRoomTransition()

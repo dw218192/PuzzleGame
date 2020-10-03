@@ -44,12 +44,16 @@ namespace PuzzleGame.UI
 
             _option1Button.gameObject.SetActive(false);
             _option2Button.gameObject.SetActive(false);
+
             _promptText.text = "Vertical Slice Finished!!!";
 
             GameContext.s_UIMgr.StartCoroutine(_quitRoutine());
-        }
+        } 
         public void VerticalSliceNoooKeyPrompt()
         {
+            _option1Button.onClick.RemoveAllListeners();
+            _option2Button.onClick.RemoveAllListeners();
+
             _option2Button.gameObject.SetActive(false);
             _option1ButtonText.text = "Yes";
             _option1Button.onClick.AddListener(OnBackPressed);
@@ -57,6 +61,9 @@ namespace PuzzleGame.UI
         }
         public void VerticalSliceKeyPrompt()
         {
+            _option1Button.onClick.RemoveAllListeners();
+            _option2Button.onClick.RemoveAllListeners();
+
             _option2Button.gameObject.SetActive(true);
             _option1ButtonText.text = "Yes";
             _option2ButtonText.text = "No";
@@ -66,6 +73,9 @@ namespace PuzzleGame.UI
         }
         public void VerticalSliceWrongRoomPrompt()
         {
+            _option1Button.onClick.RemoveAllListeners();
+            _option2Button.onClick.RemoveAllListeners();
+
             _option2Button.gameObject.SetActive(false);
             _option1ButtonText.text = "Yes";
             _option1Button.onClick.AddListener(OnBackPressed);

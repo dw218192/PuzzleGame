@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e223225aa423da143920d60ec30f8aad
+guid: 585188cdc4600544eb408bee749e4b3a
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,14 +8,14 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
+  fontName: ThaleahFat
   fontNames:
-  - ArcadeClassic
+  - ThaleahFat
   fallbackFontReferences: []
   customCharacters: 
-  fontRenderingMode: 3
+  fontRenderingMode: 0
   ascentCalculationMode: 1
   useLegacyBoundsCalculation: 0
-  shouldRoundAdvanceValue: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

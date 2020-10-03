@@ -12,10 +12,12 @@ namespace PuzzleGame
         [SerializeField] Vector2 _followOffset = Vector2.zero;
         bool _inTransition = false;
         Vector2 _camMin, _camMax;
+        float _currentRoomScale;
 
         private void Awake()
         {
             _cam = GetComponent<Camera>();
+            
             Vector3 pos = transform.position;
             pos.z = -10;
             transform.position = pos;
@@ -35,7 +37,7 @@ namespace PuzzleGame
                 return;
 
             Vector2 moveOffset = GameContext.s_player.transform.position - transform.position;
-            moveOffset += _followOffset;
+            moveOffset += _followOffset * _currentRoomScale;
 
             transform.position = new Vector3(
                 Mathf.Clamp(transform.position.x + moveOffset.x, _camMin.x, _camMax.x),
@@ -75,12 +77,11 @@ namespace PuzzleGame
 
                 //note: viewport space, top right is (1,1)
                 Vector2 camExtent = _cam.ViewportToWorldPoint(Vector2.one) - transform.position;
-                Rect roomArea = data.room.roomArea;
-                Vector2 roomMax = roomArea.position + roomArea.width * Vector2.right;
-                Vector2 roomMin = roomArea.position + roomArea.height * Vector2.up;
+                Bounds roomArea = data.room.roomAABB;
 
-                _camMax = roomMax - camExtent;
-                _camMin = roomMin + camExtent;
+                _camMax = (Vector2)roomArea.max - camExtent;
+                _camMin = (Vector2)roomArea.min + camExtent;
+                _currentRoomScale = data.room.roomScale;
 
                 _inTransition = false;
             }
@@ -100,10 +101,13 @@ namespace PuzzleGame
                 Gizmos.DrawLine(_camMin, _camMax);
                 Gizmos.color = Color.red;
 
-                Rect roomArea = GameContext.s_gameMgr.curRoom.roomArea;
-                Vector2 roomMax = roomArea.position + roomArea.width * Vector2.right;
-                Vector2 roomMin = roomArea.position + roomArea.height * Vector2.up;
-                Gizmos.DrawLine(roomMin, roomMax);
+                Bounds roomArea = GameContext.s_gameMgr.curRoom.roomAABB;
+                Vector2 roomMax = roomArea.max;
+                Vector2 roomMin = roomArea.min;
+                Gizmos.DrawLine(roomMin, roomMin + Vector2.right * roomArea.size.x);
+                Gizmos.DrawLine(roomMin, roomMin + Vector2.up * roomArea.size.y);
+                Gizmos.DrawLine(roomMax, roomMax + Vector2.left * roomArea.size.x);
+                Gizmos.DrawLine(roomMax, roomMax + Vector2.down * roomArea.size.y);
             }
         }
     }
