@@ -98,6 +98,7 @@ namespace PuzzleGame
         {
             if(GameContext.s_gameMgr)
             {
+                /*
                 Gizmos.DrawLine(_camMin, _camMax);
                 Gizmos.color = Color.red;
 
@@ -108,6 +109,7 @@ namespace PuzzleGame
                 Gizmos.DrawLine(roomMin, roomMin + Vector2.up * roomArea.size.y);
                 Gizmos.DrawLine(roomMax, roomMax + Vector2.left * roomArea.size.x);
                 Gizmos.DrawLine(roomMax, roomMax + Vector2.down * roomArea.size.y);
+                */
             }
         }
     }

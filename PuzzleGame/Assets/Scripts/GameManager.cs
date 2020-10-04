@@ -24,10 +24,9 @@ namespace PuzzleGame
 
         private void Start()
         {
-            TestRoomSpawn();
-            curRoom.SetCurrent();
+            curRoom = Room.SpawnChain(10, 4);
             //TestRoomTransition();
-            TestRoomRotation();
+            //TestRoomRotation();
         }
 
         //messenger events
@@ -43,24 +42,11 @@ namespace PuzzleGame
             curRoom = data.room;
         }
 
-        void TestRoomSpawn()
-        {
-            curRoom = Instantiate(roomPrefab, Vector3.zero, Quaternion.identity).GetComponent<Room>();
-            curRoom.roomIndex = 0;
-            curRoom.SpawnNext();
-            curRoom.next.SpawnNext();
-            curRoom.next.next.SpawnNext();
-            curRoom.next.next.next.SpawnNext();
-            curRoom.SpawnPrev();
-            curRoom.prev.SpawnPrev();
-            curRoom.prev.prev.SpawnPrev();
-            curRoom.prev.prev.prev.SpawnPrev();
-        }
-
         void TestRoomRotation()
         {
-            curRoom.RotateNext(0);
-            //curRoom.next.next.RotateNext(-180);
+            curRoom.RotateNext(180);
+            curRoom.next.RotateNext(-360);
+            curRoom.next.next.RotateNext(180);
         }
 
         void TestRoomTransition()
