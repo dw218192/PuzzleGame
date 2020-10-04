@@ -26,7 +26,7 @@ namespace PuzzleGame
         {
             curRoom = Room.SpawnChain(10, 4);
             //TestRoomTransition();
-            //TestRoomRotation();
+            TestRoomRotation();
         }
 
         //messenger events
@@ -45,8 +45,8 @@ namespace PuzzleGame
         void TestRoomRotation()
         {
             curRoom.RotateNext(180);
-            curRoom.next.RotateNext(-360);
-            curRoom.next.next.RotateNext(180);
+            curRoom.next.RotateNext(-30);
+            curRoom.next.next.RotateNext(30);
         }
 
         void TestRoomTransition()

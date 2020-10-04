@@ -294,6 +294,7 @@ namespace PuzzleGame
             while(ptr)
             {
                 ptr.SetRoomCollision(false);
+                ptr.SetActive(false);
                 ptr = ptr.prev;
             }
             //disable children room collisions
@@ -414,6 +415,7 @@ namespace PuzzleGame
                 //disable masking, enable collision
                 SetSpriteMaskInteraction(SpriteMaskInteraction.None);
                 SetRoomCollision(true);
+                SetActive(true);
             }
             //is this the child of the room that the player entered?
             else if(Object.ReferenceEquals(data.room, prev))
