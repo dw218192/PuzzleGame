@@ -25,8 +25,6 @@ namespace PuzzleGame
         private void Start()
         {
             curRoom = Room.SpawnChain(10, 4);
-            //TestRoomTransition();
-            TestRoomRotation();
         }
 
         //messenger events
@@ -38,15 +36,13 @@ namespace PuzzleGame
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
             
             //TODO: gravity changes, etc.
-
             curRoom = data.room;
-        }
 
-        void TestRoomRotation()
-        {
-            curRoom.RotateNext(180);
-            curRoom.next.RotateNext(-30);
-            curRoom.next.next.RotateNext(30);
+            /*
+            Physics2D.gravity = - Physics2D.gravity.magnitude * data.room.contentRoot.up;
+            GameContext.s_right = data.room.contentRoot.right;
+            GameContext.s_up = data.room.contentRoot.up;
+            */
         }
 
         void TestRoomTransition()

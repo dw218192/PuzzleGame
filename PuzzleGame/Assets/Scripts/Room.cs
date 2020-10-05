@@ -11,12 +11,6 @@ using PuzzleGame.EventSystem;
 using Object = UnityEngine.Object;
 namespace PuzzleGame
 {
-    public enum ERoomState
-    {
-        NORMAL,
-        IN_PAINTING,
-    }
-
     public class Room : MonoBehaviour
     {
         LinkedList<Actor> _actors = null;
@@ -39,8 +33,9 @@ namespace PuzzleGame
         [SerializeField] int _cameraViewDistLocal;
         [SerializeField] Transform _viewCenterPos;
         [SerializeField] Transform _playerSpawnPos;
-
-        ERoomState _state = ERoomState.NORMAL;
+        [SerializeField] float _paintingRotationStep;
+        [SerializeField] float _maxPaintingRotation;
+        float _paintingRotationAngle = 0;
 
         //conversion methods
         public Vector2 roomPointToWorldPoint(Vector2 roomSpacePos)
@@ -56,6 +51,7 @@ namespace PuzzleGame
             return length * _contentRoot.lossyScale.x;
         }
 
+        public float paintingRotationStep { get { return _paintingRotationStep; } }
         public float paintingToVisibleAreaScale { get { return _paintingAreaLocal.width / _visibleAreaLocal.width; } }
         public float roomScale { get { return _contentRoot.lossyScale.x; } }
         public float cameraViewDist { get { return roomUnitToWorldUnit(_cameraViewDistLocal); } }
@@ -102,12 +98,6 @@ namespace PuzzleGame
         }
         int _roomIndex;
 
-        public void SetState(ERoomState state)
-        {
-            if (state == _state)
-                return;
-        }
-
         private void ConfigSpriteMask(int roomIdx)
         {
             SpriteMask[] masks = _paintingMask.GetComponentsInChildren<SpriteMask>();
@@ -125,8 +115,18 @@ namespace PuzzleGame
                 mask.isCustomRangeActive = true;
                 mask.frontSortingLayerID = sortingLayers[i];
                 mask.backSortingLayerID = sortingLayers[i];
-                mask.frontSortingOrder = roomIdx;
-                mask.backSortingOrder = roomIdx - 1;
+
+                //interactables sorting order have different signs, see SetSpriteSortingOrder()
+                if (sortingLayers[i] == GameConst.k_InteractableSortingLayerId)
+                {
+                    mask.frontSortingOrder = -roomIdx;
+                    mask.backSortingOrder = -roomIdx - 1;
+                }
+                else
+                {
+                    mask.frontSortingOrder = roomIdx;
+                    mask.backSortingOrder = roomIdx - 1;
+                }
             }
         }
         
@@ -138,7 +138,20 @@ namespace PuzzleGame
             foreach (var actor in _actors)
             {
                 if (actor.spriteRenderer)
-                    actor.spriteRenderer.sortingOrder = roomIdx;
+                {
+                    //child's interactables should be rendered behind parent's
+                    //but as interactable layer is always rendered on top of other layers (except character)
+                    //they will still appear on top of parent's tiles (i.e. walls/floors/painting frames, etc.)
+                    if(actor.spriteRenderer.sortingLayerID == GameConst.k_InteractableSortingLayerId)
+                    {
+                        actor.spriteRenderer.sortingOrder = -roomIdx;
+                    }
+                    //child's wall/floor/tile should be rendered in front of parent's
+                    else
+                    {
+                        actor.spriteRenderer.sortingOrder = roomIdx;
+                    }
+                }
             }
         }
 
@@ -241,11 +254,35 @@ namespace PuzzleGame
             next.prev = this;
         }
 
-        public void RotateNext(float angle)
+        public void RotateNext(bool clockwise)
         {
             if (!next)
                 return;
 
+            float prev = _paintingRotationAngle;
+            if (!clockwise)
+            {
+                _paintingRotationAngle = Mathf.Min(_paintingRotationAngle + _paintingRotationStep, _maxPaintingRotation);
+                RotateNextInternal(_paintingRotationAngle - prev);
+            }
+            else
+            {
+                _paintingRotationAngle = Mathf.Max(_paintingRotationAngle - _paintingRotationStep, -_maxPaintingRotation);
+                RotateNextInternal(_paintingRotationAngle - prev);
+            }
+        }
+
+        public void InvertNext()
+        {
+            if (!next)
+                return;
+
+            _paintingRotationAngle = 0;
+            RotateNextInternal(180);
+        }
+
+        void RotateNextInternal(float angle)
+        {
             //rotate painting frame
             //all children should be childed under the painting's transform
             _paintingTransform.RotateAround(_paintingRotationAnchor.position, Vector3.forward, angle);

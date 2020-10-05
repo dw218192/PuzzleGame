@@ -52,7 +52,9 @@ namespace PuzzleGame
         [SerializeField] Color _outlineColor = Color.red;
 
         [SerializeField] bool _alwaysShowOutline = false;
-        [SerializeField] bool _showArrow = false;
+        [SerializeField] ArrowDef _arrowDef = null;
+        [SerializeField] bool _animateArrow = false;
+
         [SerializeField] Transform _arrowIconTransform;
         [SerializeField] EItemID _itemID = EItemID.INVALID;
 
@@ -79,8 +81,9 @@ namespace PuzzleGame
         {
             if (type == EInteractType.PICK_UP || alwaysShowOutline)
                 SetOutline(true);
-            if (_showArrow && _arrowIconTransform)
-                GameContext.s_effectMgr.ShowAnimatedArrow(_arrowIconTransform.position, _arrowIconTransform.up);
+            if (_arrowDef && _arrowIconTransform)
+                GameContext.s_effectMgr.ShowArrow(_arrowDef, _animateArrow, _arrowIconTransform.position, 
+                    Quaternion.LookRotation(_arrowIconTransform.forward, _arrowIconTransform.up));
         }
 
         public void OnInteract(Player player)
@@ -92,8 +95,8 @@ namespace PuzzleGame
         {
             if (type == EInteractType.PICK_UP || alwaysShowOutline)
                 SetOutline(false);
-            if (_showArrow && _arrowIconTransform)
-                GameContext.s_effectMgr.HideAnimtedArrow();
+            if (_arrowDef && _arrowIconTransform)
+                GameContext.s_effectMgr.HideArrow();
         }
 
         public void SetOutline(bool enable)

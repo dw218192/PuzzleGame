@@ -48,7 +48,28 @@ namespace PuzzleGame
         [SerializeField] MovementConfig _moveConfig = new MovementConfig();
         
         public Vector2 curVelocity { get { return _rgbody.velocity; } }
-        public bool controlEnabled { get; private set; } = true;
+
+        bool _controlEnabled = true;
+        public bool controlEnabled
+        {
+            get => _controlEnabled;
+            private set
+            {
+                //on enable
+                if(!_controlEnabled && value)
+                {
+                    ClearState();
+                }
+                _controlEnabled = value;
+            }
+        }
+
+        private void ClearState()
+        {
+            _exitPaintkeyHoldTimer = 0;
+            _exitPaintkeyDownLastFrame = false;
+            _curInteractable = null;
+        }
 
         private void Awake()
         {
@@ -67,6 +88,7 @@ namespace PuzzleGame
 
             _groundCheckSize = new Vector2(_collider.size.x * 0.9f, 0.2f);
 
+            _interactionTrigger.mask = 1 << GameConst.k_defaultLayer | 1 << GameConst.k_propLayer;
             _interactionTrigger.onTriggerEnter += (Collider2D collider) => 
             {
                 Interactable interactable = collider.GetComponent<Interactable>();
@@ -192,6 +214,7 @@ namespace PuzzleGame
 
                 if(Mathf.Approximately(_exitPaintkeyHoldTimer, _exitPaintInteractTime))
                 {
+                    _exitPaintkeyHoldTimer = 0;
                     GameContext.s_effectMgr.HideProgressBar();
                     GameContext.s_gameMgr.curRoom.GoToPrev();
                 }
@@ -199,8 +222,8 @@ namespace PuzzleGame
             else if (!_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
             {
                 _exitPaintkeyHoldTimer = 0;
-                GameContext.s_effectMgr.ShowProgressBar((Vector2)transform.position + Vector2.up, 
-                    Quaternion.identity, transform);
+                GameContext.s_effectMgr.ShowProgressBar((Vector2)transform.position + 0.5f * Vector2.down, 
+                    Quaternion.Euler(0,0,-90), transform);
                 GameContext.s_effectMgr.SetProgress(0);
             }
             else if (_exitPaintkeyDownLastFrame && !exitPaintingkeyDown)

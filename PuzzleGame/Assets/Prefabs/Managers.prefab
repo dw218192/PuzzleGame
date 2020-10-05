@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _arrowGameObj: {fileID: 6979143467118763389, guid: 8ac21a2c1041c494ba5eb4c47e7f9530, type: 3}
-  _progressBar: {fileID: 1832743324639506407, guid: 81bed13c0ee5aca4d9dbf47930749094, type: 3}
+  _progressBar: {fileID: 5803149329379013229, guid: 96d1759be7862f44eb3ffacee3540cad, type: 3}
 --- !u!114 &6392071024261278202
 MonoBehaviour:
   m_ObjectHideFlags: 0

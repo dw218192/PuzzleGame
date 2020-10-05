@@ -32,8 +32,9 @@ namespace PuzzleGame
         //      wall   collides with props and player but does not collide with jumping player
         //      props  collide with player and jumping player
 
-        public const int k_playerLayer = 8;
-        public const int k_playerJumpingLayer = 9;
+        public const int k_defaultLayer = 0;
+        public const int k_playerLayer = 8; //not used for now
+        public const int k_playerJumpingLayer = 9; //not used for now
         public const int k_propLayer = 10;
         public const int k_wallLayer = 11;
         public const int k_groundLayer = 12; //not used for now

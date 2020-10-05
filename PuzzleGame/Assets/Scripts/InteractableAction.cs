@@ -6,40 +6,64 @@ using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
+    /// <summary>
+    /// wrappers for events
+    /// </summary>
     [CreateAssetMenu(menuName="PuzzleGame/InteractableAction")]
     public class InteractableAction : ScriptableObject
     {
         public void ConsumableInteraction(Interactable interactable, Player player)
         {
-            GameContext.s_gameMgr.curRoom.RemoveItemAll(interactable.itemID);
-            player.AddToInventory(interactable.itemID, 1);
+            Room curRoom = GameContext.s_gameMgr.curRoom;
+            if (curRoom)
+            {
+                curRoom.RemoveItemAll(interactable.itemID);
+                player.AddToInventory(interactable.itemID, 1);
+            }
+            else
+            {
+                Debug.LogError("current room is null");
+            }
         }
 
         public void EnterPainting(Interactable interactable, Player player)
         {
-            GameContext.s_gameMgr.curRoom.GoToNext();
+            Room curRoom = GameContext.s_gameMgr.curRoom;
+
+            if(curRoom)
+                curRoom.GoToNext();
+            else
+                Debug.LogError("current room is null");
         }
 
-
-        public void VerticalSliceEscape(Interactable interactable, Player player)
+        public void RotatePaintingCW(Interactable interactable, Player player)
         {
-            if(GameContext.s_gameMgr.curRoom.roomIndex != 0)
-            {
-                DialogueMenu.Instance.VerticalSliceWrongRoomPrompt();
-            }
-            else
-            {
-                if (player.inventory.Count == 0)
-                {
-                    DialogueMenu.Instance.VerticalSliceNoooKeyPrompt();
-                }
-                else
-                {
-                    DialogueMenu.Instance.VerticalSliceKeyPrompt();
-                }
-            }
+            Room curRoom = GameContext.s_gameMgr.curRoom;
 
-            GameContext.s_UIMgr.OpenMenu(DialogueMenu.Instance);
+            if (curRoom)
+                curRoom.RotateNext(true);
+            else
+                Debug.LogError("current room is null");
+        }
+        
+        public void RotatePaintingCCW(Interactable interactable, Player player)
+        {
+            Room curRoom = GameContext.s_gameMgr.curRoom;
+
+            if (curRoom)
+                curRoom.RotateNext(false);
+            else
+                Debug.LogError("current room is null");
+        }
+
+        public void InvertPainting(Interactable interactable, Player player)
+        {
+            Room curRoom = GameContext.s_gameMgr.curRoom;
+
+            if (curRoom)
+                curRoom.InvertNext();
+            else
+                Debug.LogError("current room is null");
         }
     }
 }
