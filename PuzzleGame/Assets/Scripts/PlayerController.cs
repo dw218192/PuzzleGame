@@ -91,8 +91,23 @@ namespace PuzzleGame
             _interactionTrigger.mask = 1 << GameConst.k_defaultLayer | 1 << GameConst.k_propLayer;
             _interactionTrigger.onTriggerEnter += (Collider2D collider) => 
             {
+                if (_curInteractable)
+                    return;
+
                 Interactable interactable = collider.GetComponent<Interactable>();
-                if (interactable && !_curInteractable)
+                if (interactable)
+                {
+                    _curInteractable = interactable;
+                    _curInteractable.OnEnterRange();
+                }
+            };
+            _interactionTrigger.onTriggerStay += (Collider2D collider) =>
+            {
+                if (_curInteractable)
+                    return;
+
+                Interactable interactable = collider.GetComponent<Interactable>();
+                if (interactable)
                 {
                     _curInteractable = interactable;
                     _curInteractable.OnEnterRange();
