@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.Rendering;
-using UnityEngine.Assertions;
 
 using PuzzleGame.EventSystem;
 
@@ -13,6 +11,11 @@ namespace PuzzleGame
 {
     public class Room : MonoBehaviour
     {
+        //how many sorting ids available for each layer locally in the room
+        //global sorting id = local sorting id + room index * 10
+        //Note: we use 1-based indexing here, min=1, max=k_maxLocalSortingOrder
+        const int k_maxLocalSortingOrder = 9;
+
         LinkedList<Actor> _actors = null;
 
         [SerializeField] GameObject _paintingMask = null;
@@ -57,9 +60,11 @@ namespace PuzzleGame
         public float cameraViewDist { get { return roomUnitToWorldUnit(_cameraViewDistLocal); } }
         public Vector2 playerSpawnPos { get { return _playerSpawnPos.position; } }
         public Vector2 viewCenterPos { get { return _viewCenterPos.position; } }
-
+        public Vector2 roomSize { get { return _roomMax.position - _roomMin.position; } }
         //Note: the rect's size is signed
+        [Obsolete("will probably switch to using transform")]
         public Rect paintingArea { get { return new Rect(roomPointToWorldPoint(_paintingAreaLocal.position), roomDirToWorldDir(_paintingAreaLocal.size)); } }
+        [Obsolete("will probably switch to using transform")]
         public Rect visibleArea { get { return new Rect(roomPointToWorldPoint(_visibleAreaLocal.position), roomDirToWorldDir(_visibleAreaLocal.size)); } }
         public Bounds roomAABB
         {
@@ -104,54 +109,67 @@ namespace PuzzleGame
             int[] sortingLayers = new int[]
             {
                 GameConst.k_DefaultSortingLayerId,
-                GameConst.k_DecoSortingLayerId,
-                GameConst.k_InteractableSortingLayerId
+                GameConst.k_PropsSortingLayerId
             };
-            Assert.IsTrue(masks.Length == sortingLayers.Length);
+            Debug.Assert(masks.Length == sortingLayers.Length);
 
-            for(int i=0; i<sortingLayers.Length; i++)
+            int start = roomIdx * (Room.k_maxLocalSortingOrder + 1);
+
+            for (int i=0; i<sortingLayers.Length; i++)
             {
                 SpriteMask mask = masks[i];
                 mask.isCustomRangeActive = true;
                 mask.frontSortingLayerID = sortingLayers[i];
                 mask.backSortingLayerID = sortingLayers[i];
 
+#if false
+                mask.frontSortingOrder = roomIdx;
+                mask.backSortingOrder = roomIdx - 1;
+#else
                 //interactables sorting order have different signs, see SetSpriteSortingOrder()
-                if (sortingLayers[i] == GameConst.k_InteractableSortingLayerId)
+                if (sortingLayers[i] == GameConst.k_PropsSortingLayerId)
                 {
-                    mask.frontSortingOrder = -roomIdx;
-                    mask.backSortingOrder = -roomIdx - 1;
+                    mask.frontSortingOrder = -start;
+                    mask.backSortingOrder = -(start + Room.k_maxLocalSortingOrder);
                 }
                 else
                 {
-                    mask.frontSortingOrder = roomIdx;
-                    mask.backSortingOrder = roomIdx - 1;
+                    mask.frontSortingOrder = start + Room.k_maxLocalSortingOrder;
+                    mask.backSortingOrder = start;
                 }
+#endif            
             }
         }
         
         private void SetSpriteSortingOrder(int roomIdx)
         {
-            _roomTile.GetComponent<TilemapRenderer>().sortingOrder = roomIdx;
-            _paintingTile.GetComponent<TilemapRenderer>().sortingOrder = roomIdx;
+            SetSortingOrder(_roomTile.GetComponent<TilemapRenderer>(), roomIdx);
+            SetSortingOrder(_paintingTile.GetComponent<TilemapRenderer>(), roomIdx);
 
             foreach (var actor in _actors)
             {
                 if (actor.spriteRenderer)
                 {
-                    //child's interactables should be rendered behind parent's
-                    //but as interactable layer is always rendered on top of other layers (except character)
-                    //they will still appear on top of parent's tiles (i.e. walls/floors/painting frames, etc.)
-                    if(actor.spriteRenderer.sortingLayerID == GameConst.k_InteractableSortingLayerId)
-                    {
-                        actor.spriteRenderer.sortingOrder = -roomIdx;
-                    }
-                    //child's wall/floor/tile should be rendered in front of parent's
-                    else
-                    {
-                        actor.spriteRenderer.sortingOrder = roomIdx;
-                    }
+                    SetSortingOrder(actor.spriteRenderer, roomIdx);
                 }
+            }
+        }
+
+        private void SetSortingOrder(Renderer renderer, int roomIdx)
+        {
+            Debug.Assert(renderer.sortingOrder <= Room.k_maxLocalSortingOrder && renderer.sortingOrder >= 1, $"{renderer.name} sorting order out of range");
+
+            //child's interactables should be rendered behind parent's
+            //but as interactable layer > other layers (except character)
+            //they will still appear on top of parent's tiles (i.e. walls/floors/painting frames, etc.)
+            if (renderer.sortingLayerID == GameConst.k_PropsSortingLayerId)
+            {
+                renderer.sortingOrder = roomIdx * (Room.k_maxLocalSortingOrder + 1) + Room.k_maxLocalSortingOrder - renderer.sortingOrder;
+                renderer.sortingOrder *= -1;
+            }
+            else
+            {
+                renderer.sortingOrder = roomIdx * (Room.k_maxLocalSortingOrder + 1) + renderer.sortingOrder;
             }
         }
 
@@ -380,7 +398,7 @@ namespace PuzzleGame
 
         public void RemoveItemThisRoomOnly(EItemID itemID)
         {
-            Assert.IsTrue(itemID != EItemID.INVALID, "Invalid Item ID");
+            Debug.Assert(itemID != EItemID.INVALID, "Invalid Item ID");
 
             Interactable interactable = null;
 
@@ -398,7 +416,7 @@ namespace PuzzleGame
                 }
             }
 
-            Assert.IsTrue(interactable, "Invalid Item ID");
+            Debug.Assert(interactable, "Invalid Item ID");
 
             Destroy(interactable.gameObject);
         }
@@ -432,7 +450,7 @@ namespace PuzzleGame
             }
         }
 
-        #region GAME EVENTS
+#region GAME EVENTS
         private void OnBeforeEnterRoom(RoomEventData data)
         {
 
@@ -460,6 +478,6 @@ namespace PuzzleGame
                 SetRoomCollision(false);
             }
         }
-        #endregion
+#endregion
     }
 }

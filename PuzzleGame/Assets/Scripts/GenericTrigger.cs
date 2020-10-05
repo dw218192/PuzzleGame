@@ -9,12 +9,7 @@ namespace PuzzleGame
     [RequireComponent(typeof(Collider2D))]
     public class GenericTrigger : MonoBehaviour
     {
-        const int k_overlapResultSize = 20;
-
         private Collider2D _collider;
-        private ContactFilter2D _filter = new ContactFilter2D();
-        private Collider2D[] _overlapResults, _lastOverlapResults;
-        private int _lastOverlapCnt;
 
         public delegate void TriggerHandler(Collider2D collider);
         private TriggerHandler _onTriggerEnter;
@@ -53,28 +48,9 @@ namespace PuzzleGame
             remove => UnSet(value, ref _onTriggerExit);
         }
 
-        public LayerMask mask
-        {
-            set
-            {
-                _filter.SetLayerMask(value);
-            }
-        }
-
-        private void Awake()
-        {
-            _collider = GetComponent<Collider2D>();
-            _collider.isTrigger = true;
-
-            _filter.useTriggers = true;
-            _filter.useLayerMask = true;
-
-            _overlapResults = new Collider2D[k_overlapResultSize];
-            _lastOverlapResults = new Collider2D[k_overlapResultSize];
-        }
-
         //we don't use unity callback here
         //because onTriggerXX can only detect one collider
+        /*
         private void FixedUpdate()
         {
             int count = _collider.OverlapCollider(_filter, _overlapResults);
@@ -95,8 +71,8 @@ namespace PuzzleGame
             Array.Copy(_overlapResults, 0, _lastOverlapResults, 0, count);
             _lastOverlapCnt = count;
         }
-
-        /*
+        */
+        
         private void OnTriggerEnter2D(Collider2D collision)
         {
             _onTriggerEnter?.Invoke(collision);
@@ -111,6 +87,5 @@ namespace PuzzleGame
         {
             _onTriggerExit?.Invoke(collision);
         }
-        */
     }
 }

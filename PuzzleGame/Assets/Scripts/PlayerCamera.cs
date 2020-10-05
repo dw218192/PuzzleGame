@@ -9,7 +9,7 @@ namespace PuzzleGame
     public class PlayerCamera : MonoBehaviour
     {
         Camera _cam;
-        [SerializeField] Vector2 _followOffset = Vector2.zero;
+        [SerializeField] Vector2 _cameraSizeRange;
         bool _inTransition = false;
         Vector2 _camMin, _camMax;
         float _currentRoomScale;
@@ -37,7 +37,7 @@ namespace PuzzleGame
                 return;
 
             Vector2 moveOffset = GameContext.s_player.transform.position - transform.position;
-            moveOffset += _followOffset * _currentRoomScale;
+            moveOffset += _cam.orthographicSize * 0.25f * Vector2.up;
 
             transform.position = new Vector3(
                 Mathf.Clamp(transform.position.x + moveOffset.x, _camMin.x, _camMax.x),
@@ -54,7 +54,7 @@ namespace PuzzleGame
                 _inTransition = true;
 
                 float initSize = _cam.orthographicSize;
-                float targetSize = data.room.cameraViewDist / 2f;
+                float targetSize = Mathf.Clamp(data.room.cameraViewDist / 2f, _cameraSizeRange.x / 2f, _cameraSizeRange.y / 2f);
 
                 Vector3 initPos = transform.position;
                 Vector3 targetPos = data.room.viewCenterPos;

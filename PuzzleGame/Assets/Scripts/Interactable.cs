@@ -66,7 +66,9 @@ namespace PuzzleGame
         protected override void Start()
         {
             base.Start();
-            SetOutline(false);
+
+            if(spriteRenderer && spriteRenderer.sprite)
+                SetOutline(false);
         }
 
         public override void RoomInit()
@@ -80,10 +82,18 @@ namespace PuzzleGame
         public void OnEnterRange()
         {
             if (type == EInteractType.PICK_UP || alwaysShowOutline)
-                SetOutline(true);
+            {
+                if (spriteRenderer && spriteRenderer.sprite)
+                {
+                    SetOutline(true);
+                }
+            }
+                
             if (_arrowDef && _arrowIconTransform)
-                GameContext.s_effectMgr.ShowArrow(_arrowDef, _animateArrow, _arrowIconTransform.position, 
+            {
+                GameContext.s_effectMgr.ShowArrow(_arrowDef, _animateArrow, _arrowIconTransform.position,
                     Quaternion.LookRotation(_arrowIconTransform.forward, _arrowIconTransform.up));
+            }
         }
 
         public void OnInteract(Player player)

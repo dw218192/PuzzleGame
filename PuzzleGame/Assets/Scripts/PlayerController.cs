@@ -88,7 +88,6 @@ namespace PuzzleGame
 
             _groundCheckSize = new Vector2(_collider.size.x * 0.9f, 0.2f);
 
-            _interactionTrigger.mask = 1 << GameConst.k_defaultLayer | 1 << GameConst.k_propLayer;
             _interactionTrigger.onTriggerEnter += (Collider2D collider) => 
             {
                 if (_curInteractable)

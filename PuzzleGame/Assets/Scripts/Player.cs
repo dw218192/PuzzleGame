@@ -18,11 +18,13 @@ namespace PuzzleGame
 
         public PlayerController controller { get; private set; }
         public ReadOnlyCollection<InventoryItem> inventory { get { return _inventory.AsReadOnly(); } }
+        public Actor actor { get; private set; }
 
         List<InventoryItem> _inventory = new List<InventoryItem>();
 
         private void Awake()
         {
+            actor = GetComponent<Actor>();
             controller = GetComponent<PlayerController>();
             gameObject.layer = GameConst.k_playerLayer;
         }

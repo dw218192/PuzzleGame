@@ -47,8 +47,7 @@ namespace PuzzleGame
         public static readonly int k_PlayerAirborne_AnimParam = Animator.StringToHash("Airborne");
 
         public static readonly int k_DefaultSortingLayerId = SortingLayer.NameToID("Default");
-        public static readonly int k_InteractableSortingLayerId = SortingLayer.NameToID("Interactable");
-        public static readonly int k_DecoSortingLayerId = SortingLayer.NameToID("Deco");
+        public static readonly int k_PropsSortingLayerId = SortingLayer.NameToID("Props");
         public static readonly int k_CharacterSortingLayerId = SortingLayer.NameToID("Character");
     }
 }

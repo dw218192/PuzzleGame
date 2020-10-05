@@ -1,86 +1,71 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace PuzzleGame.UI
 {
     public class DialogueMenu : GameMenu<DialogueMenu>
     {
-        [SerializeField] Button _option1Button;
-        Text _option1ButtonText;
-        [SerializeField] Button _option2Button;
-        Text _option2ButtonText;
         [SerializeField] Text _promptText;
+        [SerializeField] GridLayoutGroup _layoutGroup;
+        Button _backButton;
+        Button[] _optionButtons;
 
-        public static void Display(string prompt, string option1, string option2, Button.ButtonClickedEvent opt1Evt, Button.ButtonClickedEvent opt2Evt)
+        public void Display(string prompt, (string, Button.ButtonClickedEvent)[] options, bool includeBackButton)
         {
-            Instance._option1ButtonText.text = option1;
-            Instance._option2ButtonText.text = option2;
-            Instance._option1Button.onClick = opt1Evt;
-            Instance._option2Button.onClick = opt2Evt;
-            Instance._promptText.text = prompt;
+            if(options != null)
+            {
+                Debug.Assert(options.Length + (includeBackButton ? 1 : 0) <= _optionButtons.Length);
+
+                int i;
+                for (i = 0; i < options.Length; i++)
+                {
+                    var button = _optionButtons[i];
+                    button.gameObject.SetActive(true);
+
+                    button.transform.parent = _layoutGroup.transform;
+                    button.GetComponentInChildren<Text>().text = options[i].Item1;
+                    button.onClick = options[i].Item2;
+                }
+
+                while (i < _optionButtons.Length)
+                {
+                    _optionButtons[i++].gameObject.SetActive(false);
+                }
+            }
+
+            if(includeBackButton || options == null || options.Length == 0)
+            {
+                _backButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                _backButton.gameObject.SetActive(false);
+            }
+
+            _promptText.text = prompt;
 
             GameContext.s_UIMgr.OpenMenu(Instance);
         }
         protected override void Awake()
         {
             base.Awake();
-            _option1ButtonText = _option1Button.GetComponentInChildren<Text>();
-            _option2ButtonText = _option2Button.GetComponentInChildren<Text>();
+            _optionButtons = _layoutGroup.GetComponentsInChildren<Button>();
+            foreach (var button in _optionButtons)
+                button.gameObject.SetActive(false);
+
+            _backButton = Instantiate(_optionButtons[0]);
+            _backButton.transform.parent = _layoutGroup.transform;
+            _backButton.transform.localScale = Vector3.one;
+            _backButton.GetComponentInChildren<Text>().text = "Back";
+            _backButton.onClick.AddListener(OnBackPressed);
+            _backButton.gameObject.SetActive(false);
         }
         public override void OnEnterMenu()
         {
         }
-
-        #region VERTICAL_SLICE DEMO
-        void VerticalSliceQuitApp()
-        {
-            IEnumerator _quitRoutine()
-            {
-                yield return new WaitForSeconds(5f);
-                Application.Quit();
-            }
-
-            _option1Button.gameObject.SetActive(false);
-            _option2Button.gameObject.SetActive(false);
-
-            _promptText.text = "Vertical Slice Finished!!!";
-
-            GameContext.s_UIMgr.StartCoroutine(_quitRoutine());
-        } 
-        public void VerticalSliceNoooKeyPrompt()
-        {
-            _option1Button.onClick.RemoveAllListeners();
-            _option2Button.onClick.RemoveAllListeners();
-
-            _option2Button.gameObject.SetActive(false);
-            _option1ButtonText.text = "Yes";
-            _option1Button.onClick.AddListener(OnBackPressed);
-            _promptText.text = "I need a key";
-        }
-        public void VerticalSliceKeyPrompt()
-        {
-            _option1Button.onClick.RemoveAllListeners();
-            _option2Button.onClick.RemoveAllListeners();
-
-            _option2Button.gameObject.SetActive(true);
-            _option1ButtonText.text = "Yes";
-            _option2ButtonText.text = "No";
-            _option1Button.onClick.AddListener(VerticalSliceQuitApp);
-            _option2Button.onClick.AddListener(OnBackPressed);
-            _promptText.text = "Insert Key?";
-        }
-        public void VerticalSliceWrongRoomPrompt()
-        {
-            _option1Button.onClick.RemoveAllListeners();
-            _option2Button.onClick.RemoveAllListeners();
-
-            _option2Button.gameObject.SetActive(false);
-            _option1ButtonText.text = "Yes";
-            _option1Button.onClick.AddListener(OnBackPressed);
-            _promptText.text = "You must go to the original Room to unlock the door\nWhy? Because this is a vertical slice.";
-        }
-        #endregion
     }
 }

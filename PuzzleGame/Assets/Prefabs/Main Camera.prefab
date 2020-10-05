@@ -97,3 +97,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _followOffset: {x: 0, y: 2}
+  _cameraSizeRange: {x: 3.2, y: 40}

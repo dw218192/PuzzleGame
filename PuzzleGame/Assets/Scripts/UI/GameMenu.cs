@@ -7,8 +7,6 @@ namespace PuzzleGame.UI
 {
     public abstract class GameMenu : MonoBehaviour
     {
-        [SerializeField] protected List<Button> _Buttons = new List<Button>();
-
         public virtual void OnEnterMenu()
         {
 
