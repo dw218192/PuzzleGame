@@ -5,6 +5,7 @@ using UnityEngine;
 using PuzzleGame.EventSystem;
 
 using Object = UnityEngine.Object;
+using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
@@ -75,6 +76,8 @@ namespace PuzzleGame
         {
             Messenger.AddListener(M_EventType.ON_BEFORE_ENTER_ROOM, (RoomEventData data) => { controlEnabled = false; });
             Messenger.AddListener(M_EventType.ON_ENTER_ROOM, (RoomEventData data) => { controlEnabled = true; });
+            Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => { controlEnabled = false; });
+            Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => { controlEnabled = true; });
         }
 
         // Start is called before the first frame update
@@ -230,7 +233,16 @@ namespace PuzzleGame
                 {
                     _exitPaintkeyHoldTimer = 0;
                     GameContext.s_effectMgr.HideProgressBar();
-                    GameContext.s_gameMgr.curRoom.GoToPrev();
+
+                    //TODO redo this check here
+                    if (GameContext.s_gameMgr.curRoom.roomIndex == 2)
+                    {
+                        DialogueMenu.Instance.Display("can't go further", null, true);
+                    }
+                    else
+                    {
+                        GameContext.s_gameMgr.curRoom.GoToPrev();
+                    }
                 }
             }
             else if (!_exitPaintkeyDownLastFrame && exitPaintingkeyDown)

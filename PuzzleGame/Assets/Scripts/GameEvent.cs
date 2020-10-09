@@ -32,11 +32,24 @@ namespace PuzzleGame.EventSystem
         public int curItemQuantity;
     }
 
+    [Serializable]
+    public class CutSceneEventData : MessengerEventData
+    {
+        private CutSceneEventData() { }
+        public CutSceneEventData(int cutSceneId)
+        {
+            this.cutSceneId = cutSceneId;
+        }
+        public int cutSceneId;
+    }
+
     public enum M_EventType
     {
         ON_BEFORE_ENTER_ROOM, //ON_BEFORE_ENTER_ROOM will trigger ON_ENTER_ROOM
         ON_ENTER_ROOM,
         ON_EXIT_ROOM,
-        ON_INVENTORY_CHANGE
+        ON_INVENTORY_CHANGE,
+        ON_CUTSCENE_START,
+        ON_CUTSCENE_END
     }
 }

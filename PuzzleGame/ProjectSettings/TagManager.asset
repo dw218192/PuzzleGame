@@ -41,10 +41,7 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Deco
-    uniqueID: 260683345
-    locked: 0
-  - name: Interactable
+  - name: Props
     uniqueID: 3908487683
     locked: 0
   - name: Character

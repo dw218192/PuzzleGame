@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+using PuzzleGame.EventSystem;
+
 namespace PuzzleGame.UI
 {
+    [RequireComponent(typeof(Canvas))]
     public class UIManager : MonoBehaviour
     {
         Stack<GameMenu> _MenuStack = new Stack<GameMenu>();
         List<GameMenu> _MenuInstances = new List<GameMenu>();
 
-        [SerializeField] Canvas _canvas;
+        Canvas _canvas;
+        [SerializeField] GameObject _cutSceneFrame;
         [SerializeField] DialogueMenu _dialogueMenu;
         [SerializeField] MainMenu _mainMenu;
 
@@ -20,6 +24,12 @@ namespace PuzzleGame.UI
                 Destroy(this);
             else
                 GameContext.s_UIMgr = this;
+
+            _canvas = gameObject.GetComponent<Canvas>();
+
+            Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => { StartCutScene(); });
+            Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => { EndCutScene(); });
+            EndCutScene();
         }
 
         // Start is called before the first frame update
@@ -31,7 +41,6 @@ namespace PuzzleGame.UI
         // Update is called once per frame
         void Update()
         {
-
         }
 
         private void InitializeMenus()
@@ -115,6 +124,16 @@ namespace PuzzleGame.UI
             {
                 return null;
             }
+        }
+
+        public void StartCutScene()
+        {
+            _cutSceneFrame.SetActive(true);
+        }
+
+        public void EndCutScene()
+        {
+            _cutSceneFrame.SetActive(false);
         }
     }
 }

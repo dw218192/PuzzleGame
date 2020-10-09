@@ -22,6 +22,7 @@ namespace PuzzleGame
         [SerializeField] Transform _paintingTransform = null;
         [SerializeField] Transform _paintingRotationAnchor = null;
         [SerializeField] Transform _roomMin, _roomMax; //min and max of room OBB
+        [SerializeField] CutSceneManager _roomCutsceneMgr = null;
 
         [SerializeField] Transform _contentRoot = null;
         [SerializeField] Tilemap _roomTile = null;
@@ -196,6 +197,11 @@ namespace PuzzleGame
             transform.localPosition = Vector2.zero;
             
             SetSpriteMaskInteraction(SpriteMaskInteraction.VisibleInsideMask);
+        }
+
+        public void PlayCutScene(int cutSceneId)
+        {
+            _roomCutsceneMgr.Play(cutSceneId);
         }
 
         private void Awake()
@@ -458,24 +464,27 @@ namespace PuzzleGame
 
         private void OnEnterRoom(RoomEventData data)
         {
-            //is this the parent of the room that the player entered?
-            if (Object.ReferenceEquals(data.room, next))
+            if (!Object.ReferenceEquals(data.room, this))
             {
-                SetRoomCollision(false);
-                SetActive(false);
+                //is this the ancestor of the room that the player entered?
+                if (roomIndex < data.room.roomIndex)
+                {
+                    SetRoomCollision(false);
+                    SetActive(false);
+                }
+                //is this the successor?
+                else
+                {
+                    SetRoomCollision(false);
+                }
             }
             //is this the room that the player entered?
             else if(Object.ReferenceEquals(data.room, this))
             {
                 //disable masking, enable collision
-                SetSpriteMaskInteraction(SpriteMaskInteraction.None);
                 SetRoomCollision(true);
+                SetSpriteMaskInteraction(SpriteMaskInteraction.None);
                 SetActive(true);
-            }
-            //is this the child of the room that the player entered?
-            else if(Object.ReferenceEquals(data.room, prev))
-            {
-                SetRoomCollision(false);
             }
         }
 #endregion

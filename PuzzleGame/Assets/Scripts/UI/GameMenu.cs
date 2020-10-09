@@ -14,7 +14,6 @@ namespace PuzzleGame.UI
 
         public virtual void OnLeaveMenu()
         {
-
         }
 
         public virtual void OnBackPressed()

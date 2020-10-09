@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6044774712470159980}
   - component: {fileID: 6044774712470159983}
   - component: {fileID: 593198061}
-  - component: {fileID: 6392071024261278202}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -61,18 +60,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _arrowGameObj: {fileID: 6979143467118763389, guid: 8ac21a2c1041c494ba5eb4c47e7f9530, type: 3}
   _progressBar: {fileID: 5803149329379013229, guid: 96d1759be7862f44eb3ffacee3540cad, type: 3}
---- !u!114 &6392071024261278202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6044774712470159982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae09eded4ce45294fabd0354619285a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _canvas: {fileID: 0}
-  _dialogueMenu: {fileID: 1515089696032670682, guid: 184ccb6ea1cffe949b88d40ef20fcfd1, type: 3}
-  _mainMenu: {fileID: 4157503414958201660, guid: b5b08ef6f335611448b3ff00eddd8efe, type: 3}
