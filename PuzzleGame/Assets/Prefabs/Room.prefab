@@ -64,7 +64,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1456362163298115064}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.45, y: 1, z: 11.15884}
+  m_LocalPosition: {x: 4.3, y: 1, z: 11.15884}
   m_LocalScale: {x: 1.0361825, y: 1.0361825, z: 1.0361825}
   m_Children: []
   m_Father: {fileID: 3764821047444257654}
@@ -82,6 +82,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips:
+  - {fileID: 7400000, guid: 99da752189627b84ca3f926f710a94fc, type: 2}
 --- !u!212 &2864880929430881267
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -245,6 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!212 &8327781497129615431
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -489,6 +492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
   _event:
     m_PersistentCalls:
       m_Calls:
@@ -511,6 +515,7 @@ MonoBehaviour:
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
   _itemID: 0
+  _prerequite: {fileID: 0}
 --- !u!212 &7915482237253435974
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -650,6 +655,7 @@ GameObject:
   - component: {fileID: 7195503164708117276}
   - component: {fileID: 3927815213173337841}
   - component: {fileID: 3616538722071803755}
+  - component: {fileID: 6851565470763826135}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -729,10 +735,39 @@ MonoBehaviour:
     m_Events:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 3927815213173337841}
+        - m_Target: {fileID: 2953377597608634547}
           m_TargetAssemblyTypeName: PuzzleGame.Room, Assembly-CSharp
-          m_MethodName: RotateNext
-          m_Mode: 6
+          m_MethodName: 
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &6851565470763826135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2953377597608634547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f53f0d9632b874b4e867a5f50b82ea35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetSignalAssets:
+  - signalAsset: {fileID: 11400000, guid: f6e63c1eccecf3045956a401afc5257e, type: 2}
+    stringArrayEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6087738348929370148}
+          m_TargetAssemblyTypeName: PuzzleGame.CutSceneManager, Assembly-CSharp
+          m_MethodName: DisplayDialogue
+          m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -740,7 +775,7 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 1
+          m_CallState: 2
 --- !u!1 &3105149999681976115
 GameObject:
   m_ObjectHideFlags: 0
@@ -3595,6 +3630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!1 &3251183650736891277
 GameObject:
   m_ObjectHideFlags: 0
@@ -3665,6 +3701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!1 &3510700696804147419
 GameObject:
   m_ObjectHideFlags: 0
@@ -3711,6 +3748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!212 &4477304786513147055
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3947,6 +3985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
   _event:
     m_PersistentCalls:
       m_Calls:
@@ -3969,6 +4008,7 @@ MonoBehaviour:
   _animateArrow: 1
   _arrowIconTransform: {fileID: 4297782093648534295}
   _itemID: 0
+  _prerequite: {fileID: 11400000, guid: fc00ecca4baee9342a77a9aad30c3f54, type: 2}
 --- !u!61 &2696914051317733488
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4006,6 +4046,7 @@ GameObject:
   - component: {fileID: 2267227321374015055}
   - component: {fileID: 6098375579419112071}
   - component: {fileID: 662177298017614256}
+  - component: {fileID: 3274746669366180625}
   m_Layer: 0
   m_Name: CutSceneCamera
   m_TagString: Untagged
@@ -4021,7 +4062,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4236584197852171910}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.06, y: -3.9, z: -10}
+  m_LocalPosition: {x: 6.06, y: -3.9, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4169727368777166119}
@@ -4089,6 +4130,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &3274746669366180625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4236584197852171910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animClips:
+  - {fileID: 7400000, guid: dfa9679af9c582343844999f3918e452, type: 2}
 --- !u!1 &4396742282537650193
 GameObject:
   m_ObjectHideFlags: 0
@@ -4136,6 +4191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
   _event:
     m_PersistentCalls:
       m_Calls:
@@ -4158,6 +4214,7 @@ MonoBehaviour:
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
   _itemID: 0
+  _prerequite: {fileID: 0}
 --- !u!212 &4232326482498119734
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4966,6 +5023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!1 &6630276638287998392
 GameObject:
   m_ObjectHideFlags: 0
@@ -5032,6 +5090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!1 &6660137195449984066
 GameObject:
   m_ObjectHideFlags: 0
@@ -5077,6 +5136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
   _event:
     m_PersistentCalls:
       m_Calls:
@@ -5099,6 +5159,7 @@ MonoBehaviour:
   _animateArrow: 1
   _arrowIconTransform: {fileID: 1619437286835679112}
   _itemID: 0
+  _prerequite: {fileID: 11400000, guid: fc00ecca4baee9342a77a9aad30c3f54, type: 2}
 --- !u!61 &2940944707078504964
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5280,6 +5341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!212 &511575818779290545
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5501,6 +5563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!1 &7949543697029212833
 GameObject:
   m_ObjectHideFlags: 0
@@ -5567,6 +5630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!1 &8540498401340606695
 GameObject:
   m_ObjectHideFlags: 0
@@ -5612,6 +5676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
   _event:
     m_PersistentCalls:
       m_Calls:
@@ -5634,6 +5699,7 @@ MonoBehaviour:
   _animateArrow: 1
   _arrowIconTransform: {fileID: 4550240003439095275}
   _itemID: 0
+  _prerequite: {fileID: 0}
 --- !u!61 &6811613891622484467
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5705,6 +5771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
   _event:
     m_PersistentCalls:
       m_Calls:
@@ -5727,6 +5794,7 @@ MonoBehaviour:
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
   _itemID: 1
+  _prerequite: {fileID: 0}
 --- !u!212 &1497061131759150190
 SpriteRenderer:
   m_ObjectHideFlags: 0

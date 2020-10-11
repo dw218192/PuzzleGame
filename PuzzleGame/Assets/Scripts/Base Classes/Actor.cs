@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace PuzzleGame
 {
-    public class Actor : MonoBehaviour
+    public class Actor : MonoBehaviour, IAnimationClipSource
     {
+        [SerializeField] AnimationClip[] _animClips;
         public Room room { get; set; } = null;
         public SpriteRenderer spriteRenderer 
         {
@@ -54,6 +55,12 @@ namespace PuzzleGame
         public virtual void RoomInit()
         {
 
+        }
+
+        void IAnimationClipSource.GetAnimationClips(List<AnimationClip> results)
+        {
+            if(_animClips != null)
+                results.AddRange(_animClips);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PuzzleGame.EventSystem;
+using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
@@ -9,6 +11,18 @@ namespace PuzzleGame
     {
         public Room roomPrefab = null;
         public Player playerPrefab = null;
+
+        [Serializable]
+        class GameProgressStats
+        {
+            //can the player go out of the starting room?
+            public BoolVariable canGoOutOfStartingRoom;
+            //can the painting be rotated?
+            public BoolVariable canRotatePainting;
+        }
+
+        [SerializeField]
+        GameProgressStats _progessStats = new GameProgressStats();
 
         public Room curRoom { get; set; } = null;
 
@@ -20,16 +34,17 @@ namespace PuzzleGame
                 GameContext.s_gameMgr = this;
 
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
+            Messenger.AddListener<CutSceneEventData>(M_EventType.ON_CUTSCENE_END, OnEndCutScene);
         }
 
         private void Start()
         {
-            curRoom = Room.SpawnChain(10, 4);
+            curRoom = Room.SpawnChain(GameConst.k_totalNumRooms, GameConst.k_startingRoomIndex);
             _startRoom = curRoom;
             TestRoomCutscene();
         }
 
-        //messenger events
+        #region Messenger Events
         private void OnEnterRoom(RoomEventData data)
         {
             curRoom = data.room;
@@ -47,6 +62,19 @@ namespace PuzzleGame
             */
         }
 
+        private void OnEndCutScene(CutSceneEventData data)
+        {
+            //narrative
+            switch(data.cutSceneId)
+            {
+                case 0:
+                    _progessStats.canRotatePainting.val = true;
+                    break;
+            }
+        }
+        #endregion
+
+        #region DEBUG
         void TestRoomCutscene()
         {
             IEnumerator _innerRoutine()
@@ -92,5 +120,6 @@ namespace PuzzleGame
                 Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(_startRoom));
             }
         }
+        #endregion
     }
 }

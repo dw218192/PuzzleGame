@@ -14,7 +14,7 @@ namespace PuzzleGame
     [RequireComponent(typeof(Player))]
     public class PlayerController : MonoBehaviour
     {
-        #region Ground Check
+        #region Movement
         [SerializeField] Transform _groundCheckAnchor;
         Vector2 _groundCheckSize;
         bool _grounded = false;
@@ -38,6 +38,11 @@ namespace PuzzleGame
         Player _player;
         #endregion
 
+        #region Game Specific
+        [SerializeField] BoolVariable _canGoOutOfStartingRoom;
+        bool _isInDialogue = false;
+        #endregion
+        
         [Serializable]
         public class MovementConfig
         {
@@ -56,8 +61,7 @@ namespace PuzzleGame
             get => _controlEnabled;
             private set
             {
-                //on enable
-                if(!_controlEnabled && value)
+                if(_controlEnabled != value)
                 {
                     ClearState();
                 }
@@ -70,14 +74,43 @@ namespace PuzzleGame
             _exitPaintkeyHoldTimer = 0;
             _exitPaintkeyDownLastFrame = false;
             _curInteractable = null;
+
         }
 
         private void Awake()
         {
-            Messenger.AddListener(M_EventType.ON_BEFORE_ENTER_ROOM, (RoomEventData data) => { controlEnabled = false; });
-            Messenger.AddListener(M_EventType.ON_ENTER_ROOM, (RoomEventData data) => { controlEnabled = true; });
-            Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => { controlEnabled = false; });
-            Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => { controlEnabled = true; });
+            Messenger.AddListener(M_EventType.ON_BEFORE_ENTER_ROOM, (RoomEventData data) => 
+            { 
+                controlEnabled = false; 
+            });
+
+            Messenger.AddListener(M_EventType.ON_ENTER_ROOM, (RoomEventData data) => 
+            {
+                controlEnabled = true; 
+            });
+
+            Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => 
+            { 
+                controlEnabled = false; 
+            });
+
+            Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => 
+            {
+                if(!_isInDialogue)
+                    controlEnabled = true; 
+            });
+
+            Messenger.AddListener(M_EventType.ON_DIALOGUE_START, () => 
+            { 
+                controlEnabled = false; 
+                _isInDialogue = true; 
+            });
+
+            Messenger.AddListener(M_EventType.ON_DIALOGUE_END, () => 
+            { 
+                controlEnabled = true; 
+                _isInDialogue = false; 
+            });
         }
 
         // Start is called before the first frame update
@@ -91,41 +124,35 @@ namespace PuzzleGame
 
             _groundCheckSize = new Vector2(_collider.size.x * 0.9f, 0.2f);
 
-            _interactionTrigger.onTriggerEnter += (Collider2D collider) => 
-            {
-                if (_curInteractable)
-                    return;
-
-                Interactable interactable = collider.GetComponent<Interactable>();
-                if (interactable)
-                {
-                    _curInteractable = interactable;
-                    _curInteractable.OnEnterRange();
-                }
-            };
-            _interactionTrigger.onTriggerStay += (Collider2D collider) =>
-            {
-                if (_curInteractable)
-                    return;
-
-                Interactable interactable = collider.GetComponent<Interactable>();
-                if (interactable)
-                {
-                    _curInteractable = interactable;
-                    _curInteractable.OnEnterRange();
-                }
-            };
-            _interactionTrigger.onTriggerExit += (Collider2D collider) => 
-            {
-                Interactable interactable = collider.GetComponent<Interactable>();
-                if (interactable && Object.ReferenceEquals(interactable, _curInteractable))
-                {
-                    _curInteractable.OnExitRange();
-                    _curInteractable = null;
-                }
-            };
+            _interactionTrigger.onTriggerEnter += OnTriggerEnterInteractable;
+            _interactionTrigger.onTriggerStay += OnTriggerEnterInteractable;
+            _interactionTrigger.onTriggerExit += OnTriggerExitInteractable;
 
             _interactionTriggerX = _interactionTrigger.transform.localPosition.x;
+        }
+
+        void OnTriggerEnterInteractable(Collider2D collider)
+        {
+            if (_curInteractable)
+                return;
+
+            Interactable interactable = collider.GetComponent<Interactable>();
+            if (interactable && interactable.canInteract)
+            {
+                _curInteractable = interactable;
+                _curInteractable.OnEnterRange();
+            }
+        }
+
+        void OnTriggerExitInteractable(Collider2D collider)
+        {
+            Interactable interactable = collider.GetComponent<Interactable>();
+
+            if (interactable && Object.ReferenceEquals(interactable, _curInteractable))
+            {
+                _curInteractable.OnExitRange();
+                _curInteractable = null;
+            }
         }
 
         void TurnAround(float horizontalVelocity)
@@ -144,9 +171,6 @@ namespace PuzzleGame
         // Update is called once per frame
         void Update()
         {
-            if (!controlEnabled)
-                return;
-
             MovementUpdate();
             InteractionUpdate();
         }
@@ -162,47 +186,48 @@ namespace PuzzleGame
 
             float vertical = 0, horizontal = 0;
 
-            if (_grounded)
+            if(controlEnabled)
             {
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (_grounded)
                 {
-                    vertical = _moveConfig.jumpThrust;
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        vertical = _moveConfig.jumpThrust;
 
-                    _grounded = false;
-                    _groundCheckTimer = Time.deltaTime * 10f;
-                }
-                if (Input.GetKey(KeyCode.A))
-                {
-                    horizontal = -_moveConfig.speed;
-                }
-                if (Input.GetKey(KeyCode.D))
-                {
-                    horizontal = _moveConfig.speed;
-                }
+                        _grounded = false;
+                        _groundCheckTimer = Time.deltaTime * 10f;
+                    }
+                    if (Input.GetKey(KeyCode.A))
+                    {
+                        horizontal = -_moveConfig.speed;
+                    }
+                    if (Input.GetKey(KeyCode.D))
+                    {
+                        horizontal = _moveConfig.speed;
+                    }
 
-                _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * vertical;
+                    _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * vertical;
+                }
+                else
+                {
+                    if (Input.GetKey(KeyCode.A))
+                    {
+                        horizontal = -_moveConfig.airBorneSpeed;
+                    }
+                    if (Input.GetKey(KeyCode.D))
+                    {
+                        horizontal = _moveConfig.airBorneSpeed;
+                    }
+
+                    _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * Vector2.Dot(GameContext.s_up, _rgbody.velocity);
+                }
             }
-            else
-            {
-                if (Input.GetKey(KeyCode.A))
-                {
-                    horizontal = -_moveConfig.airBorneSpeed;
-                }
-                if (Input.GetKey(KeyCode.D))
-                {
-                    horizontal = _moveConfig.airBorneSpeed;
-                }
-
-                _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * Vector2.Dot(GameContext.s_up, _rgbody.velocity);
-            }
+            TurnAround(horizontal);
 
             _animator.SetBool(GameConst.k_PlayerAirborne_AnimParam, !_grounded);
             _animator.SetBool(GameConst.k_PlayerWalking_AnimParam, !Mathf.Approximately(0, horizontal));
-
             _animator.SetFloat(GameConst.k_PlayerXSpeed_AnimParam, horizontal);
             _animator.SetFloat(GameConst.k_PlayerYSpeed_AnimParam, _rgbody.velocity.y);
-
-            TurnAround(horizontal);
         }
 
         bool CheckGrounded()
@@ -216,48 +241,58 @@ namespace PuzzleGame
 
         void InteractionUpdate()
         {
+            if (!controlEnabled)
+                return;
+
             if(Input.GetKeyDown(KeyCode.E))
             {
                 if(_curInteractable)
                     _curInteractable.OnInteract(_player);
             }
 
-            bool exitPaintingkeyDown = Input.GetKey(KeyCode.Q);
-            //go out of the painting
-            if (_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
+            if(GameContext.s_gameMgr.curRoom.roomIndex == GameConst.k_startingRoomIndex && !_canGoOutOfStartingRoom.val)
             {
-                _exitPaintkeyHoldTimer = Mathf.Min(_exitPaintInteractTime, _exitPaintkeyHoldTimer + Time.deltaTime);
-                GameContext.s_effectMgr.SetProgress(_exitPaintkeyHoldTimer / _exitPaintInteractTime);
-
-                if(Mathf.Approximately(_exitPaintkeyHoldTimer, _exitPaintInteractTime))
+                
+            }
+            else
+            {
+                bool exitPaintingkeyDown = Input.GetKey(KeyCode.Q);
+                //go out of the painting
+                if (_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
                 {
-                    _exitPaintkeyHoldTimer = 0;
-                    GameContext.s_effectMgr.HideProgressBar();
+                    _exitPaintkeyHoldTimer = Mathf.Min(_exitPaintInteractTime, _exitPaintkeyHoldTimer + Time.deltaTime);
+                    GameContext.s_effectMgr.SetProgress(_exitPaintkeyHoldTimer / _exitPaintInteractTime);
 
-                    //TODO redo this check here
-                    if (GameContext.s_gameMgr.curRoom.roomIndex == 2)
+                    if (Mathf.Approximately(_exitPaintkeyHoldTimer, _exitPaintInteractTime))
                     {
-                        DialogueMenu.Instance.Display("can't go further", null, true);
-                    }
-                    else
-                    {
-                        GameContext.s_gameMgr.curRoom.GoToPrev();
+                        _exitPaintkeyHoldTimer = 0;
+                        GameContext.s_effectMgr.HideProgressBar();
+
+                        //TODO redo this check here
+                        if (GameContext.s_gameMgr.curRoom.roomIndex == 2)
+                        {
+                            DialogueMenu.Instance.DisplayPrompt("can't go further", null, true);
+                        }
+                        else
+                        {
+                            GameContext.s_gameMgr.curRoom.GoToPrev();
+                        }
                     }
                 }
-            }
-            else if (!_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
-            {
-                _exitPaintkeyHoldTimer = 0;
-                GameContext.s_effectMgr.ShowProgressBar((Vector2)transform.position + 0.5f * Vector2.down, 
-                    Quaternion.Euler(0,0,-90), transform);
-                GameContext.s_effectMgr.SetProgress(0);
-            }
-            else if (_exitPaintkeyDownLastFrame && !exitPaintingkeyDown)
-            {
-                GameContext.s_effectMgr.HideProgressBar();
-            }
+                else if (!_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
+                {
+                    _exitPaintkeyHoldTimer = 0;
+                    GameContext.s_effectMgr.ShowProgressBar((Vector2)transform.position + 0.5f * Vector2.down,
+                        Quaternion.Euler(0, 0, -90), transform);
+                    GameContext.s_effectMgr.SetProgress(0);
+                }
+                else if (_exitPaintkeyDownLastFrame && !exitPaintingkeyDown)
+                {
+                    GameContext.s_effectMgr.HideProgressBar();
+                }
 
-            _exitPaintkeyDownLastFrame = exitPaintingkeyDown;
+                _exitPaintkeyDownLastFrame = exitPaintingkeyDown;
+            }
         }
 
         private void OnDrawGizmos()

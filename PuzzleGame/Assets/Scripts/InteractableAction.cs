@@ -35,9 +35,9 @@ namespace PuzzleGame
 
             if(curRoom)
             {
-                if(Mathf.Min(curRoom.roomSize.x, curRoom.roomSize.y) <= 5f)
+                if(Mathf.Min(curRoom.roomSize.x, curRoom.roomSize.y) <= 10f)
                 {
-                    DialogueMenu.Instance.Display("I am too large to fit into this room", null, true);
+                    DialogueMenu.Instance.DisplayPrompt("I am too large to fit into this room", null, true);
                 }
                 else
                 {

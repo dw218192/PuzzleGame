@@ -47,27 +47,44 @@ namespace PuzzleGame
 
     public class Interactable : Actor
     {
+        //interaction event
         [SerializeField] UnityEvent<Interactable, Player> _event;
         [SerializeField] EInteractType _type;
-        [SerializeField] Color _outlineColor = Color.red;
 
+        //for arrow/outline effects
+        [SerializeField] Color _outlineColor = Color.red;
         [SerializeField] bool _alwaysShowOutline = false;
         [SerializeField] ArrowDef _arrowDef = null;
         [SerializeField] bool _animateArrow = false;
-
         [SerializeField] Transform _arrowIconTransform;
+
+        //for pick-ups only
         [SerializeField] EItemID _itemID = EItemID.INVALID;
 
+        //inspect setting
+        [SerializeField] BoolVariable _prerequite;
+
+        public bool canInteract { get { return _prerequite == null || _prerequite.val; } }
         public EInteractType type { get { return _type; } }
         public Color outlineColor { get { return _outlineColor; } }
         public bool alwaysShowOutline { get { return _alwaysShowOutline; } }
         public EItemID itemID { get { return _itemID; } }
 
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+
         protected override void Start()
         {
             base.Start();
-
-            if(spriteRenderer && spriteRenderer.sprite)
+            /*
+            if (_prerequite != null)
+            {
+                Debug.Log($"_prerequite.val={_prerequite.val}\n!_prerequite || _prerequite.val={!_prerequite || _prerequite.val}");
+            }
+            */
+            if (spriteRenderer && spriteRenderer.sprite)
                 SetOutline(false);
         }
 
@@ -75,12 +92,15 @@ namespace PuzzleGame
         {
             base.RoomInit();
 
+            //if this interactable has an id (usually used for pick-ups)
+            //id is the same regardless of the room level
             if (itemID != EItemID.INVALID)
                 ItemDatabase.RegisterItem(itemID, new ItemDatabase.ItemData() { inventoryIcon = spriteRenderer.sprite });
         }
 
         public void OnEnterRange()
         {
+            //if we're a pick-up item or outline is forced to show
             if (type == EInteractType.PICK_UP || alwaysShowOutline)
             {
                 if (spriteRenderer && spriteRenderer.sprite)
@@ -88,7 +108,8 @@ namespace PuzzleGame
                     SetOutline(true);
                 }
             }
-                
+            
+            //if animated arrow effect is enabled on this item
             if (_arrowDef && _arrowIconTransform)
             {
                 GameContext.s_effectMgr.ShowArrow(_arrowDef, _animateArrow, _arrowIconTransform.position,
@@ -105,6 +126,7 @@ namespace PuzzleGame
         {
             if (type == EInteractType.PICK_UP || alwaysShowOutline)
                 SetOutline(false);
+
             if (_arrowDef && _arrowIconTransform)
                 GameContext.s_effectMgr.HideArrow();
         }

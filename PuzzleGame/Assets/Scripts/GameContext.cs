@@ -25,6 +25,8 @@ namespace PuzzleGame
     {
         public const string k_interactableSpriteLayer = "Interactable";
         public const int k_pixelPerWorldUnit = 16;
+        public const int k_startingRoomIndex = 2;
+        public const int k_totalNumRooms = 7;
 
         //layers are set in project and used for collision rules
         //rule: boundary collides with everything

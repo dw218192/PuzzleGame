@@ -16,7 +16,6 @@ namespace PuzzleGame
         private TriggerHandler _onTriggerStay;
         private TriggerHandler _onTriggerExit;
 
-
         private void Set(TriggerHandler func, ref TriggerHandler mem)
         {
             if (mem != null)
@@ -72,7 +71,13 @@ namespace PuzzleGame
             _lastOverlapCnt = count;
         }
         */
-        
+
+        private void Awake()
+        {
+            _collider = GetComponent<Collider2D>();
+            _collider.isTrigger = true;
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             _onTriggerEnter?.Invoke(collision);

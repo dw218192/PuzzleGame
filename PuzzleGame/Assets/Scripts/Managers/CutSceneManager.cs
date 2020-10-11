@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 using PuzzleGame.EventSystem;
+using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
@@ -38,6 +39,11 @@ namespace PuzzleGame
             _directors[cutSceneId].Play();
 
             Messenger.Broadcast(M_EventType.ON_CUTSCENE_START, new CutSceneEventData(cutSceneId));
+        }
+
+        public void DisplayDialogue(string[] dialogue)
+        {
+            DialogueMenu.Instance.DisplayDialogue(dialogue);
         }
     }
 }

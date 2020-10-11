@@ -46,6 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomPrefab: {fileID: 3927815213173337841, guid: 3dd6c523fd2ca4c419753299de78c660, type: 3}
   playerPrefab: {fileID: 7845882885185920104, guid: 2f507b5cc563519469e4d89361b8c808, type: 3}
+  _progessStats:
+    canGoOutOfStartingRoom: {fileID: 11400000, guid: 0b66ecf5abb88b649a9de576a2239fe0, type: 2}
+    canRotatePainting: {fileID: 11400000, guid: fc00ecca4baee9342a77a9aad30c3f54, type: 2}
 --- !u!114 &593198061
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,9 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace PuzzleGame.EventSystem
 {
+    #region Custom Unity Events
+    [Serializable]
+    public class StringArrayEvent : UnityEvent<string[]> { }
+    #endregion
+
+    #region Messenger Events
     [Serializable]
     public class RoomEventData : MessengerEventData
     {
@@ -50,6 +57,9 @@ namespace PuzzleGame.EventSystem
         ON_EXIT_ROOM,
         ON_INVENTORY_CHANGE,
         ON_CUTSCENE_START,
-        ON_CUTSCENE_END
+        ON_CUTSCENE_END,
+        ON_DIALOGUE_START,
+        ON_DIALOGUE_END
     }
+    #endregion
 }

@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animClips: []
 --- !u!212 &7845882885185920107
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -189,7 +190,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1389035605
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 1062541457811144968, guid: 6badf23ba737445498bb7132dce8f05a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -217,6 +218,7 @@ MonoBehaviour:
   _groundCheckAnchor: {fileID: 2090459526879984741}
   _interactionTrigger: {fileID: 2477844575106455296}
   _exitPaintInteractTime: 2
+  _canGoOutOfStartingRoom: {fileID: 11400000, guid: 0b66ecf5abb88b649a9de576a2239fe0, type: 2}
   _moveConfig:
     speed: 3
     jumpThrust: 6.5
