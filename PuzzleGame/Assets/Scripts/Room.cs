@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using PuzzleGame.EventSystem;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Tilemaps;
-
-using PuzzleGame.EventSystem;
-
+using UnityEngine.Timeline;
 using Object = UnityEngine.Object;
+
 namespace PuzzleGame
 {
     public class Room : MonoBehaviour
@@ -199,9 +199,9 @@ namespace PuzzleGame
             SetSpriteMaskInteraction(SpriteMaskInteraction.VisibleInsideMask);
         }
 
-        public void PlayCutScene(int cutSceneId)
+        public void PlayCutScene(TimelineAsset timeline)
         {
-            _roomCutsceneMgr.Play(cutSceneId);
+            _roomCutsceneMgr.Play(timeline);
         }
 
         private void Awake()
@@ -369,12 +369,6 @@ namespace PuzzleGame
             //disable masking of the current room
             SetSpriteMaskInteraction(SpriteMaskInteraction.None);
 
-            //reinit item ids
-            foreach(var actor in _actors)
-            {
-                actor.RoomInit();
-            }
-
             //callbacks
             Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(this));
         }
@@ -402,10 +396,8 @@ namespace PuzzleGame
             Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(prev));
         }
 
-        public void RemoveItemThisRoomOnly(EItemID itemID)
+        public void RemoveItemThisRoomOnly(InventoryItemDef itemDef)
         {
-            Debug.Assert(itemID != EItemID.INVALID, "Invalid Item ID");
-
             Interactable interactable = null;
 
             for(var it = _actors.First; it != null; it = it.Next)
@@ -413,7 +405,7 @@ namespace PuzzleGame
                 if(it.Value is Interactable)
                 {
                     Interactable inter = (Interactable)it.Value;
-                    if(inter.itemID == itemID)
+                    if(ReferenceEquals(inter.itemDef, itemDef))
                     {
                         interactable = inter;
                         _actors.Remove(it);
@@ -427,23 +419,23 @@ namespace PuzzleGame
             Destroy(interactable.gameObject);
         }
 
-        public void RemoveItemDownwards(EItemID itemID)
+        public void RemoveItemDownwards(InventoryItemDef itemDef)
         {
-            RemoveItemThisRoomOnly(itemID);
+            RemoveItemThisRoomOnly(itemDef);
             if(next)
             {
-                next.RemoveItemDownwards(itemID);
+                next.RemoveItemDownwards(itemDef);
             }
         }
 
-        public void RemoveItemAll(EItemID itemID)
+        public void RemoveItemAll(InventoryItemDef itemDef)
         {
-            RemoveItemDownwards(itemID);
+            RemoveItemDownwards(itemDef);
 
             Room cur = prev;
             while(cur)
             {
-                cur.RemoveItemThisRoomOnly(itemID);
+                cur.RemoveItemThisRoomOnly(itemDef);
                 cur = cur.prev;
             }
         }

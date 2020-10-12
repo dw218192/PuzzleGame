@@ -12,7 +12,7 @@ namespace PuzzleGame
     {
         public class InventoryItem
         {
-            public EItemID itemID;
+            public InventoryItemDef def;
             public int quantity;
         }
 
@@ -39,13 +39,13 @@ namespace PuzzleGame
         {
         }
 
-        public void AddToInventory(EItemID id, int quantity)
+        public void AddToInventory(InventoryItemDef def, int quantity)
         {
             //the inventory is very small, so just brute force everything
             int index = -1, itemQuantity = 0;
             for(int i=0; i< _inventory.Count; i++)
             {
-                if(_inventory[i].itemID == id)
+                if(_inventory[i].def == def)
                 {
                     _inventory[i].quantity += quantity;
                     itemQuantity = _inventory[i].quantity;
@@ -56,12 +56,12 @@ namespace PuzzleGame
 
             if(index == -1)
             {
-                _inventory.Add(new InventoryItem() { itemID = id, quantity = quantity });
+                _inventory.Add(new InventoryItem() { def = def, quantity = quantity });
                 itemQuantity = quantity;
                 index = _inventory.Count - 1;
             }
 
-            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(id, index, itemQuantity));
+            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(def, index, itemQuantity));
         }
     }
 }

@@ -49,14 +49,6 @@ namespace PuzzleGame
             //put common init work here
         }
 
-        /// <summary>
-        /// only called once on the root room
-        /// </summary>
-        public virtual void RoomInit()
-        {
-
-        }
-
         void IAnimationClipSource.GetAnimationClips(List<AnimationClip> results)
         {
             if(_animClips != null)

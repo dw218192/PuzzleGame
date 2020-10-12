@@ -12,7 +12,7 @@ namespace PuzzleGame
     public class DialogueEventEmitterPair
     {
         public SignalAsset signalAsset;
-        public StringArrayEvent stringArrayEvent;
+        public DialogueEvent dialogueEvent;
     }
 }
 

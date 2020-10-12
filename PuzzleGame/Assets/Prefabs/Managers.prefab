@@ -49,6 +49,11 @@ MonoBehaviour:
   _progessStats:
     canGoOutOfStartingRoom: {fileID: 11400000, guid: 0b66ecf5abb88b649a9de576a2239fe0, type: 2}
     canRotatePainting: {fileID: 11400000, guid: fc00ecca4baee9342a77a9aad30c3f54, type: 2}
+  _cutSceneAndDialogues:
+    puzzle2CutScene: {fileID: 11400000, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
+    rotationUnlockDialogueId: {fileID: 11400000, guid: 1b797d803be22bc4d8f6895a2867026f, type: 2}
+  _resources:
+    paintingRotationTutorialImage: {fileID: 21300000, guid: d6682874f8ff01a44b721b73ce47ad0e, type: 3}
 --- !u!114 &593198061
 MonoBehaviour:
   m_ObjectHideFlags: 0

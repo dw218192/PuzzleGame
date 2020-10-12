@@ -66,9 +66,8 @@ namespace PuzzleGame.UI
             }
             else
             {
-                ItemDatabase.ItemData itemData = ItemDatabase.GetItemData(data.itemID);
                 _slotDisplayData[data.slotIndex].Set(
-                    itemData.inventoryIcon,
+                    data.itemDef.inventoryDisplaySprite,
                     data.curItemQuantity);
             }
         }

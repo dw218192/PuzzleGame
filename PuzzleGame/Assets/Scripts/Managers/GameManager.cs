@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Timeline;
+
 using PuzzleGame.EventSystem;
 using PuzzleGame.UI;
+using UnityEngine.Playables;
 
 namespace PuzzleGame
 {
@@ -11,6 +14,12 @@ namespace PuzzleGame
     {
         public Room roomPrefab = null;
         public Player playerPrefab = null;
+
+        [Serializable]
+        class GameResources
+        {
+            public Sprite paintingRotationTutorialImage;
+        }
 
         [Serializable]
         class GameProgressStats
@@ -21,8 +30,23 @@ namespace PuzzleGame
             public BoolVariable canRotatePainting;
         }
 
+        /// <summary>
+        /// NOTE: cutscenes are identified by PlayableDirector
+        /// dialogues are identified by Constant SOs
+        /// </summary>
+        [Serializable]
+        class CutSceneAndDialogues
+        {
+            public TimelineAsset puzzle2CutScene;
+            public Constant rotationUnlockDialogueId;
+        }
+
         [SerializeField]
         GameProgressStats _progessStats = new GameProgressStats();
+        [SerializeField]
+        CutSceneAndDialogues _cutSceneAndDialogues = new CutSceneAndDialogues();
+        [SerializeField]
+        GameResources _resources = new GameResources();
 
         public Room curRoom { get; set; } = null;
 
@@ -35,6 +59,7 @@ namespace PuzzleGame
 
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
             Messenger.AddListener<CutSceneEventData>(M_EventType.ON_CUTSCENE_END, OnEndCutScene);
+            Messenger.AddListener<DialogueEventData>(M_EventType.ON_DIALOGUE_END, OnEndDialogue);
         }
 
         private void Start()
@@ -62,14 +87,21 @@ namespace PuzzleGame
             */
         }
 
+        //these game progression stuff are hardcoded for now, maybe forever
         private void OnEndCutScene(CutSceneEventData data)
         {
-            //narrative
-            switch(data.cutSceneId)
+            if(ReferenceEquals(data.cutScene, _cutSceneAndDialogues.puzzle2CutScene))
             {
-                case 0:
-                    _progessStats.canRotatePainting.val = true;
-                    break;
+                //unlock painting rotation
+                _progessStats.canRotatePainting.val = true;
+            }
+        }
+
+        private void OnEndDialogue(DialogueEventData data)
+        {
+            if (ReferenceEquals(data.dialogueID, _cutSceneAndDialogues.rotationUnlockDialogueId))
+            {
+                DialogueMenu.Instance.DisplayPrompt("New Interaction", "You may now interact with the painting on its sides", _resources.paintingRotationTutorialImage, null, "OK");
             }
         }
         #endregion
@@ -80,7 +112,7 @@ namespace PuzzleGame
             IEnumerator _innerRoutine()
             {
                 yield return new WaitForSecondsRealtime(5f);
-                curRoom.PlayCutScene(0);
+                curRoom.PlayCutScene(_cutSceneAndDialogues.puzzle2CutScene);
             }
 
             StartCoroutine(_innerRoutine());

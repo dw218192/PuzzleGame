@@ -100,13 +100,13 @@ namespace PuzzleGame
                     controlEnabled = true; 
             });
 
-            Messenger.AddListener(M_EventType.ON_DIALOGUE_START, () => 
+            Messenger.AddListener(M_EventType.ON_DIALOGUE_START, (DialogueEventData data) => 
             { 
                 controlEnabled = false; 
                 _isInDialogue = true; 
             });
 
-            Messenger.AddListener(M_EventType.ON_DIALOGUE_END, () => 
+            Messenger.AddListener(M_EventType.ON_DIALOGUE_END, (DialogueEventData data) => 
             { 
                 controlEnabled = true; 
                 _isInDialogue = false; 
@@ -271,7 +271,7 @@ namespace PuzzleGame
                         //TODO redo this check here
                         if (GameContext.s_gameMgr.curRoom.roomIndex == 2)
                         {
-                            DialogueMenu.Instance.DisplayPrompt("can't go further", null, true);
+                            DialogueMenu.Instance.DisplayPrompt("Message", "I will fall to death", null, null, "Ok then");
                         }
                         else
                         {
@@ -307,7 +307,7 @@ namespace PuzzleGame
             GUI.Label(new Rect(10, 80, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
 
             if(_curInteractable)
-                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}, id:{_curInteractable.itemID}");
+                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}, can pickup = {((bool)_curInteractable.itemDef).ToString()}");
         }
     }
 }

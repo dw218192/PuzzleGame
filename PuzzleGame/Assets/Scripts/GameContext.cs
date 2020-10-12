@@ -20,6 +20,8 @@ namespace PuzzleGame
 
     /// <summary>
     /// put everything constant in the project here (e.g. layer name, string, etc.)
+    /// used to store absolute constants
+    /// the constants that tend to be tweaked during edit-time is stored in GameConstConfig
     /// </summary>
     public static class GameConst
     {
@@ -27,6 +29,7 @@ namespace PuzzleGame
         public const int k_pixelPerWorldUnit = 16;
         public const int k_startingRoomIndex = 2;
         public const int k_totalNumRooms = 7;
+        public const int k_maxRoomIndex = 5;
 
         //layers are set in project and used for collision rules
         //rule: boundary collides with everything

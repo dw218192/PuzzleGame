@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Timeline;
 using UnityEngine.Playables;
 
 using PuzzleGame.EventSystem;
 using PuzzleGame.UI;
+using System.Linq;
 
 namespace PuzzleGame
 {
@@ -13,37 +15,44 @@ namespace PuzzleGame
         [SerializeField] PlayableDirector[] _directors;
         [SerializeField] Camera _cutSceneCam;
 
-        Dictionary<PlayableDirector, int> _director2Id = new Dictionary<PlayableDirector, int>();
-
         private void Awake()
         {
-            for (int i=0; i<_directors.Length; i++)
+            foreach (var director in _directors)
             {
-                PlayableDirector director = _directors[i];
                 director.extrapolationMode = DirectorWrapMode.None;
                 director.playOnAwake = false;
                 director.stopped += Director_stopped;
-                _director2Id[director] = i;
+
+                Debug.Assert(director.playableAsset is TimelineAsset);
             }
             _cutSceneCam.gameObject.SetActive(false);
         }
 
-        private void Director_stopped(PlayableDirector obj)
+        private void Director_stopped(PlayableDirector director)
         {
-            Messenger.Broadcast(M_EventType.ON_CUTSCENE_END, new CutSceneEventData(_director2Id[obj]));
+            Messenger.Broadcast(M_EventType.ON_CUTSCENE_END, new CutSceneEventData(director.playableAsset as TimelineAsset));
         }
 
-        public void Play(int cutSceneId)
+        public void Play(TimelineAsset timeline)
         {
-            Debug.Assert(cutSceneId >= 0 && cutSceneId < _directors.Length);
-            _directors[cutSceneId].Play();
+            PlayableDirector targetDirector = null;
+            foreach (var director in _directors)
+            {
+                if(ReferenceEquals(director.playableAsset, timeline))
+                {
+                    targetDirector = director;
+                    break;
+                }
+            }
 
-            Messenger.Broadcast(M_EventType.ON_CUTSCENE_START, new CutSceneEventData(cutSceneId));
+            Debug.Assert(targetDirector);
+            targetDirector.Play();
+            Messenger.Broadcast(M_EventType.ON_CUTSCENE_START, new CutSceneEventData(timeline));
         }
 
-        public void DisplayDialogue(string[] dialogue)
+        public void DisplayDialogue(string[] dialogue, Constant id)
         {
-            DialogueMenu.Instance.DisplayDialogue(dialogue);
+            DialogueMenu.Instance.DisplayDialogue(dialogue, id);
         }
     }
 }

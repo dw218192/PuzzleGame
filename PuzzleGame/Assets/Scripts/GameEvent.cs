@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace PuzzleGame.EventSystem
 {
     #region Custom Unity Events
     [Serializable]
-    public class StringArrayEvent : UnityEvent<string[]> { }
+    //dialogue sequence + dialogue identifier
+    public class DialogueEvent : UnityEvent<string[], Constant> { }
     #endregion
 
     #region Messenger Events
@@ -27,14 +31,14 @@ namespace PuzzleGame.EventSystem
     public class InventoryChangeEventData : MessengerEventData
     {
         private InventoryChangeEventData() { }
-        public InventoryChangeEventData(EItemID itemID, int slotIndex, int curItemQuantity)
+        public InventoryChangeEventData(InventoryItemDef def, int slotIndex, int curItemQuantity)
         {
-            this.itemID = itemID;
+            this.itemDef = def;
             this.slotIndex = slotIndex;
             this.curItemQuantity = curItemQuantity;
         }
 
-        public EItemID itemID;
+        public InventoryItemDef itemDef;
         public int slotIndex;
         public int curItemQuantity;
     }
@@ -43,11 +47,22 @@ namespace PuzzleGame.EventSystem
     public class CutSceneEventData : MessengerEventData
     {
         private CutSceneEventData() { }
-        public CutSceneEventData(int cutSceneId)
+        public CutSceneEventData(TimelineAsset cutScene)
         {
-            this.cutSceneId = cutSceneId;
+            this.cutScene = cutScene;
         }
-        public int cutSceneId;
+        public TimelineAsset cutScene;
+    }
+
+    [Serializable]
+    public class DialogueEventData : MessengerEventData
+    {
+        private DialogueEventData() { }
+        public DialogueEventData(Constant dialogueID)
+        {
+            this.dialogueID = dialogueID;
+        }
+        public Constant dialogueID;
     }
 
     public enum M_EventType

@@ -20,8 +20,8 @@ namespace PuzzleGame
             Room curRoom = GameContext.s_gameMgr.curRoom;
             if (curRoom)
             {
-                curRoom.RemoveItemAll(interactable.itemID);
-                player.AddToInventory(interactable.itemID, 1);
+                curRoom.RemoveItemAll(interactable.itemDef);
+                player.AddToInventory(interactable.itemDef, 1);
             }
             else
             {
@@ -35,9 +35,9 @@ namespace PuzzleGame
 
             if(curRoom)
             {
-                if(Mathf.Min(curRoom.roomSize.x, curRoom.roomSize.y) <= 10f)
+                if(curRoom.roomIndex == GameConst.k_maxRoomIndex - 1)
                 {
-                    DialogueMenu.Instance.DisplayPrompt("I am too large to fit into this room", null, true);
+                    DialogueMenu.Instance.DisplayPrompt("Message", "I am too large to fit into this room", null, null, "Ok then");
                 }
                 else
                 {
@@ -91,5 +91,21 @@ namespace PuzzleGame
                 Debug.LogError("current room is null");
             }
         }
+
+        #region PLAYTEST BUILD
+        public void DoorInteraction(Interactable interactable, Player player)
+        {
+            Room curRoom = GameContext.s_gameMgr.curRoom;
+
+            if (curRoom.roomIndex == GameConst.k_startingRoomIndex)
+            {
+                DialogueMenu.Instance.DisplayPrompt("Message", "You need 2 keys to open this door", null, null, "Alright");
+            }
+            else
+            {
+                DialogueMenu.Instance.DisplayPrompt("Message", "I'm too large to escape from this door", null, null, "Alright");
+            }
+        }
+        #endregion
     }
 }

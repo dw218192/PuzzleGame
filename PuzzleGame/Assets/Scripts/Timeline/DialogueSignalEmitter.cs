@@ -8,5 +8,6 @@ namespace PuzzleGame
     public class DialogueSignalEmitter : SignalEmitter
     {
         public string[] dialogues;
+        public Constant dialogueId;
     }
 }

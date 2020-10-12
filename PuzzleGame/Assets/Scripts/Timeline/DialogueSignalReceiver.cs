@@ -18,7 +18,7 @@ namespace PuzzleGame
 
                 foreach(var m in matches)
                 {
-                    m.stringArrayEvent.Invoke(dialogueSignalEmitter.dialogues);
+                    m.dialogueEvent.Invoke(dialogueSignalEmitter.dialogues, dialogueSignalEmitter.dialogueId);
                 }
             }
         }
