@@ -12,7 +12,7 @@ namespace PuzzleGame.EventSystem
     #region Custom Unity Events
     [Serializable]
     //dialogue sequence + dialogue identifier
-    public class DialogueEvent : UnityEvent<string[], Constant> { }
+    public class DialogueEvent : UnityEvent<DialogueDef> { }
     #endregion
 
     #region Messenger Events
@@ -58,11 +58,22 @@ namespace PuzzleGame.EventSystem
     public class DialogueEventData : MessengerEventData
     {
         private DialogueEventData() { }
-        public DialogueEventData(Constant dialogueID)
+        public DialogueEventData(DialogueDef dialogue)
         {
-            this.dialogueID = dialogueID;
+            this.dialogue = dialogue;
         }
-        public Constant dialogueID;
+        public DialogueDef dialogue;
+    }
+
+    [Serializable]
+    public class PuzzleEventData : MessengerEventData
+    {
+        private PuzzleEventData() { }
+        public PuzzleEventData(bool finished)
+        {
+            this.finished = finished;
+        }
+        public bool finished;
     }
 
     public enum M_EventType
@@ -74,7 +85,9 @@ namespace PuzzleGame.EventSystem
         ON_CUTSCENE_START,
         ON_CUTSCENE_END,
         ON_DIALOGUE_START,
-        ON_DIALOGUE_END
+        ON_DIALOGUE_END,
+        ON_PUZZLE_START,
+        ON_PUZZLE_END
     }
     #endregion
 }

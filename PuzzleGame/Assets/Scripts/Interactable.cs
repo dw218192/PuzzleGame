@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Assertions;
+using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
@@ -17,6 +18,7 @@ namespace PuzzleGame
     {
         //interaction event
         [SerializeField] UnityEvent<Interactable, Player> _event;
+        [SerializeField] DialogueDef _interactionDialogue;
         [SerializeField] EInteractType _type;
 
         //for arrow/outline effects
@@ -78,6 +80,9 @@ namespace PuzzleGame
         public void OnInteract(Player player)
         {
             _event.Invoke(this, player);
+
+            if (_interactionDialogue)
+                DialogueMenu.Instance.DisplayDialogue(_interactionDialogue);
         }
 
         public void OnExitRange()

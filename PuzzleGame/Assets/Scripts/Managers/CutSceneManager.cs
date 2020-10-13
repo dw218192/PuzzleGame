@@ -50,9 +50,9 @@ namespace PuzzleGame
             Messenger.Broadcast(M_EventType.ON_CUTSCENE_START, new CutSceneEventData(timeline));
         }
 
-        public void DisplayDialogue(string[] dialogue, Constant id)
+        public void DisplayDialogue(DialogueDef dialogueDef)
         {
-            DialogueMenu.Instance.DisplayDialogue(dialogue, id);
+            DialogueMenu.Instance.DisplayDialogue(dialogueDef);
         }
     }
 }

@@ -12,22 +12,27 @@ namespace PuzzleGame
 {
     public class GameManager : MonoBehaviour
     {
+        enum EGameState
+        {
+            NONE,
+            RUNNING,
+        }
+
         public Room roomPrefab = null;
         public Player playerPrefab = null;
 
         [Serializable]
         class GameResources
         {
+            public Sprite exitPaintingTutorialImage;
             public Sprite paintingRotationTutorialImage;
         }
 
         [Serializable]
-        class GameProgressStats
+        class DialogueUnlockPair
         {
-            //can the player go out of the starting room?
-            public BoolVariable canGoOutOfStartingRoom;
-            //can the painting be rotated?
-            public BoolVariable canRotatePainting;
+            public DialogueDef dialogue;
+            public BoolVariable unlockVariable;
         }
 
         /// <summary>
@@ -37,16 +42,24 @@ namespace PuzzleGame
         [Serializable]
         class CutSceneAndDialogues
         {
+            public DialogueDef key1Dialogue;
+            public DialogueDef key1Dialogue2;
+
             public TimelineAsset puzzle2CutScene;
-            public Constant rotationUnlockDialogueId;
+            public DialogueDef rotationUnlockDialogue;
+
+            public DialogueDef puzzle2StartDialogue;
+            public DialogueDef puzzle2SuccessDialogue;
         }
 
         [SerializeField]
-        GameProgressStats _progessStats = new GameProgressStats();
+        DialogueUnlockPair[] _dialogueUnlocks;
         [SerializeField]
         CutSceneAndDialogues _cutSceneAndDialogues = new CutSceneAndDialogues();
         [SerializeField]
         GameResources _resources = new GameResources();
+        EGameState _gameState = EGameState.NONE;
+        HashSet<ScriptableObject> _hasPlayed = new HashSet<ScriptableObject>();
 
         public Room curRoom { get; set; } = null;
 
@@ -60,13 +73,28 @@ namespace PuzzleGame
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
             Messenger.AddListener<CutSceneEventData>(M_EventType.ON_CUTSCENE_END, OnEndCutScene);
             Messenger.AddListener<DialogueEventData>(M_EventType.ON_DIALOGUE_END, OnEndDialogue);
+            Messenger.AddListener<PuzzleEventData>(M_EventType.ON_PUZZLE_START, OnStartPuzzle);
+            Messenger.AddListener<PuzzleEventData>(M_EventType.ON_PUZZLE_END, OnEndPuzzle);
         }
 
-        private void Start()
+        public void StartGame()
         {
             curRoom = Room.SpawnChain(GameConst.k_totalNumRooms, GameConst.k_startingRoomIndex);
             _startRoom = curRoom;
-            TestRoomCutscene();
+
+            _gameState = EGameState.RUNNING;
+        }
+
+        public void QuitGame()
+        {
+            IEnumerator _routine()
+            {
+                yield return new WaitForSeconds(2);
+                Application.Quit();
+            }
+
+            DialogueMenu.Instance.DisplayPrompt("Congrats", "You have beat the game (for now)!!", null, null, null);
+            StartCoroutine(_routine());
         }
 
         #region Messenger Events
@@ -78,31 +106,62 @@ namespace PuzzleGame
                 GameContext.s_player = Instantiate(playerPrefab, curRoom.playerSpawnPos, Quaternion.identity);
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
-            
-            //TODO: gravity changes, etc.
-            /*
-            Physics2D.gravity = - Physics2D.gravity.magnitude * data.room.contentRoot.up;
-            GameContext.s_right = data.room.contentRoot.right;
-            GameContext.s_up = data.room.contentRoot.up;
-            */
+
+            //playtest build
+            if (curRoom.roomIndex == GameConst.k_startingRoomIndex &&
+                !_hasPlayed.Contains(_cutSceneAndDialogues.puzzle2CutScene) &&
+                !_hasPlayed.Contains(_cutSceneAndDialogues.key1Dialogue2) &&
+                _hasPlayed.Contains(_cutSceneAndDialogues.key1Dialogue))
+            {
+                DialogueMenu.Instance.DisplayDialogue(_cutSceneAndDialogues.key1Dialogue2);
+            }
         }
 
-        //these game progression stuff are hardcoded for now, maybe forever
+        
+        //TODO: these game progression stuff are hardcoded for now, maybe forever
         private void OnEndCutScene(CutSceneEventData data)
         {
-            if(ReferenceEquals(data.cutScene, _cutSceneAndDialogues.puzzle2CutScene))
-            {
-                //unlock painting rotation
-                _progessStats.canRotatePainting.val = true;
-            }
+            _hasPlayed.Add(data.cutScene);
         }
 
         private void OnEndDialogue(DialogueEventData data)
         {
-            if (ReferenceEquals(data.dialogueID, _cutSceneAndDialogues.rotationUnlockDialogueId))
+            _hasPlayed.Add(data.dialogue);
+
+            if (ReferenceEquals(data.dialogue, _cutSceneAndDialogues.key1Dialogue))
             {
-                DialogueMenu.Instance.DisplayPrompt("New Interaction", "You may now interact with the painting on its sides", _resources.paintingRotationTutorialImage, null, "OK");
+                DialogueMenu.Instance.DisplayPrompt("New Interaction", "You may now exit a painting by holding <color=#ff0000ff><size=27>Q</size></color>", _resources.exitPaintingTutorialImage, null, "OK");
             }
+            else if (ReferenceEquals(data.dialogue, _cutSceneAndDialogues.key1Dialogue2))
+            {
+                TestRoomCutscene();
+            }
+            else if (ReferenceEquals(data.dialogue, _cutSceneAndDialogues.rotationUnlockDialogue))
+            {
+                DialogueMenu.Instance.DisplayPrompt("New Interaction", "You may now interact with the painting near its corners", _resources.paintingRotationTutorialImage, null, "OK");
+            }
+
+            //unlocks
+            foreach(var unlockPair in _dialogueUnlocks)
+            {
+                if(ReferenceEquals(unlockPair.dialogue, data.dialogue))
+                {
+                    unlockPair.unlockVariable.val = true;
+                    break;
+                }
+            }
+        }
+
+        private void OnEndPuzzle(PuzzleEventData data)
+        {
+            if(data.finished)
+                DialogueMenu.Instance.DisplayDialogue(_cutSceneAndDialogues.puzzle2SuccessDialogue);
+        }
+
+        private void OnStartPuzzle(PuzzleEventData data)
+        {
+            if(curRoom.roomIndex == GameConst.k_startingRoomIndex && !_hasPlayed.Contains(_cutSceneAndDialogues.puzzle2StartDialogue))
+                DialogueMenu.Instance.DisplayDialogue(_cutSceneAndDialogues.puzzle2StartDialogue);
         }
         #endregion
 
@@ -111,7 +170,9 @@ namespace PuzzleGame
         {
             IEnumerator _innerRoutine()
             {
-                yield return new WaitForSecondsRealtime(5f);
+                while (curRoom.roomIndex != GameConst.k_startingRoomIndex)
+                    yield return new WaitForEndOfFrame();
+
                 curRoom.PlayCutScene(_cutSceneAndDialogues.puzzle2CutScene);
             }
 
@@ -138,18 +199,20 @@ namespace PuzzleGame
         Room _startRoom;
         private void OnGUI()
         {
-            GUI.color = Color.red;
-            GUI.contentColor = Color.red;
-            GUI.Label(new Rect(Screen.width - 150f, 20f, 100f, 20f), "Prototype Build");
-            GUI.Label(new Rect(Screen.width - 150f, 40f, 150f, 100f), "Hold Q -- out of painting\nE -- interact \nWASD -- Walk\nSpace -- Jump");
+            if(_gameState == EGameState.RUNNING)
+            {
+                GUI.color = Color.red;
+                GUI.contentColor = Color.red;
+                GUI.Label(new Rect(Screen.width - 150f, 20f, 100f, 20f), "Debug Menu");
 
-            if (GUI.Button(new Rect(Screen.width - 150f, 170f, 150f, 50f), "Quit Game"))
-            {
-                Application.Quit();
-            }
-            if (GUI.Button(new Rect(Screen.width - 150f, 230f, 150f, 50f), "Teleport To\nStarting Room\nNOTE:will cause bugs"))
-            {
-                Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(_startRoom));
+                if (GUI.Button(new Rect(Screen.width - 150f, 50f, 150f, 50f), "Quit Game"))
+                {
+                    Application.Quit();
+                }
+                if (GUI.Button(new Rect(Screen.width - 150f, 110f, 150f, 50f), "Teleport To\nStarting Room\nNOTE:may cause bugs"))
+                {
+                    Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(_startRoom));
+                }
             }
         }
         #endregion

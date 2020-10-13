@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using PuzzleGame.EventSystem;
-
-using Object = UnityEngine.Object;
+﻿using PuzzleGame.EventSystem;
 using PuzzleGame.UI;
+using System;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace PuzzleGame
 {
@@ -39,8 +36,9 @@ namespace PuzzleGame
         #endregion
 
         #region Game Specific
-        [SerializeField] BoolVariable _canGoOutOfStartingRoom;
-        bool _isInDialogue = false;
+        [SerializeField] BoolVariable _canExitStartingRoom;
+        [SerializeField] BoolVariable _canExitSmallRoom;
+        int _controlLockCnt = 0;
         #endregion
         
         [Serializable]
@@ -80,36 +78,56 @@ namespace PuzzleGame
         private void Awake()
         {
             Messenger.AddListener(M_EventType.ON_BEFORE_ENTER_ROOM, (RoomEventData data) => 
-            { 
+            {
+                ++_controlLockCnt;
                 controlEnabled = false; 
             });
 
             Messenger.AddListener(M_EventType.ON_ENTER_ROOM, (RoomEventData data) => 
             {
-                controlEnabled = true; 
+                if (--_controlLockCnt == 0)
+                    controlEnabled = true;
             });
 
             Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => 
-            { 
+            {
+                ++_controlLockCnt;
                 controlEnabled = false; 
             });
 
             Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => 
             {
-                if(!_isInDialogue)
+                if(--_controlLockCnt == 0)
                     controlEnabled = true; 
             });
 
             Messenger.AddListener(M_EventType.ON_DIALOGUE_START, (DialogueEventData data) => 
-            { 
+            {
+                ++_controlLockCnt;
                 controlEnabled = false; 
-                _isInDialogue = true; 
             });
 
             Messenger.AddListener(M_EventType.ON_DIALOGUE_END, (DialogueEventData data) => 
-            { 
-                controlEnabled = true; 
-                _isInDialogue = false; 
+            {
+                if (--_controlLockCnt == 0)
+                    controlEnabled = true;
+            });
+
+            Messenger.AddListener(M_EventType.ON_PUZZLE_START, (PuzzleEventData data) =>
+            {
+                ++_controlLockCnt;
+                controlEnabled = false;
+
+                _interactionTrigger.gameObject.SetActive(false);
+            });
+
+
+            Messenger.AddListener(M_EventType.ON_PUZZLE_END, (PuzzleEventData data) =>
+            {
+                if (--_controlLockCnt == 0)
+                    controlEnabled = true;
+
+                _interactionTrigger.gameObject.SetActive(true);
             });
         }
 
@@ -250,11 +268,17 @@ namespace PuzzleGame
                     _curInteractable.OnInteract(_player);
             }
 
-            if(GameContext.s_gameMgr.curRoom.roomIndex == GameConst.k_startingRoomIndex && !_canGoOutOfStartingRoom.val)
+            bool canGoOut = true;
+            if (GameContext.s_gameMgr.curRoom.roomIndex == GameConst.k_startingRoomIndex)
             {
-                
+                canGoOut = _canExitStartingRoom.val;
             }
-            else
+            else if (GameContext.s_gameMgr.curRoom.roomIndex > GameConst.k_startingRoomIndex)
+            {
+                canGoOut = _canExitSmallRoom.val;
+            }
+
+            if(canGoOut)
             {
                 bool exitPaintingkeyDown = Input.GetKey(KeyCode.Q);
                 //go out of the painting
@@ -302,12 +326,14 @@ namespace PuzzleGame
 
         private void OnGUI()
         {
+#if DEVELOPMENT_BUILD
             GUI.color = Color.green;
             GUI.Label(new Rect(10, 50, 200, 32), $"velocity: {_rgbody.velocity.ToString()}");
             GUI.Label(new Rect(10, 80, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
 
             if(_curInteractable)
                 GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}, can pickup = {((bool)_curInteractable.itemDef).ToString()}");
+#endif
         }
     }
 }

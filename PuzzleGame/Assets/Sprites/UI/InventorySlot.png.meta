@@ -8,6 +8,15 @@ TextureImporter:
   - first:
       213: -4763614330683561469
     second: InventorySlot_1
+  - first:
+      213: 6562753681778653092
+    second: InventorySlot_0
+  - first:
+      213: 8393843348375522733
+    second: InventorySlot_1
+  - first:
+      213: 4050839996938790428
+    second: InventorySlot_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -121,8 +130,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 64479ba5fc283bd30800000000000000
-      internalID: 4446041084236756038
+      spriteID: 4a7bdced3b5931b50800000000000000
+      internalID: 6562753681778653092
       vertices: []
       indices: 
       edges: []
@@ -142,8 +151,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 30a65a4410e34edb0800000000000000
-      internalID: -4763614330683561469
+      spriteID: dadc2388d0cec7470800000000000000
+      internalID: 8393843348375522733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InventorySlot_2
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 350
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c162b73d389773830800000000000000
+      internalID: 4050839996938790428
       vertices: []
       indices: 
       edges: []

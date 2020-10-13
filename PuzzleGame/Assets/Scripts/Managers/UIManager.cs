@@ -10,7 +10,8 @@ namespace PuzzleGame.UI
     [RequireComponent(typeof(Canvas))]
     public class UIManager : MonoBehaviour
     {
-        Stack<GameMenu> _MenuStack = new Stack<GameMenu>();
+        //a linkedlist that behaves like a stack
+        LinkedList<GameMenu> _MenuStack = new LinkedList<GameMenu>();
         List<GameMenu> _MenuInstances = new List<GameMenu>();
 
         Canvas _canvas;
@@ -63,7 +64,6 @@ namespace PuzzleGame.UI
             foreach (GameMenu menuInstance in _MenuInstances)
             {
                 menuInstance.gameObject.SetActive(false);
-/*
                 if (menuInstance != MainMenu.Instance)
                 {
                     menuInstance.gameObject.SetActive(false);
@@ -72,7 +72,6 @@ namespace PuzzleGame.UI
                 {
                     OpenMenu(menuInstance);
                 }
-*/
             }
         }
 
@@ -86,15 +85,23 @@ namespace PuzzleGame.UI
 
             if (_MenuStack.Count > 0)
             {
-                foreach (GameMenu menu in _MenuStack)
+                for(var curNode = _MenuStack.First; curNode != null; curNode = curNode.Next)
                 {
-                    menu.gameObject.SetActive(false);
+                    if(ReferenceEquals(curNode.Value, menuInstance))
+                    {
+                        //already opened
+                        _MenuStack.Remove(curNode);
+                    }
+                    else
+                    {
+                        curNode.Value.gameObject.SetActive(false);
+                    }
                 }
             }
 
             menuInstance.gameObject.SetActive(true);
             menuInstance.OnEnterMenu();
-            _MenuStack.Push(menuInstance);
+            _MenuStack.AddFirst(menuInstance);
         }
         public void CloseCurrentMenu()
         {
@@ -104,21 +111,22 @@ namespace PuzzleGame.UI
                 return;
             }
 
-            GameMenu topMenu = _MenuStack.Pop();
+            GameMenu topMenu = _MenuStack.First.Value;
+            _MenuStack.RemoveFirst();
             topMenu.OnLeaveMenu();
             topMenu.gameObject.SetActive(false);
 
             if (_MenuStack.Count > 0)
             {
-                GameMenu nextMenu = _MenuStack.Peek();
+                GameMenu nextMenu = _MenuStack.First.Value;
                 nextMenu.gameObject.SetActive(true);
             }
         }
         public GameMenu GetActiveMenu()
         {
-            if (_MenuStack.Count > 0 && _MenuStack.Peek().gameObject.activeSelf)
+            if (_MenuStack.Count > 0 && _MenuStack.First.Value.gameObject.activeSelf)
             {
-                return _MenuStack.Peek();
+                return _MenuStack.First.Value;
             }
             else
             {

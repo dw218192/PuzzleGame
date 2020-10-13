@@ -28,8 +28,7 @@ namespace PuzzleGame.UI
 
         class DialogueBufferEntry
         {
-            public Constant id;
-            public string[] dialogues;
+            public DialogueDef def;
             public int cur = 0;
         }
 
@@ -52,19 +51,19 @@ namespace PuzzleGame.UI
         DialogueBufferEntry _curDialogue = null;
         Queue<DialogueBufferEntry> _bufferedDialogues = new Queue<DialogueBufferEntry>();
 
-        public void DisplayDialogue(string[] dialogueSequence, Constant id)
+        public void DisplayDialogue(DialogueDef dialogueDef)
         {
-            if(dialogueSequence != null)
+            if(dialogueDef)
             {
                 //if the dialogue box is inactive, there shouldn't be any dialogues left in the buffer
                 Debug.Assert(!(!_dialoguePanel.activeSelf && _bufferedDialogues.Count > 0));
 
 
-                DialogueBufferEntry entry = new DialogueBufferEntry { dialogues = dialogueSequence, id = id };
+                DialogueBufferEntry entry = new DialogueBufferEntry { def = dialogueDef };
                 //activate the dialogue box and advance the dialogue if there is no dialogue yet
                 if (!_dialoguePanel.activeSelf)
                 {
-                    Messenger.Broadcast(M_EventType.ON_DIALOGUE_START, new DialogueEventData(id));
+                    Messenger.Broadcast(M_EventType.ON_DIALOGUE_START, new DialogueEventData(dialogueDef));
 
                     _dialoguePanel.SetActive(true);
                     _curDialogue = entry;
@@ -80,20 +79,20 @@ namespace PuzzleGame.UI
         }
         void OnPressDialogueButton()
         {
-            if (_curDialogue.cur == _curDialogue.dialogues.Length)
+            if (_curDialogue.cur == _curDialogue.def.dialogues.Length)
             {
-                Messenger.Broadcast(M_EventType.ON_DIALOGUE_END, new DialogueEventData(_curDialogue.id));
+                Messenger.Broadcast(M_EventType.ON_DIALOGUE_END, new DialogueEventData(_curDialogue.def));
 
                 if (_bufferedDialogues.Count > 0)
                     _curDialogue = _bufferedDialogues.Dequeue();
             }
 
-            if (_curDialogue.cur < _curDialogue.dialogues.Length)
+            if (_curDialogue.cur < _curDialogue.def.dialogues.Length)
             {
-                _dialogueText.text = _curDialogue.dialogues[_curDialogue.cur++];
+                _dialogueText.text = _curDialogue.def.dialogues[_curDialogue.cur++];
 
                 //nothing left
-                if (_curDialogue.cur == _curDialogue.dialogues.Length && _bufferedDialogues.Count == 0)
+                if (_curDialogue.cur == _curDialogue.def.dialogues.Length && _bufferedDialogues.Count == 0)
                 {
                     _dialogueButtonText.text = "Close";
                 }
@@ -144,9 +143,17 @@ namespace PuzzleGame.UI
             {
                 _optionButtons[i++].gameObject.SetActive(false);
             }
+             
+            if(back != null)
+            {
+                _backButton.gameObject.SetActive(true);
+                _backButton.GetComponentInChildren<Text>().text = back;
+            }
+            else
+            {
+                _backButton.gameObject.SetActive(false);
+            }
 
-            _backButton.gameObject.SetActive(true);
-            _backButton.GetComponentInChildren<Text>().text = back;
 
             GameContext.s_UIMgr.OpenMenu(Instance);
         }

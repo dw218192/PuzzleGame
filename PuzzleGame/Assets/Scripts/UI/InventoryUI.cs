@@ -9,65 +9,32 @@ namespace PuzzleGame.UI
 {
     public class InventoryUI : MonoBehaviour
     {
-        [SerializeField] GameObject[] _itemSlots;
-        
-        struct SlotDisplayData
-        {
-            private Image _displayImg;
-            private Text _quantityText;
-
-            public SlotDisplayData(Image displayImg, Text quantityText)
-            {
-                _displayImg = displayImg;
-                _quantityText = quantityText;
-
-                _displayImg.enabled = _quantityText.enabled = false;
-            }
-            public void Set(Sprite sprite, int quantity)
-            {
-                _displayImg.enabled = _quantityText.enabled = true;
-
-                _displayImg.sprite = sprite;
-                _quantityText.text = quantity.ToString();
-            }
-            public void UnSet()
-            {
-                _displayImg.enabled = _quantityText.enabled = false;
-            }
-        }
-
-        SlotDisplayData[] _slotDisplayData;
-        int _numSlots;
+        [SerializeField] GameObject _slotRoot;
+        InventorySlot[] _itemSlots;
 
         private void Awake()
         {
             Messenger.AddListener<InventoryChangeEventData>(M_EventType.ON_INVENTORY_CHANGE, OnInventoryChange);
-
-            _numSlots = _itemSlots.Length;
-            _slotDisplayData = new SlotDisplayData[_numSlots];
-
-            for (int i=0; i< _numSlots; i++)
+            _itemSlots = _slotRoot.GetComponentsInChildren<InventorySlot>();
+            foreach(var slot in _itemSlots)
             {
-                Image itemImg = _itemSlots[i].GetComponentInChildren<Image>();
-                Text quantityText = _itemSlots[i].GetComponentInChildren<Text>();
-
-                _slotDisplayData[i] = new SlotDisplayData(itemImg, quantityText);
+                slot.UnSet();
             }
         }
 
         void OnInventoryChange(InventoryChangeEventData data)
         {
-            Assert.IsTrue( data.slotIndex >= 0 && data.slotIndex < _numSlots && data.curItemQuantity > 0);
+            Assert.IsTrue( data.slotIndex >= 0 && data.slotIndex < _itemSlots.Length && data.curItemQuantity > 0);
 
             //item not found
             if (data.curItemQuantity == 0)
             {
-                _slotDisplayData[data.slotIndex].UnSet();
+                _itemSlots[data.slotIndex].UnSet();
             }
             else
             {
-                _slotDisplayData[data.slotIndex].Set(
-                    data.itemDef.inventoryDisplaySprite,
+                _itemSlots[data.slotIndex].Set(
+                    data.itemDef,
                     data.curItemQuantity);
             }
         }

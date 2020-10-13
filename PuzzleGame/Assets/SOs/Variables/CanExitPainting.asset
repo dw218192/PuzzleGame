@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b1017e1c013d6c45aec25c9c04b2ced, type: 3}
-  m_Name: CanGoOutOfStartingRoom
+  m_Name: CanExitPainting
   m_EditorClassIdentifier: 
   defaultValue: 0

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 using PuzzleGame.EventSystem;
 using PuzzleGame.UI;
+using UnityEngine.Events;
 
 namespace PuzzleGame
 {
@@ -97,9 +98,29 @@ namespace PuzzleGame
         {
             Room curRoom = GameContext.s_gameMgr.curRoom;
 
+            int keysLeft = 2;
+            if(player.inventory.Count > 0)
+            {
+                keysLeft = 2 - player.inventory[0].quantity;
+            }
+
             if (curRoom.roomIndex == GameConst.k_startingRoomIndex)
             {
-                DialogueMenu.Instance.DisplayPrompt("Message", "You need 2 keys to open this door", null, null, "Alright");
+                if(keysLeft > 0)
+                {
+                    DialogueMenu.Instance.DisplayPrompt("Message", $"You need <color=red>{keysLeft}</color> more key(s) to open this door", null, null, "Alright");
+                }
+                else
+                {
+                    Button.ButtonClickedEvent option1 = new Button.ButtonClickedEvent();
+                    option1.AddListener(GameContext.s_gameMgr.QuitGame);
+
+                    (string, Button.ButtonClickedEvent)[] options =
+                    {
+                        ("Yes", option1),
+                    };
+                    DialogueMenu.Instance.DisplayPrompt("Message", "insert all keys?", null, options, "No");
+                }
             }
             else
             {
