@@ -11,6 +11,7 @@ using PuzzleGame.EventSystem;
 
 namespace PuzzleGame
 {
+    [Obsolete]
     public class ChandelierPuzzle : MonoBehaviour
     {
         //4 lights, hardcoded
@@ -28,12 +29,9 @@ namespace PuzzleGame
         [SerializeField] Text _prompt;
 
         Button[] _buttons;
-        const int k_maxStage = 4;
 
         //23 1 34 42
         [SerializeField] string _correctSequence = "3142";
-
-        int _curStage = 0;
         StringBuilder _userSequence = new StringBuilder();
 
         bool _viewCodeMode = false;
@@ -161,7 +159,6 @@ namespace PuzzleGame
         private void ResetAll()
         {
             _userSequence.Clear();
-            _curStage = 0;
             SetSprites(_unlitSprite);
         }
 

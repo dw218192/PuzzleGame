@@ -13,6 +13,9 @@ namespace PuzzleGame.EventSystem
     [Serializable]
     //dialogue sequence + dialogue identifier
     public class DialogueEvent : UnityEvent<DialogueDef> { }
+
+    [Serializable]
+    public class InteractionEvent : UnityEvent<Interactable, Player> { }
     #endregion
 
     #region Messenger Events

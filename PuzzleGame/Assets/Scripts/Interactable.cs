@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Assertions;
-using PuzzleGame.UI;
+﻿using UnityEngine;
+using UltEvents;
 
 namespace PuzzleGame
 {
@@ -16,14 +12,18 @@ namespace PuzzleGame
 
     public class Interactable : Actor
     {
-        //interaction event
-        [SerializeField] UnityEvent<Interactable, Player> _event;
-        [SerializeField] DialogueDef _interactionDialogue;
-        [SerializeField] EInteractType _type;
+        /// <summary>
+        /// Interaction Events with static parameters (pre-configured during edit-time)
+        /// </summary>
+        [SerializeField] protected UltEvent _interactionEvent;
+        /// <summary>
+        /// Prerequites for interaction
+        [SerializeField] Condition _prerequisite;
+        /// </summary>
 
         //for arrow/outline effects
         [SerializeField] Color _outlineColor = Color.red;
-        [SerializeField] bool _alwaysShowOutline = false;
+        [SerializeField] bool _showOutline = false;
         [SerializeField] ArrowDef _arrowDef = null;
         [SerializeField] bool _animateArrow = false;
         [SerializeField] Transform _arrowIconTransform;
@@ -31,13 +31,14 @@ namespace PuzzleGame
         //for pick-ups only
         [SerializeField] InventoryItemDef _itemDef = null;
 
-        //inspect setting
-        [SerializeField] BoolVariable _prerequite;
+        public bool canInteract { 
+            get 
+            {
+                return _prerequisite == null || _prerequisite.Evaluate(); 
+            }
+        }
 
-        public bool canInteract { get { return _prerequite == null || _prerequite.val; } }
-        public EInteractType type { get { return _type; } }
         public Color outlineColor { get { return _outlineColor; } }
-        public bool alwaysShowOutline { get { return _alwaysShowOutline; } }
         public InventoryItemDef itemDef { get { return _itemDef; } }
 
         protected override void Awake()
@@ -48,12 +49,6 @@ namespace PuzzleGame
         protected override void Start()
         {
             base.Start();
-            /*
-            if (_prerequite != null)
-            {
-                Debug.Log($"_prerequite.val={_prerequite.val}\n!_prerequite || _prerequite.val={!_prerequite || _prerequite.val}");
-            }
-            */
             if (spriteRenderer && spriteRenderer.sprite)
                 SetOutline(false);
         }
@@ -61,7 +56,7 @@ namespace PuzzleGame
         public void OnEnterRange()
         {
             //if we're a pick-up item or outline is forced to show
-            if (type == EInteractType.PICK_UP || alwaysShowOutline)
+            if (_showOutline)
             {
                 if (spriteRenderer && spriteRenderer.sprite)
                 {
@@ -77,17 +72,14 @@ namespace PuzzleGame
             }
         }
 
-        public void OnInteract(Player player)
+        public void OnInteract()
         {
-            _event.Invoke(this, player);
-
-            if (_interactionDialogue)
-                DialogueMenu.Instance.DisplayDialogue(_interactionDialogue);
+            _interactionEvent?.Invoke();
         }
 
         public void OnExitRange()
         {
-            if (type == EInteractType.PICK_UP || alwaysShowOutline)
+            if (_showOutline)
                 SetOutline(false);
 
             if (_arrowDef && _arrowIconTransform)

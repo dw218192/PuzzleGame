@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2709149144085157272}
   - component: {fileID: 1627829898867884624}
   - component: {fileID: 9158768611845694184}
-  - component: {fileID: 7733708393781477971}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -105,33 +104,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7733708393781477971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 876762609934798622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd23fda432b597449abb626238bcd098, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _chandelier: {fileID: 8418496411045956146}
-  _codeClip: {fileID: 7400000, guid: 3198910e0e423884fb25c0226738432e, type: 2}
-  _reward: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
-  _puzzleCamera: {fileID: 5789735374126141754}
-  _canvas: {fileID: 2709149144085157272}
-  _litSprite: {fileID: -8865671059513095544, guid: a0c486a4a53f3b646b180afce0e6476f, type: 3}
-  _unlitSprite: {fileID: -6974825564043854688, guid: a0c486a4a53f3b646b180afce0e6476f, type: 3}
-  _acceptedSprite: {fileID: 7754917867891159947, guid: a0c486a4a53f3b646b180afce0e6476f, type: 3}
-  _light1: {fileID: 6106923308325467496}
-  _light2: {fileID: 5012406450479558561}
-  _light3: {fileID: 1995920809149235064}
-  _light4: {fileID: 2361784159804820924}
-  _backButton: {fileID: 4873275531195425909}
-  _prompt: {fileID: 4472253556283551981}
-  _correctSequence: 3142
 --- !u!1 &3554537240180651232
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,7 +583,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8980837169961123855}
-  - component: {fileID: 8418496411045956146}
+  - component: {fileID: 4192054488882457051}
   - component: {fileID: 8714107586425924999}
   - component: {fileID: 2671655752270486794}
   - component: {fileID: 8777368075975844714}
@@ -639,7 +611,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8418496411045956146
+--- !u!114 &4192054488882457051
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -648,36 +620,72 @@ MonoBehaviour:
   m_GameObject: {fileID: 5411823733164012428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
+  m_Script: {fileID: 11500000, guid: 8811f2dcaef13cf42ae11dbf55e903cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _animClips:
   - {fileID: 7400000, guid: 99da752189627b84ca3f926f710a94fc, type: 2}
   - {fileID: 7400000, guid: 3198910e0e423884fb25c0226738432e, type: 2}
-  _event:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7733708393781477971}
-        m_TargetAssemblyTypeName: PuzzleGame.ChandelierPuzzle, Assembly-CSharp
-        m_MethodName: EnterPuzzle
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  _interactionDialogue: {fileID: 0}
-  _type: 1
-  _outlineColor: {r: 0, g: 0.00002193451, b: 1, a: 1}
-  _alwaysShowOutline: 1
+  _interactionEvent:
+    _PersistentCalls: []
+  _prerequisite: {fileID: 11400000, guid: f62a018fec0f0ab49a247ff5febef064, type: 2}
+  _outlineColor: {r: 0, g: 0.52991295, b: 1, a: 1}
+  _showOutline: 1
   _arrowDef: {fileID: 0}
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
   _itemDef: {fileID: 0}
-  _prerequite: {fileID: 11400000, guid: fc00ecca4baee9342a77a9aad30c3f54, type: 2}
+  _inspectCamera: {fileID: 5789735374126141754}
+  _canvas: {fileID: 2709149144085157272}
+  _backButton: {fileID: 4873275531195425909}
+  _successEvent:
+    _PersistentCalls:
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.DisplayDialogue
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.DialogueDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: 88af68965174c7f43af1a1dcd9364fe4, type: 2}
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.AddToInventory
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.InventoryItemDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
+      - _Type: 3
+        _Int: 1
+        _String: 
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 0}
+  _failEvent:
+    _PersistentCalls: []
+  _codeClip: {fileID: 7400000, guid: 3198910e0e423884fb25c0226738432e, type: 2}
+  _litSprite: {fileID: -8865671059513095544, guid: a0c486a4a53f3b646b180afce0e6476f, type: 3}
+  _unlitSprite: {fileID: -6974825564043854688, guid: a0c486a4a53f3b646b180afce0e6476f, type: 3}
+  _acceptedSprite: {fileID: 7754917867891159947, guid: a0c486a4a53f3b646b180afce0e6476f, type: 3}
+  _light1: {fileID: 6106923308325467496}
+  _light2: {fileID: 5012406450479558561}
+  _light3: {fileID: 1995920809149235064}
+  _light4: {fileID: 2361784159804820924}
+  _prompt: {fileID: 4472253556283551981}
+  _correctSequence: 3142
 --- !u!212 &8714107586425924999
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -265,7 +265,7 @@ namespace PuzzleGame
             if(Input.GetKeyDown(KeyCode.E))
             {
                 if(_curInteractable)
-                    _curInteractable.OnInteract(_player);
+                    _curInteractable.OnInteract();
             }
 
             bool canGoOut = true;
@@ -295,7 +295,7 @@ namespace PuzzleGame
                         //TODO redo this check here
                         if (GameContext.s_gameMgr.curRoom.roomIndex == 2)
                         {
-                            DialogueMenu.Instance.DisplayPrompt("Message", "I will fall to death", null, null, "Ok then");
+                            DialogueMenu.Instance.DisplayPromptOneShot("Message", "I will fall to death", null, null, "Ok then");
                         }
                         else
                         {

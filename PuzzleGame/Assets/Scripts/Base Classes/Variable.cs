@@ -5,7 +5,9 @@ using UnityEngine;
 
 namespace PuzzleGame
 {
-    public abstract class Variable<T> : ScriptableObject
+    public abstract class Variable : ScriptableObject { }
+
+    public abstract class Variable<T> : Variable
     {
         public T defaultValue;
         private T _val;

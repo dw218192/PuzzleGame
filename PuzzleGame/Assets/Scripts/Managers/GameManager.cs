@@ -7,6 +7,9 @@ using UnityEngine.Timeline;
 using PuzzleGame.EventSystem;
 using PuzzleGame.UI;
 using UnityEngine.Playables;
+using UnityEngine.UI;
+
+using UltEvents;
 
 namespace PuzzleGame
 {
@@ -21,46 +24,48 @@ namespace PuzzleGame
         public Room roomPrefab = null;
         public Player playerPrefab = null;
 
-        [Serializable]
-        class GameResources
+        public enum EventType
         {
-            public Sprite exitPaintingTutorialImage;
-            public Sprite paintingRotationTutorialImage;
+            ON_START,
+            ON_END,
+        }
+
+
+        class ObjectEvents<T>
+        {
+            public T objectRef;
+            public UltEvent events;
         }
 
         [Serializable]
-        class DialogueUnlockPair
-        {
-            public DialogueDef dialogue;
-            public BoolVariable unlockVariable;
-        }
+        class DialogueEvents : ObjectEvents<DialogueDef> { }
 
-        /// <summary>
-        /// NOTE: cutscenes are identified by PlayableDirector
-        /// dialogues are identified by Constant SOs
-        /// </summary>
         [Serializable]
-        class CutSceneAndDialogues
+        class CutSceneEvents : ObjectEvents<TimelineAsset> { }
+
+        [Serializable]
+        class PromptEvents : ObjectEvents<PromptDef> { }
+
+        [Serializable]
+        class RoomEvents
         {
-            public DialogueDef key1Dialogue;
-            public DialogueDef key1Dialogue2;
-
-            public TimelineAsset puzzle2CutScene;
-            public DialogueDef rotationUnlockDialogue;
-
-            public DialogueDef puzzle2StartDialogue;
-            public DialogueDef puzzle2SuccessDialogue;
+            public bool isOneTime;
+            public UltEvent events;
         }
 
         [SerializeField]
-        DialogueUnlockPair[] _dialogueUnlocks;
+        DialogueEvents[] _dialogueEvents;
+
         [SerializeField]
-        CutSceneAndDialogues _cutSceneAndDialogues = new CutSceneAndDialogues();
+        CutSceneEvents[] _cutSceneEvents;
+
         [SerializeField]
-        GameResources _resources = new GameResources();
+        PromptEvents[] _promptEvents;
+
+        [SerializeField]
+        RoomEvents[] _enterRoomEvents;
+
         EGameState _gameState = EGameState.NONE;
-        HashSet<ScriptableObject> _hasPlayed = new HashSet<ScriptableObject>();
-
         public Room curRoom { get; set; } = null;
 
         private void Awake()
@@ -71,10 +76,6 @@ namespace PuzzleGame
                 GameContext.s_gameMgr = this;
 
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
-            Messenger.AddListener<CutSceneEventData>(M_EventType.ON_CUTSCENE_END, OnEndCutScene);
-            Messenger.AddListener<DialogueEventData>(M_EventType.ON_DIALOGUE_END, OnEndDialogue);
-            Messenger.AddListener<PuzzleEventData>(M_EventType.ON_PUZZLE_START, OnStartPuzzle);
-            Messenger.AddListener<PuzzleEventData>(M_EventType.ON_PUZZLE_END, OnEndPuzzle);
         }
 
         public void StartGame()
@@ -93,7 +94,7 @@ namespace PuzzleGame
                 Application.Quit();
             }
 
-            DialogueMenu.Instance.DisplayPrompt("Congrats", "You have beat the game (for now)!!", null, null, null);
+            DialogueMenu.Instance.DisplayPromptOneShot("Congrats", "You have beat the game (for now)!!", null, null, null);
             StartCoroutine(_routine());
         }
 
@@ -107,78 +108,49 @@ namespace PuzzleGame
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
 
-            //playtest build
-            if (curRoom.roomIndex == GameConst.k_startingRoomIndex &&
-                !_hasPlayed.Contains(_cutSceneAndDialogues.puzzle2CutScene) &&
-                !_hasPlayed.Contains(_cutSceneAndDialogues.key1Dialogue2) &&
-                _hasPlayed.Contains(_cutSceneAndDialogues.key1Dialogue))
+            foreach(var evts in _enterRoomEvents)
             {
-                DialogueMenu.Instance.DisplayDialogue(_cutSceneAndDialogues.key1Dialogue2);
-            }
-        }
+                evts.events?.Invoke();
 
-        
-        //TODO: these game progression stuff are hardcoded for now, maybe forever
-        private void OnEndCutScene(CutSceneEventData data)
-        {
-            _hasPlayed.Add(data.cutScene);
-        }
-
-        private void OnEndDialogue(DialogueEventData data)
-        {
-            _hasPlayed.Add(data.dialogue);
-
-            if (ReferenceEquals(data.dialogue, _cutSceneAndDialogues.key1Dialogue))
-            {
-                DialogueMenu.Instance.DisplayPrompt("New Interaction", "You may now exit a painting by holding <color=#ff0000ff><size=27>Q</size></color>", _resources.exitPaintingTutorialImage, null, "OK");
-            }
-            else if (ReferenceEquals(data.dialogue, _cutSceneAndDialogues.key1Dialogue2))
-            {
-                TestRoomCutscene();
-            }
-            else if (ReferenceEquals(data.dialogue, _cutSceneAndDialogues.rotationUnlockDialogue))
-            {
-                DialogueMenu.Instance.DisplayPrompt("New Interaction", "You may now interact with the painting near its corners", _resources.paintingRotationTutorialImage, null, "OK");
-            }
-
-            //unlocks
-            foreach(var unlockPair in _dialogueUnlocks)
-            {
-                if(ReferenceEquals(unlockPair.dialogue, data.dialogue))
+                if(evts.isOneTime)
                 {
-                    unlockPair.unlockVariable.val = true;
-                    break;
+                    evts.events.Clear();
                 }
             }
         }
-
-        private void OnEndPuzzle(PuzzleEventData data)
+        public void OnEndCutScene(TimelineAsset cutScene)
         {
-            if(data.finished)
-                DialogueMenu.Instance.DisplayDialogue(_cutSceneAndDialogues.puzzle2SuccessDialogue);
+            foreach (var eventlist in _cutSceneEvents)
+            {
+                if (ReferenceEquals(cutScene, eventlist.objectRef))
+                {
+                    eventlist.events?.Invoke();
+                }
+            }
         }
-
-        private void OnStartPuzzle(PuzzleEventData data)
+        public void OnEndDialogue(DialogueDef dialogue)
         {
-            if(curRoom.roomIndex == GameConst.k_startingRoomIndex && !_hasPlayed.Contains(_cutSceneAndDialogues.puzzle2StartDialogue))
-                DialogueMenu.Instance.DisplayDialogue(_cutSceneAndDialogues.puzzle2StartDialogue);
+            foreach (var eventlist in _dialogueEvents)
+            {
+                if (ReferenceEquals(dialogue, eventlist.objectRef))
+                {
+                    eventlist.events?.Invoke();
+                }
+            }
+        }
+        public void OnEndPrompt(PromptDef prompt)
+        {
+            foreach (var eventlist in _promptEvents)
+            {
+                if (ReferenceEquals(prompt, eventlist.objectRef))
+                {
+                    eventlist.events?.Invoke();
+                }
+            }
         }
         #endregion
 
         #region DEBUG
-        void TestRoomCutscene()
-        {
-            IEnumerator _innerRoutine()
-            {
-                while (curRoom.roomIndex != GameConst.k_startingRoomIndex)
-                    yield return new WaitForEndOfFrame();
-
-                curRoom.PlayCutScene(_cutSceneAndDialogues.puzzle2CutScene);
-            }
-
-            StartCoroutine(_innerRoutine());
-        }
-
         void TestRoomTransition()
         {
             Room outermost = curRoom.prev.prev.prev.prev;

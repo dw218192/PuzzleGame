@@ -31,6 +31,7 @@ namespace PuzzleGame
         private void Director_stopped(PlayableDirector director)
         {
             Messenger.Broadcast(M_EventType.ON_CUTSCENE_END, new CutSceneEventData(director.playableAsset as TimelineAsset));
+            GameContext.s_gameMgr.OnEndCutScene(director.playableAsset as TimelineAsset);
         }
 
         public void Play(TimelineAsset timeline)
@@ -47,6 +48,7 @@ namespace PuzzleGame
 
             Debug.Assert(targetDirector);
             targetDirector.Play();
+            
             Messenger.Broadcast(M_EventType.ON_CUTSCENE_START, new CutSceneEventData(timeline));
         }
 
