@@ -185,6 +185,10 @@ namespace PuzzleGame
                 {
                     Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(_startRoom));
                 }
+                if (GUI.Button(new Rect(Screen.width - 150f, 170f, 150f, 50f), "Go to Next Room"))
+                {
+                    curRoom.GoToNext();
+                }
             }
         }
         #endregion

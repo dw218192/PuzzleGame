@@ -24,7 +24,7 @@ namespace PuzzleGame.UI
 
         void OnInventoryChange(InventoryChangeEventData data)
         {
-            Assert.IsTrue( data.slotIndex >= 0 && data.slotIndex < _itemSlots.Length && data.curItemQuantity > 0);
+            Assert.IsTrue( data.slotIndex >= 0 && data.slotIndex < _itemSlots.Length && data.curItemQuantity >= 0);
 
             //item not found
             if (data.curItemQuantity == 0)

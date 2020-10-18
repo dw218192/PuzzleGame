@@ -46,7 +46,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomPrefab: {fileID: 3927815213173337841, guid: 3dd6c523fd2ca4c419753299de78c660, type: 3}
   playerPrefab: {fileID: 7845882885185920104, guid: 2f507b5cc563519469e4d89361b8c808, type: 3}
-  _dialogueEvents: []
+  _dialogueEvents:
+  - objectRef: {fileID: 11400000, guid: 69dde2320c6e710498cd94be4ca2bf80, type: 2}
+    events:
+      _PersistentCalls:
+      - _Target: {fileID: 0}
+        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null.DisplayPrompt
+        _PersistentArguments:
+        - _Type: 13
+          _Int: 0
+          _String: PuzzleGame.PromptDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+          _X: 0
+          _Y: 0
+          _Z: 0
+          _W: 0
+          _Object: {fileID: 11400000, guid: ffb23b33ed02d1d4896e55e23bbd18b6, type: 2}
+  - objectRef: {fileID: 11400000, guid: 072fe037a2c4892409129bad7ab82b19, type: 2}
+    events:
+      _PersistentCalls:
+      - _Target: {fileID: 0}
+        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null.DisplayPrompt
+        _PersistentArguments:
+        - _Type: 13
+          _Int: 0
+          _String: PuzzleGame.PromptDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+          _X: 0
+          _Y: 0
+          _Z: 0
+          _W: 0
+          _Object: {fileID: 11400000, guid: ffe10dd96133ee247ab560ec4681f50c, type: 2}
   _cutSceneEvents:
   - objectRef: {fileID: 11400000, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
     events:
@@ -99,28 +131,6 @@ MonoBehaviour:
           _Z: 0
           _W: 0
           _Object: {fileID: 11400000, guid: 98c62b64a9b27364da163eb09f09615b, type: 2}
-      - _Target: {fileID: 0}
-        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null.PlayCutscene
-        _PersistentArguments:
-        - _Type: 13
-          _Int: 0
-          _String: PuzzleGame.Condition, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
-          _X: 0
-          _Y: 0
-          _Z: 0
-          _W: 0
-          _Object: {fileID: 11400000, guid: 740f43244a423f14b96c734edbb745c4, type: 2}
-        - _Type: 13
-          _Int: 0
-          _String: UnityEngine.Timeline.TimelineAsset, Unity.Timeline, Version=1.0.0.0,
-            Culture=neutral, PublicKeyToken=null
-          _X: 0
-          _Y: 0
-          _Z: 0
-          _W: 0
-          _Object: {fileID: 11400000, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
 --- !u!114 &593198061
 MonoBehaviour:
   m_ObjectHideFlags: 0

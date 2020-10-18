@@ -9,6 +9,7 @@ namespace PuzzleGame
     {
         public Sprite sprite;
         public RuntimeAnimatorController animControl;
+        public bool flipX, flipY;
     }
 
 }

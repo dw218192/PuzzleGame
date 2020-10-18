@@ -10,24 +10,8 @@ using UltEvents;
 
 namespace PuzzleGame.UI
 {
-    public class DialogueMenu : GameMenu<DialogueMenu>
+    public class DialogueMenu : SingletonGameMenu<DialogueMenu>
     {
-        [Serializable]
-        public class PromptDesc
-        {
-            public PromptDesc(string prompt, Sprite image, (string, Button.ButtonClickedEvent)[] options, bool includeBackButton)
-            {
-                this.prompt = prompt;
-                this.image = image;
-                this.options = options;
-                this.includeBackButton = includeBackButton;
-            }
-            public string prompt;
-            public Sprite image;
-            public (string, Button.ButtonClickedEvent)[] options;
-            public bool includeBackButton;
-        }
-
         class DialogueBufferEntry
         {
             public DialogueDef def;
@@ -112,6 +96,9 @@ namespace PuzzleGame.UI
 
         public void DisplayPrompt(PromptDef promptDef)
         {
+            if(_curPrompt)
+                ClosePrompt();
+
             _curPrompt = promptDef;
             _promptPanel.SetActive(true);
             _promptTitleText.text = promptDef.title;
@@ -174,6 +161,9 @@ namespace PuzzleGame.UI
 
         public void DisplayPromptOneShot(string title, string prompt, Sprite image, (string, Button.ButtonClickedEvent)[] options, string back)
         {
+            if (_curPrompt)
+                ClosePrompt();
+
             _curPrompt = null;
             _promptPanel.SetActive(true);
             _promptTitleText.text = title;
@@ -247,12 +237,13 @@ namespace PuzzleGame.UI
             _promptPanel.SetActive(false);
         }
 
-        void ClosePrompt()
+        public void ClosePrompt()
         {
             if(_curPrompt)
             {
                 GameContext.s_gameMgr.OnEndPrompt(_curPrompt);
                 _curPrompt.hasPlayed = true;
+                _curPrompt = null;
             }
 
             _promptPanel.SetActive(false);
@@ -262,7 +253,7 @@ namespace PuzzleGame.UI
                 OnBackPressed();
             }
         }
-        void CloseDialogue()
+        public void CloseDialogue()
         {
             GameContext.s_gameMgr.OnEndDialogue(_curDialogue.def);
             _curDialogue.def.hasPlayed = true;
@@ -277,6 +268,7 @@ namespace PuzzleGame.UI
 
         public override void OnEnterMenu()
         {
+            base.OnEnterMenu();
         }
     }
 }

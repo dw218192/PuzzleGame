@@ -1,6 +1,8 @@
 ﻿using PuzzleGame.EventSystem;
 using PuzzleGame.UI;
 using System;
+using System.Collections.Generic;
+using UltEvents;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -21,9 +23,30 @@ namespace PuzzleGame
         #region Interaction
         [SerializeField] GenericTrigger _interactionTrigger;
         [SerializeField] [Range(0.2f, 5f)] float _exitPaintInteractTime = 2f;
-        float _exitPaintkeyHoldTimer = 0;
-        bool _exitPaintkeyDownLastFrame;
+        float _interactHoldTimer = 0;
+        bool _interactHoldKeyDownLastFrame;
         Interactable _curInteractable;
+        Interactable curInteractable
+        {
+            get => _curInteractable;
+            set
+            {
+                if(!ReferenceEquals(value, _curInteractable))
+                {
+                    if(_curInteractable)
+                    {
+                        _curInteractable.OnExitRange();
+                    }
+                    
+                    _curInteractable = value;
+
+                    if(value)
+                    {
+                        value.OnEnterRange();
+                    }
+                }
+            }
+        }
         float _interactionTriggerX;
         #endregion
 
@@ -50,7 +73,7 @@ namespace PuzzleGame
         }
 
         [SerializeField] MovementConfig _moveConfig = new MovementConfig();
-        
+
         public Vector2 curVelocity { get { return _rgbody.velocity; } }
 
         bool _controlEnabled = true;
@@ -69,10 +92,9 @@ namespace PuzzleGame
 
         private void ClearState()
         {
-            _exitPaintkeyHoldTimer = 0;
-            _exitPaintkeyDownLastFrame = false;
-            _curInteractable = null;
-
+            _interactHoldTimer = 0;
+            _interactHoldKeyDownLastFrame = false;
+            curInteractable = null;
         }
 
         private void Awake()
@@ -151,14 +173,25 @@ namespace PuzzleGame
 
         void OnTriggerEnterInteractable(Collider2D collider)
         {
-            if (_curInteractable)
-                return;
-
             Interactable interactable = collider.GetComponent<Interactable>();
             if (interactable && interactable.canInteract)
             {
-                _curInteractable = interactable;
-                _curInteractable.OnEnterRange();
+                if(curInteractable)
+                {
+                    float dist = Vector2.Distance(collider.transform.position, transform.position);
+                    if(dist < Vector2.Distance(curInteractable.transform.position, transform.position))
+                    {
+                        curInteractable = interactable;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    curInteractable = interactable;
+                }
             }
         }
 
@@ -168,8 +201,7 @@ namespace PuzzleGame
 
             if (interactable && Object.ReferenceEquals(interactable, _curInteractable))
             {
-                _curInteractable.OnExitRange();
-                _curInteractable = null;
+                curInteractable = null;
             }
         }
 
@@ -191,6 +223,14 @@ namespace PuzzleGame
         {
             MovementUpdate();
             InteractionUpdate();
+
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                if(!ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), MainMenu.Instance))
+                {
+                    GameContext.s_UIMgr.CloseCurrentMenu();
+                }
+            }
         }
 
         void MovementUpdate()
@@ -262,10 +302,9 @@ namespace PuzzleGame
             if (!controlEnabled)
                 return;
 
-            if(Input.GetKeyDown(KeyCode.E))
+            if(Input.GetKeyDown(KeyCode.E) && curInteractable)
             {
-                if(_curInteractable)
-                    _curInteractable.OnInteract();
+                curInteractable.OnInteract();
             }
 
             bool canGoOut = true;
@@ -282,14 +321,14 @@ namespace PuzzleGame
             {
                 bool exitPaintingkeyDown = Input.GetKey(KeyCode.Q);
                 //go out of the painting
-                if (_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
+                if (_interactHoldKeyDownLastFrame && exitPaintingkeyDown)
                 {
-                    _exitPaintkeyHoldTimer = Mathf.Min(_exitPaintInteractTime, _exitPaintkeyHoldTimer + Time.deltaTime);
-                    GameContext.s_effectMgr.SetProgress(_exitPaintkeyHoldTimer / _exitPaintInteractTime);
+                    _interactHoldTimer = Mathf.Min(_exitPaintInteractTime, _interactHoldTimer + Time.deltaTime);
+                    GameContext.s_effectMgr.SetProgress(_interactHoldTimer / _exitPaintInteractTime);
 
-                    if (Mathf.Approximately(_exitPaintkeyHoldTimer, _exitPaintInteractTime))
+                    if (Mathf.Approximately(_interactHoldTimer, _exitPaintInteractTime))
                     {
-                        _exitPaintkeyHoldTimer = 0;
+                        _interactHoldTimer = 0;
                         GameContext.s_effectMgr.HideProgressBar();
 
                         //TODO redo this check here
@@ -303,19 +342,19 @@ namespace PuzzleGame
                         }
                     }
                 }
-                else if (!_exitPaintkeyDownLastFrame && exitPaintingkeyDown)
+                else if (!_interactHoldKeyDownLastFrame && exitPaintingkeyDown)
                 {
-                    _exitPaintkeyHoldTimer = 0;
+                    _interactHoldTimer = 0;
                     GameContext.s_effectMgr.ShowProgressBar((Vector2)transform.position + 0.5f * Vector2.down,
                         Quaternion.Euler(0, 0, -90), transform);
                     GameContext.s_effectMgr.SetProgress(0);
                 }
-                else if (_exitPaintkeyDownLastFrame && !exitPaintingkeyDown)
+                else if (_interactHoldKeyDownLastFrame && !exitPaintingkeyDown)
                 {
                     GameContext.s_effectMgr.HideProgressBar();
                 }
 
-                _exitPaintkeyDownLastFrame = exitPaintingkeyDown;
+                _interactHoldKeyDownLastFrame = exitPaintingkeyDown;
             }
         }
 

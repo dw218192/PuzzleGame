@@ -11,13 +11,10 @@ namespace PuzzleGame.UI
     public class UIManager : MonoBehaviour
     {
         //a linkedlist that behaves like a stack
-        LinkedList<GameMenu> _MenuStack = new LinkedList<GameMenu>();
-        List<GameMenu> _MenuInstances = new List<GameMenu>();
+        LinkedList<IGameMenu> _MenuStack = new LinkedList<IGameMenu>();
+        List<IGameMenu> _MenuInstances = new List<IGameMenu>();
 
-        Canvas _canvas;
         [SerializeField] GameObject _cutSceneFrame;
-        [SerializeField] DialogueMenu _dialogueMenu;
-        [SerializeField] MainMenu _mainMenu;
 
         private void Awake()
         {
@@ -25,8 +22,6 @@ namespace PuzzleGame.UI
                 Destroy(this);
             else
                 GameContext.s_UIMgr = this;
-
-            _canvas = gameObject.GetComponent<Canvas>();
 
             Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => { StartCutScene(); });
             Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => { EndCutScene(); });
@@ -36,7 +31,6 @@ namespace PuzzleGame.UI
         // Start is called before the first frame update
         void Start()
         {
-            InitializeMenus();
         }
 
         // Update is called once per frame
@@ -44,38 +38,24 @@ namespace PuzzleGame.UI
         {
         }
 
-        private void InitializeMenus()
+        public void RegisterMenu(IGameMenu menu)
         {
-            BindingFlags myFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
-            FieldInfo[] fields = this.GetType().GetFields(myFlags);
-
-            foreach (FieldInfo field in fields)
+            bool found = false;
+            foreach(var ins in _MenuInstances)
             {
-                GameMenu prefab = field.GetValue(this) as GameMenu;
-
-                if (prefab != null)
+                if(ReferenceEquals(ins, menu))
                 {
-                    GameMenu menuInstance = Instantiate(prefab, _canvas.transform);
-
-                    _MenuInstances.Add(menuInstance);
+                    found = true;
                 }
             }
 
-            foreach (GameMenu menuInstance in _MenuInstances)
+            if(!found)
             {
-                menuInstance.gameObject.SetActive(false);
-                if (menuInstance != MainMenu.Instance)
-                {
-                    menuInstance.gameObject.SetActive(false);
-                }
-                else
-                {
-                    OpenMenu(menuInstance);
-                }
+                _MenuInstances.Add(menu);
             }
         }
 
-        public void OpenMenu(GameMenu menuInstance)
+        public void OpenMenu(IGameMenu menuInstance)
         {
             if (menuInstance == null)
             {
@@ -91,15 +71,17 @@ namespace PuzzleGame.UI
                     {
                         //already opened
                         _MenuStack.Remove(curNode);
-                    }
-                    else
-                    {
-                        curNode.Value.gameObject.SetActive(false);
+                        break;
                     }
                 }
+                /*
+                if (_MenuStack.Count > 0)
+                {
+                    _MenuStack.First.Value.OnLeaveMenu();
+                }
+                */
             }
 
-            menuInstance.gameObject.SetActive(true);
             menuInstance.OnEnterMenu();
             _MenuStack.AddFirst(menuInstance);
         }
@@ -107,24 +89,22 @@ namespace PuzzleGame.UI
         {
             if (_MenuStack.Count == 0)
             {
-                Debug.LogWarning("MenuManager.CloseCurrentMenu()- there is no menu in the stack");
                 return;
             }
 
-            GameMenu topMenu = _MenuStack.First.Value;
+            IGameMenu topMenu = _MenuStack.First.Value;
             _MenuStack.RemoveFirst();
             topMenu.OnLeaveMenu();
-            topMenu.gameObject.SetActive(false);
 
             if (_MenuStack.Count > 0)
             {
-                GameMenu nextMenu = _MenuStack.First.Value;
-                nextMenu.gameObject.SetActive(true);
+                IGameMenu nextMenu = _MenuStack.First.Value;
+                nextMenu.OnEnterMenu();
             }
         }
-        public GameMenu GetActiveMenu()
+        public IGameMenu GetActiveMenu()
         {
-            if (_MenuStack.Count > 0 && _MenuStack.First.Value.gameObject.activeSelf)
+            if (_MenuStack.Count > 0)
             {
                 return _MenuStack.First.Value;
             }

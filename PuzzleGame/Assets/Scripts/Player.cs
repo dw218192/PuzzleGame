@@ -39,13 +39,26 @@ namespace PuzzleGame
         {
         }
 
+        public bool HasItem(InventoryItemDef def, int minQuantity)
+        {
+            for (int i = 0; i < _inventory.Count; i++)
+            {
+                if (ReferenceEquals(_inventory[i].def, def))
+                {
+                    return _inventory[i].quantity >= minQuantity;
+                }
+            }
+
+            return false;
+        }
+
         public void AddToInventory(InventoryItemDef def, int quantity)
         {
             //the inventory is very small, so just brute force everything
             int index = -1, itemQuantity = 0;
             for(int i=0; i< _inventory.Count; i++)
             {
-                if(_inventory[i].def == def)
+                if(ReferenceEquals(_inventory[i].def, def))
                 {
                     _inventory[i].quantity += quantity;
                     itemQuantity = _inventory[i].quantity;
@@ -61,6 +74,25 @@ namespace PuzzleGame
                 index = _inventory.Count - 1;
             }
 
+            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(def, index, itemQuantity));
+        }
+        public void RemoveFromInventory(InventoryItemDef def, int quantity)
+        {
+            int index = -1, itemQuantity = 0;
+
+            for (int i = 0; i < _inventory.Count; i++)
+            {
+                if (ReferenceEquals(_inventory[i].def, def))
+                {
+                    Debug.Assert(_inventory[i].quantity >= quantity);
+                    _inventory[i].quantity -= quantity;
+                    itemQuantity = _inventory[i].quantity;
+                    index = i;
+                    break;
+                }
+            }
+
+            Debug.Assert(index != -1);
             Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(def, index, itemQuantity));
         }
     }

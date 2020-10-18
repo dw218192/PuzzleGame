@@ -46,11 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animClips: []
+  _roomRange: {x: 0, y: 7}
   _interactionEvent:
     _PersistentCalls:
     - _Target: {fileID: 0}
       _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null.AddToInventory
+        PublicKeyToken=null.PickupItem
       _PersistentArguments:
       - _Type: 13
         _Int: 0
@@ -69,19 +70,6 @@ MonoBehaviour:
         _Z: 0
         _W: 0
         _Object: {fileID: 0}
-    - _Target: {fileID: 0}
-      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null.ConsumeItem
-      _PersistentArguments:
-      - _Type: 13
-        _Int: 0
-        _String: PuzzleGame.InventoryItemDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
-        _X: 0
-        _Y: 0
-        _Z: 0
-        _W: 0
-        _Object: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
     - _Target: {fileID: 0}
       _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null.DisplayDialogue

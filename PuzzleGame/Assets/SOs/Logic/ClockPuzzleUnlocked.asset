@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8656ac0360b21054da01d8e3727573d4, type: 3}
-  m_Name: ChandelierSuccessDialogue
+  m_Script: {fileID: 11500000, guid: 4b1017e1c013d6c45aec25c9c04b2ced, type: 3}
+  m_Name: ClockPuzzleUnlocked
   m_EditorClassIdentifier: 
-  dialogues:
-  - The combination triggered something inside the chadelier...
-  - Another golden key is revealed and you picked it up.
+  defaultValue: 0

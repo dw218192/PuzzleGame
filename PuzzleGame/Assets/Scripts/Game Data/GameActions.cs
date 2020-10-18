@@ -41,11 +41,15 @@ namespace PuzzleGame
             Debug.Assert(GameContext.s_player);
             GameContext.s_player.AddToInventory(inventoryItem, quantity);
         }
-
-        public static void ConsumeItem(InventoryItemDef item)
+        public static void ConsumeItem(InventoryItemDef item, int quantity)
+        {
+            GameContext.s_player.RemoveFromInventory(item, quantity);
+        }
+        public static void PickupItem(InventoryItemDef item, int quantity)
         {
             Room curRoom = GameContext.s_gameMgr.curRoom;
             curRoom.RemoveItemAll(item);
+            AddToInventory(item, quantity);
         }
         public static void DisplayDialogue(DialogueDef dialogue)
         {
@@ -87,6 +91,17 @@ namespace PuzzleGame
                 DisplayPrompt(prompt);
             }
         }
+        public static void ClosePrompt(BoolVariable condition)
+        {
+            ClosePrompt(condition.val);
+        }
+        public static void ClosePrompt(bool condition)
+        {
+            if(condition && ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), DialogueMenu.Instance))
+            {
+                DialogueMenu.Instance.ClosePrompt();
+            }
+        }
         public static void PlayCutscene(BoolVariable condition, TimelineAsset timeline)
         {
             PlayCutscene(condition.val, timeline);
@@ -120,5 +135,40 @@ namespace PuzzleGame
         {
             return prompt.hasPlayed;
         }
+        public static bool PlayerHasItem(InventoryItemDef requiredItem, int minQuantity)
+        {
+            return GameContext.s_player.HasItem(requiredItem, minQuantity);
+        }
+        public static void UnlockWithRequirement(BoolVariable unlockVariable, InventoryItemDef requiredItem, int minQuantity, PromptDef failPrompt)
+        {
+            if (unlockVariable.val)
+            {
+                return;
+            }
+
+            if (PlayerHasItem(requiredItem, minQuantity))
+            {
+                unlockVariable.val = true;
+                ConsumeItem(requiredItem, minQuantity);
+            }
+            else
+            {
+                DialogueMenu.Instance.DisplayPrompt(failPrompt);
+            }
+        }
+
+        #region DEMO
+        public static void DoorInteraction(InventoryItemDef requiredItem, int quantity, PromptDef failPrompt)
+        {
+            if (PlayerHasItem(requiredItem, quantity))
+            {
+                GameContext.s_gameMgr.QuitGame();
+            }
+            else
+            {
+                DialogueMenu.Instance.DisplayPrompt(failPrompt);
+            }
+        }
+        #endregion
     }
 }

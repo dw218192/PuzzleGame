@@ -1,6 +1,7 @@
 ﻿using PuzzleGame.EventSystem;
 using System;
 using System.Collections.Generic;
+using UltEvents;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Tilemaps;
@@ -39,6 +40,9 @@ namespace PuzzleGame
         [SerializeField] Transform _playerSpawnPos;
         [SerializeField] float _paintingRotationStep;
         [SerializeField] float _maxPaintingRotation;
+
+        [SerializeField] UltEvent _roomEvents;
+
         float _paintingRotationAngle = 0;
 
         //conversion methods
@@ -100,6 +104,20 @@ namespace PuzzleGame
                 _roomIndex = value;
                 SetSpriteSortingOrder(value);
                 ConfigSpriteMask(value);
+
+                for(LinkedListNode<Actor> cur = _actors.First; cur != null; )
+                {
+                    Actor actor = cur.Value;
+                    var next = cur.Next;
+
+                    if (_roomIndex < actor.roomRange.x || _roomIndex > actor.roomRange.y)
+                    {
+                        Destroy(actor.gameObject);
+                        _actors.Remove(cur);
+                    }
+
+                    cur = next;
+                }
             }
         }
         int _roomIndex;
@@ -233,6 +251,11 @@ namespace PuzzleGame
             Vector3 pos = _paintingMask.transform.position;
             pos.z = -1;
             _paintingMask.transform.position = pos;
+        }
+
+        private void Update()
+        {
+            _roomEvents.Invoke();
         }
 
         /// <summary>
@@ -413,10 +436,10 @@ namespace PuzzleGame
                     }
                 }
             }
-
-            Debug.Assert(interactable, "Invalid Item ID");
-
-            Destroy(interactable.gameObject);
+            if(interactable)
+            {
+                Destroy(interactable.gameObject);
+            }
         }
 
         public void RemoveItemDownwards(InventoryItemDef itemDef)
@@ -448,7 +471,7 @@ namespace PuzzleGame
             }
         }
 
-#region GAME EVENTS
+        #region GAME EVENTS
         private void OnBeforeEnterRoom(RoomEventData data)
         {
 
@@ -479,6 +502,6 @@ namespace PuzzleGame
                 SetActive(true);
             }
         }
-#endregion
+        #endregion
     }
 }

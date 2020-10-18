@@ -6,16 +6,16 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+using UltEvents;
 
 namespace PuzzleGame.EventSystem
 {
     #region Custom Unity Events
+    /// <summary>
+    /// Used in timeline
+    /// </summary>
     [Serializable]
-    //dialogue sequence + dialogue identifier
     public class DialogueEvent : UnityEvent<DialogueDef> { }
-
-    [Serializable]
-    public class InteractionEvent : UnityEvent<Interactable, Player> { }
     #endregion
 
     #region Messenger Events

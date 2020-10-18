@@ -5,12 +5,16 @@ using UnityEngine.UI;
 
 namespace PuzzleGame.UI
 {
-    public class MainMenu : GameMenu<MainMenu>
+    public class MainMenu : SingletonGameMenu<MainMenu>
     {
         [SerializeField] Button _startButton;
-        private void Start()
+
+        protected override void Start()
         {
+            base.Start();
+
             _startButton.onClick.AddListener(StartGame);
+            GameContext.s_UIMgr.OpenMenu(this);
         }
 
         public void StartGame()

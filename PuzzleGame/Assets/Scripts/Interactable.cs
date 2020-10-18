@@ -5,9 +5,8 @@ namespace PuzzleGame
 {
     public enum EInteractType
     {
-        MOVABLE,
-        GENERIC_EVENT,
-        PICK_UP
+        HOLD,
+        PRESS
     }
 
     public class Interactable : Actor
@@ -18,8 +17,8 @@ namespace PuzzleGame
         [SerializeField] protected UltEvent _interactionEvent;
         /// <summary>
         /// Prerequites for interaction
-        [SerializeField] Condition _prerequisite;
         /// </summary>
+        [SerializeField] Condition _prerequisite;
 
         //for arrow/outline effects
         [SerializeField] Color _outlineColor = Color.red;
@@ -49,6 +48,7 @@ namespace PuzzleGame
         protected override void Start()
         {
             base.Start();
+
             if (spriteRenderer && spriteRenderer.sprite)
                 SetOutline(false);
         }
@@ -68,7 +68,7 @@ namespace PuzzleGame
             if (_arrowDef && _arrowIconTransform)
             {
                 GameContext.s_effectMgr.ShowArrow(_arrowDef, _animateArrow, _arrowIconTransform.position,
-                    Quaternion.LookRotation(_arrowIconTransform.forward, _arrowIconTransform.up));
+                    Quaternion.LookRotation(_arrowIconTransform.forward, _arrowIconTransform.up), _arrowDef.flipX, _arrowDef.flipY);
             }
         }
 

@@ -7,7 +7,18 @@ namespace PuzzleGame
     public class Actor : MonoBehaviour, IAnimationClipSource
     {
         [SerializeField] AnimationClip[] _animClips;
+        [SerializeField] Vector2Int _roomRange = new Vector2Int(0, GameConst.k_totalNumRooms-1);
+
         public Room room { get; set; } = null;
+
+        public Vector2Int roomRange
+        {
+            get
+            {
+                return _roomRange;
+            }
+        }
+
         public SpriteRenderer spriteRenderer 
         {
             get

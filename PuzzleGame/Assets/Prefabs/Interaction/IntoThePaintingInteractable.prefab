@@ -76,6 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animClips: []
+  _roomRange: {x: 0, y: 3}
   _interactionEvent:
     _PersistentCalls:
     - _Target: {fileID: 0}

@@ -10,17 +10,27 @@ using UltEvents;
 
 namespace PuzzleGame
 {
+    /*
+        general structure of a puzzle:
+        puzzle --> inspectable --> interactable --> actor
+            world space canvas (the inspected object, any UI on the object itself)
+            screen space canvas (any world-space independent UI)
+    */
+   
     [RequireComponent(typeof(Animator))]
     public class Chandelier : Inspectable
     {
         [Header("Chandelier Puzzle")]
         [SerializeField] UltEvent _successEvent;
-        [SerializeField] UltEvent _failEvent;
         [SerializeField] AnimationClip _codeClip;
+        [SerializeField] string _correctSequence = "3142";
+
+        [Header("world space canvas setting")]
         [SerializeField] Sprite _litSprite, _unlitSprite, _acceptedSprite;
         [SerializeField] Button _light1, _light2, _light3, _light4;
+
+        [Header("screen space canvas setting")]
         [SerializeField] Text _prompt;
-        [SerializeField] string _correctSequence = "3142";
         StringBuilder _userSequence = new StringBuilder();
 
         AnimationClipPlayable _codeClipPlayable;
@@ -36,7 +46,6 @@ namespace PuzzleGame
         {
             base.Start();
 
-            _isSuccessful = false;
             _viewCodeMode = room.roomIndex == GameConst.k_startingRoomIndex;
 
             //puzzle mode
@@ -50,14 +59,6 @@ namespace PuzzleGame
                 _light2.onClick.AddListener(() => { UserInput(1); });
                 _light3.onClick.AddListener(() => { UserInput(2); });
                 _light4.onClick.AddListener(() => { UserInput(3); });
-
-                _backButton.onClick.AddListener(() =>
-                {
-                    if (_isSuccessful)
-                        _successEvent?.Invoke();
-                    else
-                        _failEvent?.Invoke();
-                });
             }
             //view code mode
             else
@@ -86,12 +87,16 @@ namespace PuzzleGame
             {
                 ResetAll();
             }
+
+            if (!_canInspect)
+            {
+                _successEvent?.Invoke();
+            }
         }
 
         void UserInput(int lightId)
         {
-            if (_isSuccessful)
-                return;
+            Debug.Assert(_canInspect);
 
             _lightButtons[lightId].image.sprite = _litSprite;
 
@@ -119,7 +124,7 @@ namespace PuzzleGame
                 {
                     SetSprites(_acceptedSprite);
                     _prompt.text = "<color=green>Unlocked</color>";
-                    _isSuccessful = true;
+                    _canInspect = false;
                 }
             }
         }
@@ -138,8 +143,10 @@ namespace PuzzleGame
             }
         }
 
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (_viewCodeMode)
             {
                 //loop the clip
@@ -148,6 +155,12 @@ namespace PuzzleGame
                     _codeClipPlayable.SetTime(0);
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            if(_viewCodeMode)
+                _codeClipPlayable.GetGraph().Destroy();
         }
     }
 }

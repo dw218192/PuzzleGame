@@ -5,15 +5,29 @@ using UnityEngine.UI;
 
 namespace PuzzleGame.UI
 {
-    public abstract class GameMenu : MonoBehaviour
+    public interface IGameMenu
     {
+        void OnEnterMenu();
+        void OnLeaveMenu();
+        void OnBackPressed();
+    }
+
+    public abstract class GameMenu : MonoBehaviour, IGameMenu
+    {
+        protected virtual void Start()
+        {
+            gameObject.SetActive(false);
+            GameContext.s_UIMgr.RegisterMenu(this);
+        }
+
         public virtual void OnEnterMenu()
         {
-
+            gameObject.SetActive(true);
         }
 
         public virtual void OnLeaveMenu()
         {
+            gameObject.SetActive(false);
         }
 
         public virtual void OnBackPressed()
@@ -26,7 +40,7 @@ namespace PuzzleGame.UI
     }
 
     [DisallowMultipleComponent]
-    public abstract class GameMenu<MenuType> : GameMenu where MenuType : GameMenu<MenuType>
+    public abstract class SingletonGameMenu<MenuType> : GameMenu where MenuType : SingletonGameMenu<MenuType>
     {
         private static MenuType _Instance;
         public static MenuType Instance { get { return _Instance; } }
@@ -41,6 +55,11 @@ namespace PuzzleGame.UI
             {
                 _Instance = (MenuType)this;
             }
+        }
+
+        protected virtual void Start()
+        {
+            base.Start();
         }
 
         protected virtual void OnDestroy()

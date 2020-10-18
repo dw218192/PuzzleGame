@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: ChandelierDialogue
   m_EditorClassIdentifier: 
   dialogues:
-  - Oops! The chandelier appears to have some sort of intricate mechanism inside.
-  - The lights appear to be malfuncioning...
-  - What's this? some kind of combination?
+  - This chandelier appears to have some sort of intricate mechanism inside.
+  - The light bulbs look like some kind of combination input.

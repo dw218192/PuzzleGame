@@ -38,6 +38,7 @@ namespace PuzzleGame
         //      props  collide with player and jumping player
 
         public const int k_defaultLayer = 0;
+        public const int k_UILayer = 5;
         public const int k_playerLayer = 8; //not used for now
         public const int k_playerJumpingLayer = 9; //not used for now
         public const int k_propLayer = 10;
