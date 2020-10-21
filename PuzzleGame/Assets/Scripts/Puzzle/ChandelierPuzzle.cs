@@ -11,7 +11,7 @@ using PuzzleGame.EventSystem;
 
 namespace PuzzleGame
 {
-    [Obsolete]
+    [Obsolete("use inspectable-based chandelier puzzle")]
     public class ChandelierPuzzle : MonoBehaviour
     {
         //4 lights, hardcoded
@@ -118,8 +118,6 @@ namespace PuzzleGame
                     GameContext.s_gameMgr.StartCoroutine(_sucessRoutine());
                 }
             }
-
-            Messenger.Broadcast(M_EventType.ON_PUZZLE_END, new PuzzleEventData(_finished));
         }
 
         public void EnterPuzzle()
@@ -140,8 +138,6 @@ namespace PuzzleGame
             {
                 _codeClipPlayable.SetTime(0);
             }
-
-            Messenger.Broadcast(M_EventType.ON_PUZZLE_START, new PuzzleEventData(_finished));
         }
 
         void OnFail()

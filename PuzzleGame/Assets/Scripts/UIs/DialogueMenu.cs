@@ -50,7 +50,7 @@ namespace PuzzleGame.UI
                 //activate the dialogue box and advance the dialogue if there is no dialogue yet
                 if (!_dialoguePanel.activeSelf)
                 {
-                    Messenger.Broadcast(M_EventType.ON_DIALOGUE_START, new DialogueEventData(dialogueDef));
+                    Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(false));
 
                     _dialoguePanel.SetActive(true);
                     _curDialogue = entry;
@@ -68,7 +68,7 @@ namespace PuzzleGame.UI
         {
             if (_curDialogue.cur == _curDialogue.def.dialogues.Length)
             {
-                Messenger.Broadcast(M_EventType.ON_DIALOGUE_END, new DialogueEventData(_curDialogue.def));
+                Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(true));
 
                 if (_bufferedDialogues.Count > 0)
                     _curDialogue = _bufferedDialogues.Dequeue();

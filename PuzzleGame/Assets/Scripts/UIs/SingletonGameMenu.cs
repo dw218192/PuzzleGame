@@ -57,11 +57,6 @@ namespace PuzzleGame.UI
             }
         }
 
-        protected virtual void Start()
-        {
-            base.Start();
-        }
-
         protected virtual void OnDestroy()
         {
             if (_Instance == this)

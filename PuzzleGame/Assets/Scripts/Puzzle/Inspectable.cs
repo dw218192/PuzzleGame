@@ -43,27 +43,40 @@ namespace PuzzleGame
 
             spriteRenderer.enabled = false;
             
+            //open screen space canvas (which are not managed by the UIManager for now)
             if(_screenInspectionCanvas)
             {
                 _screenInspectionCanvas.gameObject.SetActive(true);
             }
 
+            //open world space canvas
             GameContext.s_UIMgr.OpenMenu(_worldInspectionCanvas);
 
+            //display first dialogue
             if (_firstEncounterDialogue && !_firstEncounterDialogue.hasPlayed)
             {
                 DialogueMenu.Instance.DisplayDialogue(_firstEncounterDialogue);
             }
+
+            Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(false));
         }
 
+
+        /// <summary>
+        /// this is called from the back button of screen space canvas
+        /// </summary>
         public virtual void EndInspect()
         {
             spriteRenderer.enabled = true;
 
+            //disable screen space
             if(_screenInspectionCanvas)
             {
                 _screenInspectionCanvas.gameObject.SetActive(false);
             }
+
+            //enable player ctrl
+            Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(true));
         }
 
         protected virtual void Update()

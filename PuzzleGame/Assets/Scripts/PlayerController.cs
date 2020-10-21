@@ -85,8 +85,34 @@ namespace PuzzleGame
                 if(_controlEnabled != value)
                 {
                     ClearState();
+                    _controlEnabled = value;
                 }
-                _controlEnabled = value;
+            }
+        }
+
+        private void SetControlEnabled(bool enable)
+        {
+            if(!enable)
+            {
+                ++_controlLockCnt;
+            }
+            else
+            {
+                if(_controlLockCnt > 0)
+                {
+                    --_controlLockCnt;
+                }
+            }
+
+            if(enable && _controlLockCnt == 0)
+            {
+                controlEnabled = true;
+                _interactionTrigger.gameObject.SetActive(true);
+            }
+            else
+            {
+                controlEnabled = false;
+                _interactionTrigger.gameObject.SetActive(false);
             }
         }
 
@@ -99,57 +125,33 @@ namespace PuzzleGame
 
         private void Awake()
         {
+            Messenger.AddListener(M_EventType.ON_CHANGE_PLAYER_CONTROL, (PlayerControlEventData data) =>
+            {
+                SetControlEnabled(data.enable);
+            });
             Messenger.AddListener(M_EventType.ON_BEFORE_ENTER_ROOM, (RoomEventData data) => 
             {
-                ++_controlLockCnt;
-                controlEnabled = false; 
+                SetControlEnabled(false);
             });
-
             Messenger.AddListener(M_EventType.ON_ENTER_ROOM, (RoomEventData data) => 
             {
-                if (--_controlLockCnt == 0)
-                    controlEnabled = true;
+                SetControlEnabled(true);
             });
-
             Messenger.AddListener(M_EventType.ON_CUTSCENE_START, (CutSceneEventData data) => 
             {
-                ++_controlLockCnt;
-                controlEnabled = false; 
+                SetControlEnabled(false);
             });
-
             Messenger.AddListener(M_EventType.ON_CUTSCENE_END, (CutSceneEventData data) => 
             {
-                if(--_controlLockCnt == 0)
-                    controlEnabled = true; 
+                SetControlEnabled(true);
             });
-
-            Messenger.AddListener(M_EventType.ON_DIALOGUE_START, (DialogueEventData data) => 
+            Messenger.AddListener(M_EventType.ON_GAME_PAUSED, () =>
             {
-                ++_controlLockCnt;
-                controlEnabled = false; 
+                SetControlEnabled(false);
             });
-
-            Messenger.AddListener(M_EventType.ON_DIALOGUE_END, (DialogueEventData data) => 
+            Messenger.AddListener(M_EventType.ON_GAME_RESUMED, () =>
             {
-                if (--_controlLockCnt == 0)
-                    controlEnabled = true;
-            });
-
-            Messenger.AddListener(M_EventType.ON_PUZZLE_START, (PuzzleEventData data) =>
-            {
-                ++_controlLockCnt;
-                controlEnabled = false;
-
-                _interactionTrigger.gameObject.SetActive(false);
-            });
-
-
-            Messenger.AddListener(M_EventType.ON_PUZZLE_END, (PuzzleEventData data) =>
-            {
-                if (--_controlLockCnt == 0)
-                    controlEnabled = true;
-
-                _interactionTrigger.gameObject.SetActive(true);
+                SetControlEnabled(true);
             });
         }
 
@@ -199,7 +201,7 @@ namespace PuzzleGame
         {
             Interactable interactable = collider.GetComponent<Interactable>();
 
-            if (interactable && Object.ReferenceEquals(interactable, _curInteractable))
+            if (interactable && ReferenceEquals(interactable, _curInteractable))
             {
                 curInteractable = null;
             }
@@ -226,9 +228,16 @@ namespace PuzzleGame
 
             if(Input.GetKeyDown(KeyCode.Escape))
             {
-                if(!ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), MainMenu.Instance))
+                if(GameContext.s_UIMgr.GetOpenMenuCount() > 0)
                 {
-                    GameContext.s_UIMgr.CloseCurrentMenu();
+                    if (!ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), MainMenu.Instance))
+                    {
+                        GameContext.s_UIMgr.CloseCurrentMenu();
+                    }
+                }
+                else
+                {
+                    GameContext.s_UIMgr.OpenMenu(PauseMenu.Instance);
                 }
             }
         }

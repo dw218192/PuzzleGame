@@ -69,28 +69,39 @@ namespace PuzzleGame.EventSystem
     }
 
     [Serializable]
-    public class PuzzleEventData : MessengerEventData
+    public class InspectionEventData : MessengerEventData
     {
-        private PuzzleEventData() { }
-        public PuzzleEventData(bool finished)
+        private InspectionEventData() { }
+        public InspectionEventData(bool finished)
         {
             this.finished = finished;
         }
         public bool finished;
     }
 
+    public class PlayerControlEventData : MessengerEventData
+    {
+        private PlayerControlEventData() { }
+        public PlayerControlEventData(bool enable)
+        {
+            this.enable = enable;
+        }
+        public bool enable;
+    }
+
     public enum M_EventType
     {
-        ON_BEFORE_ENTER_ROOM, //ON_BEFORE_ENTER_ROOM will trigger ON_ENTER_ROOM
-        ON_ENTER_ROOM,
-        ON_EXIT_ROOM,
-        ON_INVENTORY_CHANGE,
-        ON_CUTSCENE_START,
-        ON_CUTSCENE_END,
-        ON_DIALOGUE_START,
-        ON_DIALOGUE_END,
-        ON_PUZZLE_START,
-        ON_PUZZLE_END
+        ON_BEFORE_ENTER_ROOM, //RoomEventData //ON_BEFORE_ENTER_ROOM will trigger ON_ENTER_ROOM
+        ON_ENTER_ROOM, //RoomEventData
+        ON_EXIT_ROOM, //RoomEventData
+
+        ON_INVENTORY_CHANGE, //InventoryChangeEventData
+        ON_CUTSCENE_START, //CutSceneEventData
+        ON_CUTSCENE_END, //CutSceneEventData
+        ON_CHANGE_PLAYER_CONTROL,  //PlayerControlEventData
+
+        ON_GAME_PAUSED,
+        ON_GAME_RESUMED
     }
     #endregion
 }

@@ -24,19 +24,20 @@ namespace PuzzleGame
         public Room roomPrefab = null;
         public Player playerPrefab = null;
 
-        public enum EventType
-        {
-            ON_START,
-            ON_END,
-        }
-
-
         class ObjectEvents<T>
         {
             public T objectRef;
             public UltEvent events;
         }
 
+        #region Game Audio
+        [Header("Audio Configuration")]
+        [SerializeField] AudioClip _mainMenuClip;
+        [SerializeField] AudioClip _gameClip;
+        [SerializeField] float _bgmVolume;
+        #endregion
+
+        #region Game Logic
         [Serializable]
         class DialogueEvents : ObjectEvents<DialogueDef> { }
 
@@ -53,6 +54,7 @@ namespace PuzzleGame
             public UltEvent events;
         }
 
+        [Header("Game Logic Configuration")]
         [SerializeField]
         DialogueEvents[] _dialogueEvents;
 
@@ -64,6 +66,7 @@ namespace PuzzleGame
 
         [SerializeField]
         RoomEvents[] _enterRoomEvents;
+        #endregion
 
         EGameState _gameState = EGameState.NONE;
         public Room curRoom { get; set; } = null;
@@ -75,7 +78,13 @@ namespace PuzzleGame
             else
                 GameContext.s_gameMgr = this;
 
-            Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
+            Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);            
+        }
+
+        private void Start()
+        {
+            //play main menu theme
+            GameContext.s_audioMgr.PlayConstantSound(_mainMenuClip, _bgmVolume);
         }
 
         public void StartGame()
@@ -84,18 +93,14 @@ namespace PuzzleGame
             _startRoom = curRoom;
 
             _gameState = EGameState.RUNNING;
+
+            //play game theme
+            GameContext.s_audioMgr.PlayConstantSound(_gameClip, _bgmVolume);
         }
 
         public void QuitGame()
         {
-            IEnumerator _routine()
-            {
-                yield return new WaitForSeconds(2);
-                Application.Quit();
-            }
-
-            DialogueMenu.Instance.DisplayPromptOneShot("Congrats", "You have beat the game (for now)!!", null, null, null);
-            StartCoroutine(_routine());
+            Application.Quit();
         }
 
         #region Messenger Events

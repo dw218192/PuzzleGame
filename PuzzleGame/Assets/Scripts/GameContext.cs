@@ -13,6 +13,7 @@ namespace PuzzleGame
         public static GameManager s_gameMgr;
         public static EffectManager s_effectMgr;
         public static UIManager s_UIMgr;
+        public static AudioManager s_audioMgr;
 
         public static Player s_player;
         public static Vector2 s_right = Vector2.right, s_up = Vector2.up;

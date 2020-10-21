@@ -113,6 +113,10 @@ namespace PuzzleGame.UI
                 return null;
             }
         }
+        public int GetOpenMenuCount()
+        {
+            return _MenuStack.Count;
+        }
 
         public void StartCutScene()
         {
