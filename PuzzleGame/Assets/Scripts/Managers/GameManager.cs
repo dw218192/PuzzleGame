@@ -153,6 +153,77 @@ namespace PuzzleGame
                 }
             }
         }
+
+        public void DestroyActor(int actorId)
+        {
+            Room room = curRoom;
+
+            while (room.roomIndex != 0)
+            {
+                room = room.prev;
+            }
+
+            while(room != null)
+            {
+                room.DestroyActor(actorId);
+                room = room.next;
+            }
+        }
+
+        /// <summary>
+        /// return all instances of the same actor in each room
+        /// </summary>
+        /// <param name="actorId"></param>
+        /// <returns></returns>
+        public Actor[] GetAllActorsById(int actorId)
+        {
+            Actor[] ret = new Actor[GameConst.k_totalNumRooms];
+            Room room = curRoom;
+
+            while (room.roomIndex != 0)
+            {
+                room = room.prev;
+            }
+
+            while (room != null)
+            {
+                ret[room.roomIndex] = room.GetActor(actorId);
+                room = room.next;
+            }
+
+            return ret;
+        }
+
+
+        public void DestroyActorRange(int actorId, int startRoomIdx, int endRoomIdx)
+        {
+            Debug.Assert(startRoomIdx <= endRoomIdx && startRoomIdx >= 0 && startRoomIdx <= GameConst.k_totalNumRooms-1);
+
+            Room startRoom = curRoom;
+            if(curRoom.roomIndex > startRoomIdx)
+            {
+                do
+                {
+                    startRoom = startRoom.prev;
+                }
+                while (startRoom.roomIndex != startRoomIdx);
+            }
+            else if(curRoom.roomIndex < startRoomIdx)
+            {
+                do
+                {
+                    startRoom = startRoom.next;
+                }
+                while (startRoom.roomIndex != startRoomIdx);
+            }
+
+            int numRooms = endRoomIdx - startRoomIdx + 1;
+            for(int i=0; i < numRooms; i++)
+            {
+                startRoom.DestroyActor(actorId);
+                startRoom = startRoom.next;
+            }
+        }
         #endregion
 
         #region DEBUG

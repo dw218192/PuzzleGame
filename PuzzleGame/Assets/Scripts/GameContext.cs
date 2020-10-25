@@ -26,6 +26,9 @@ namespace PuzzleGame
     /// </summary>
     public static class GameConst
     {
+        public const string k_outlineShaderPath = "Sprites/Outline";
+        public const int k_playerInventorySize = 8;
+
         public const string k_interactableSpriteLayer = "Interactable";
         public const int k_pixelPerWorldUnit = 16;
         public const int k_startingRoomIndex = 2;
@@ -40,7 +43,7 @@ namespace PuzzleGame
 
         public const int k_defaultLayer = 0;
         public const int k_UILayer = 5;
-        public const int k_playerLayer = 8; //not used for now
+        public const int k_playerLayer = 8;
         public const int k_playerJumpingLayer = 9; //not used for now
         public const int k_propLayer = 10;
         public const int k_wallLayer = 11;

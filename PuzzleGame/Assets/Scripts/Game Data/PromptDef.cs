@@ -18,6 +18,7 @@ namespace PuzzleGame
     public class PromptDef : ScriptableObject
     {
         public string title;
+        [TextArea]
         public string prompt;
         public Sprite promptImage;
         public PromptOptionDesc[] options;

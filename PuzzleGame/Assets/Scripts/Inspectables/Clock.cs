@@ -11,7 +11,6 @@ using PuzzleGame.UI;
 
 namespace PuzzleGame
 {
-    [RequireComponent(typeof(Animator))]
     public class Clock : Inspectable
     {
         [Header("Clock Puzzle")]
@@ -31,7 +30,6 @@ namespace PuzzleGame
         [SerializeField] BoolVariable _isGameUnlocked;
         [SerializeField] IntVariable _switchState;
         [SerializeField] Transform _clockPlumb, _clockHands;
-        [SerializeField] PromptDef _unlockPrompt;
         [SerializeField] Sprite _lockedClock, _unlockedClock;
         [SerializeField] float _maxRotation;
 
@@ -42,7 +40,6 @@ namespace PuzzleGame
         [SerializeField] GameObject _switchPrefab;
         [SerializeField] GameObject _unlockedGameRoot;
         [SerializeField] GameObject _lockedGameRoot;
-        [SerializeField] Button _unlockButton;
         [SerializeField] Button _keyPickupButton;
 
         [Header("screen space canvas setting")]
@@ -54,6 +51,7 @@ namespace PuzzleGame
         float _switchRadius;
         float _handsRotation;
         bool _isPlayingClip;
+        bool _isKeyPickedUp;
 
         const int k_numSwitches = 8;
         const int k_allsetState = 0b11111111;
@@ -85,24 +83,24 @@ namespace PuzzleGame
             }
 
             _switchRadius = Vector2.Distance(_switchStartingAnchor.position, _switchStartingAnchor.parent.position);
+            _isPlayingClip = false;
+            _handsRotation = 0;
+            _isKeyPickedUp = false;
 
             //update sprite
             UpdateSwitches(_switchState.defaultValue);
             UpdatePuzzleLockState(_isGameUnlocked.defaultValue);
-
-            _handsRotation = 0;
 
             //configure world UI
             _keyPickupButton.gameObject.SetActive(false);
             _keyPickupButton.onClick.AddListener(() =>
             {
                 _successEvent?.Invoke();
+                _isKeyPickedUp = true;
             });
-            _unlockButton.onClick.AddListener(() => { DialogueMenu.Instance.DisplayPrompt(_unlockPrompt); });
 
-            //configure UI
+            //configure screen UI
             _gravityButtonText.text = _worldInspectionCanvas.enableInspectCamRotation ? "Enable\nGravity View" : "Disable\nGravity View";
-
             _resetButton.onClick.AddListener(ResetPuzzle);
             _gravityButton.onClick.AddListener(ToggleCamRotation);
             _backButton.onClick.AddListener(_worldInspectionCanvas.OnBackPressed);
@@ -137,14 +135,14 @@ namespace PuzzleGame
 
                 if (_switchState.val == k_allsetState)
                 {
-                    _canInspect = false;
+                    canInspect = false;
                     GameContext.s_gameMgr.StartCoroutine(_successRoutine(_successClip.length));
                 }
 
                 _isPlayingClip = false;
             }
 
-            if(!_canInspect || _isPlayingClip)
+            if(!canInspect || _isPlayingClip)
             {
                 return;
             }
@@ -276,6 +274,12 @@ namespace PuzzleGame
         public override void EndInspect()
         {
             base.EndInspect();
+
+            //if the player succeeded in cracking the puzzle but forgot to pick up the key
+            if(!canInspect && !_isKeyPickedUp)
+            {
+                _keyPickupButton.onClick.Invoke();
+            }
         }
     }
 }

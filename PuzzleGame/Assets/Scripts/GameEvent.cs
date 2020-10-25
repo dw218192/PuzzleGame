@@ -34,16 +34,14 @@ namespace PuzzleGame.EventSystem
     public class InventoryChangeEventData : MessengerEventData
     {
         private InventoryChangeEventData() { }
-        public InventoryChangeEventData(InventoryItemDef def, int slotIndex, int curItemQuantity)
+        public InventoryChangeEventData(InventoryItem itemIns, int slotIndex)
         {
-            this.itemDef = def;
+            this.itemIns = itemIns;
             this.slotIndex = slotIndex;
-            this.curItemQuantity = curItemQuantity;
         }
 
-        public InventoryItemDef itemDef;
+        public InventoryItem itemIns;
         public int slotIndex;
-        public int curItemQuantity;
     }
 
     [Serializable]

@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 2671655752270486794}
   - component: {fileID: 8777368075975844714}
   - component: {fileID: 878493440068965830}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Chandelier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -127,6 +127,7 @@ MonoBehaviour:
   _animClips:
   - {fileID: 7400000, guid: 99da752189627b84ca3f926f710a94fc, type: 2}
   - {fileID: 7400000, guid: 3198910e0e423884fb25c0226738432e, type: 2}
+  _roomRange: {x: 0, y: 6}
   _interactionEvent:
     _PersistentCalls: []
   _prerequisite: {fileID: 11400000, guid: f62a018fec0f0ab49a247ff5febef064, type: 2}
@@ -135,7 +136,6 @@ MonoBehaviour:
   _arrowDef: {fileID: 0}
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
-  _itemDef: {fileID: 0}
   _firstEncounterDialogue: {fileID: 11400000, guid: 1f0f544645caa1c4a8844cb7307f2742, type: 2}
   _worldInspectionCanvas: {fileID: 5261604366450969563}
   _screenInspectionCanvas: {fileID: 8076638564333719518}
@@ -154,6 +154,14 @@ MonoBehaviour:
         _Z: 0
         _W: 0
         _Object: {fileID: 11400000, guid: d5a24687311e54e49b8f1cb3bf79b0dd, type: 2}
+      - _Type: 5
+        _Int: 0
+        _String: 
+        _X: 1
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 0}
       - _Type: 3
         _Int: 1
         _String: 

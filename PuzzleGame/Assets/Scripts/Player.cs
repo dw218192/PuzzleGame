@@ -7,26 +7,42 @@ using PuzzleGame.EventSystem;
 
 namespace PuzzleGame
 {
+    /// <summary>
+    /// an instance of an inventory item
+    /// </summary>
+    public class InventoryItem
+    {
+        public InventoryItemDef def;
+        public int quantity;
+
+        public float scale; //the global scale of the item, determined by the room in which it's picked up
+
+        public float GetRoomRelativeScale()
+        {
+            float curRoomScale = GameContext.s_gameMgr.curRoom.roomScale;
+            return scale / curRoomScale;
+        }
+    }
+
+
     [RequireComponent(typeof(PlayerController))]
     public class Player : MonoBehaviour
     {
-        public class InventoryItem
-        {
-            public InventoryItemDef def;
-            public int quantity;
-        }
-
         public PlayerController controller { get; private set; }
-        public ReadOnlyCollection<InventoryItem> inventory { get { return _inventory.AsReadOnly(); } }
         public Actor actor { get; private set; }
 
-        List<InventoryItem> _inventory = new List<InventoryItem>();
+        InventoryItem[] _inventory = new InventoryItem[GameConst.k_playerInventorySize];
 
         private void Awake()
         {
             actor = GetComponent<Actor>();
             controller = GetComponent<PlayerController>();
             gameObject.layer = GameConst.k_playerLayer;
+
+            for(int i=0; i<GameConst.k_playerInventorySize; i++)
+            {
+                _inventory[i] = null;
+            }
         }
 
         // Start is called before the first frame update
@@ -39,61 +55,135 @@ namespace PuzzleGame
         {
         }
 
-        public bool HasItem(InventoryItemDef def, int minQuantity)
+        private int AllocateSlot()
         {
-            for (int i = 0; i < _inventory.Count; i++)
+            for (int i = 0; i < GameConst.k_playerInventorySize; i++)
             {
-                if (ReferenceEquals(_inventory[i].def, def))
-                {
-                    return _inventory[i].quantity >= minQuantity;
-                }
+                if (_inventory[i] == null)
+                    return i;
             }
 
-            return false;
+            Debug.Assert(false, "Player inventory is full, cannot allocate");
+            return -1;
         }
 
-        public void AddToInventory(InventoryItemDef def, int quantity)
+        /// <summary>
+        /// returns if the player has an item of the size same as the <paramref name="location"/>
+        /// with at least <paramref name="minQuantity"/> quantities
+        /// </summary>
+        public enum ItemQueryResult
         {
-            //the inventory is very small, so just brute force everything
-            int index = -1, itemQuantity = 0;
-            for(int i=0; i< _inventory.Count; i++)
+            NO_ITEM,
+            WRONG_SCALE_OR_QUANTITY,
+            SUCCESS
+        }
+        private InventoryItem[] _itemQueryBuffer = new InventoryItem[GameConst.k_playerInventorySize];
+        public ItemQueryResult QueryItem(InventoryItemDef def, int minQuantity, float roomRelativeScale, Room location)
+        {
+            float globalScale = roomRelativeScale * location.roomScale;
+
+            int bufferSize = 0;
+            for (int i = 0; i < GameConst.k_playerInventorySize; i++)
             {
+                if (_inventory[i] == null)
+                    continue;
+
                 if(ReferenceEquals(_inventory[i].def, def))
                 {
-                    _inventory[i].quantity += quantity;
-                    itemQuantity = _inventory[i].quantity;
-                    index = i;
-                    break;
+                    _itemQueryBuffer[bufferSize] = _inventory[i];
+                    bufferSize++;
                 }
             }
 
-            if(index == -1)
+            if(bufferSize == 0)
             {
-                _inventory.Add(new InventoryItem() { def = def, quantity = quantity });
-                itemQuantity = quantity;
-                index = _inventory.Count - 1;
+                return ItemQueryResult.NO_ITEM;
             }
-
-            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(def, index, itemQuantity));
-        }
-        public void RemoveFromInventory(InventoryItemDef def, int quantity)
-        {
-            int index = -1, itemQuantity = 0;
-
-            for (int i = 0; i < _inventory.Count; i++)
+            else
             {
-                if (ReferenceEquals(_inventory[i].def, def))
+                for(int i=0; i<bufferSize; i++)
                 {
-                    Debug.Assert(_inventory[i].quantity >= quantity);
-                    _inventory[i].quantity -= quantity;
-                    itemQuantity = _inventory[i].quantity;
+                    if(_itemQueryBuffer[i].quantity >= minQuantity && Mathf.Approximately(_inventory[i].scale, globalScale))
+                    {
+                        return ItemQueryResult.SUCCESS;
+                    }
+                }
+
+                return ItemQueryResult.WRONG_SCALE_OR_QUANTITY;
+            }
+        }
+
+        public void AddToInventory(InventoryItemDef def, int quantity, float roomRelativeScale, Room location)
+        {
+            float globalScale = roomRelativeScale * location.roomScale;
+            AddToInventory(def, quantity, globalScale);
+        }
+        public void AddToInventory(InventoryItemDef def, int quantity, float globalScale)
+        {
+            //the inventory is very small, so just brute force everything
+            InventoryItem itemIns = null;
+            int index = -1;
+
+            for (int i = 0; i < GameConst.k_playerInventorySize; i++)
+            {
+                if (_inventory[i] == null)
+                    continue;
+
+                if (ReferenceEquals(_inventory[i].def, def) && Mathf.Approximately(_inventory[i].scale, globalScale))
+                {
+                    //the item is of the same type AND was picked up in the same room
+                    //then stack the items
+
+                    _inventory[i].quantity += quantity;
+
+                    itemIns = _inventory[i];
                     index = i;
                     break;
                 }
             }
 
-            Debug.Assert(index != -1);
-            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(def, index, itemQuantity));
+            //a new item is added
+            if (index == -1)
+            {
+                index = AllocateSlot();
+
+                itemIns = new InventoryItem()
+                {
+                    def = def,
+                    quantity = quantity,
+                    scale = globalScale
+                };
+
+                _inventory[index] = itemIns;
+            }
+
+            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(itemIns, index));
+        }
+
+        public void RemoveFromInventory(InventoryItem item, int quantity)
+        {
+            InventoryItem itemIns = null;
+            int index = -1;
+
+            for (int i = 0; i < GameConst.k_playerInventorySize; i++)
+            {
+                if (ReferenceEquals(_inventory[i], item))
+                {
+                    itemIns = _inventory[i];
+                    index = i;
+
+                    itemIns.quantity -= quantity;
+
+                    if(itemIns.quantity == 0)
+                    {
+                        _inventory[i] = null;
+                    }
+                    
+                    break;
+                }
+            }
+
+            Messenger.Broadcast(M_EventType.ON_INVENTORY_CHANGE, new InventoryChangeEventData(itemIns, index));
         }
     }
 }

@@ -40,7 +40,9 @@ namespace PuzzleGame.UI
             _inspectCamera.gameObject.SetActive(false);
             gameObject.SetActive(false);
 
+            _inspectCamera.orthographic = true;
             _inspectCamera.orthographicSize *= _inspectable.room.roomScale;
+            _inspectCamera.cullingMask = ~(1 << GameConst.k_playerLayer);
 
             GameContext.s_UIMgr.RegisterMenu(this);
         }

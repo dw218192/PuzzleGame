@@ -35,21 +35,10 @@ namespace PuzzleGame
             Room curRoom = GameContext.s_gameMgr.curRoom;
             curRoom.RotateNext(clockwise);
         }
-
-        public static void AddToInventory(InventoryItemDef inventoryItem, int quantity)
+        public static void AddToInventory(InventoryItemDef inventoryItem, float relativeScale, int quantity)
         {
             Debug.Assert(GameContext.s_player);
-            GameContext.s_player.AddToInventory(inventoryItem, quantity);
-        }
-        public static void ConsumeItem(InventoryItemDef item, int quantity)
-        {
-            GameContext.s_player.RemoveFromInventory(item, quantity);
-        }
-        public static void PickupItem(InventoryItemDef item, int quantity)
-        {
-            Room curRoom = GameContext.s_gameMgr.curRoom;
-            curRoom.RemoveItemAll(item);
-            AddToInventory(item, quantity);
+            GameContext.s_player.AddToInventory(inventoryItem, quantity, relativeScale, GameContext.s_gameMgr.curRoom);
         }
         public static void DisplayDialogue(DialogueDef dialogue)
         {
@@ -135,40 +124,5 @@ namespace PuzzleGame
         {
             return prompt.hasPlayed;
         }
-        public static bool PlayerHasItem(InventoryItemDef requiredItem, int minQuantity)
-        {
-            return GameContext.s_player.HasItem(requiredItem, minQuantity);
-        }
-        public static void UnlockWithRequirement(BoolVariable unlockVariable, InventoryItemDef requiredItem, int minQuantity, PromptDef failPrompt)
-        {
-            if (unlockVariable.val)
-            {
-                return;
-            }
-
-            if (PlayerHasItem(requiredItem, minQuantity))
-            {
-                unlockVariable.val = true;
-                ConsumeItem(requiredItem, minQuantity);
-            }
-            else
-            {
-                DialogueMenu.Instance.DisplayPrompt(failPrompt);
-            }
-        }
-
-        #region DEMO
-        public static void DoorInteraction(InventoryItemDef requiredItem, int quantity, PromptDef failPrompt)
-        {
-            if (PlayerHasItem(requiredItem, quantity))
-            {
-                GameContext.s_gameMgr.QuitGame();
-            }
-            else
-            {
-                DialogueMenu.Instance.DisplayPrompt(failPrompt);
-            }
-        }
-        #endregion
     }
 }

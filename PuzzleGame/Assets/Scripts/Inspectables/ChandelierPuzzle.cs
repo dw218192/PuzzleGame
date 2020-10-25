@@ -103,7 +103,7 @@ namespace PuzzleGame
             IEnumerator _sucessRoutine()
             {
                 yield return new WaitForSecondsRealtime(1f);
-                GameContext.s_player.AddToInventory(_reward, 1);
+                GameContext.s_player.AddToInventory(_reward, 1, 1, GameContext.s_gameMgr.curRoom);
             }
 
             _puzzleCamera.gameObject.SetActive(false);

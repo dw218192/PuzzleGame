@@ -18,6 +18,21 @@ namespace PuzzleGame
         //screen space canvas
         [SerializeField] protected Canvas _screenInspectionCanvas;
         protected bool _canInspect = true;
+        protected bool canInspect
+        {
+            get => _canInspect;
+            set
+            {
+                Actor[] actors = GameContext.s_gameMgr.GetAllActorsById(actorId);
+                foreach(var actor in actors)
+                {
+                    Debug.Assert(actor is Inspectable);
+                    Inspectable ins = actor as Inspectable;
+                    ins._canInspect = value;
+                }
+            }
+        }
+
 
         protected override void Awake()
         {
@@ -38,7 +53,7 @@ namespace PuzzleGame
 
         public virtual void BeginInspect()
         {
-            if (!_canInspect)
+            if (!canInspect)
                 return;
 
             spriteRenderer.enabled = false;

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6625449815867024829}
   - component: {fileID: 6095641188335089420}
   - component: {fileID: 7175364899128651010}
+  - component: {fileID: 8596801511880113391}
   m_Layer: 0
   m_Name: Key_1
   m_TagString: Untagged
@@ -51,40 +52,6 @@ MonoBehaviour:
     _PersistentCalls:
     - _Target: {fileID: 0}
       _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null.PickupItem
-      _PersistentArguments:
-      - _Type: 13
-        _Int: 0
-        _String: PuzzleGame.InventoryItemDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
-        _X: 0
-        _Y: 0
-        _Z: 0
-        _W: 0
-        _Object: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
-      - _Type: 3
-        _Int: 1
-        _String: 
-        _X: 0
-        _Y: 0
-        _Z: 0
-        _W: 0
-        _Object: {fileID: 0}
-    - _Target: {fileID: 0}
-      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null.DisplayDialogue
-      _PersistentArguments:
-      - _Type: 13
-        _Int: 0
-        _String: PuzzleGame.DialogueDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
-        _X: 0
-        _Y: 0
-        _Z: 0
-        _W: 0
-        _Object: {fileID: 11400000, guid: 69dde2320c6e710498cd94be4ca2bf80, type: 2}
-    - _Target: {fileID: 0}
-      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null.SetBoolean
       _PersistentArguments:
       - _Type: 13
@@ -104,13 +71,15 @@ MonoBehaviour:
         _Z: 0
         _W: 0
         _Object: {fileID: 0}
+    - _Target: {fileID: 8596801511880113391}
+      _MethodName: PickupItem
+      _PersistentArguments: []
   _prerequisite: {fileID: 0}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 1
   _arrowDef: {fileID: 0}
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
-  _itemDef: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
 --- !u!212 &6095641188335089420
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -188,3 +157,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.4254799}
   m_EdgeRadius: 0
+--- !u!114 &8596801511880113391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4382579260444722488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a78b5ca3e01e681458ab9735fa43ca3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemToPickup: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
+  _quantityPerPickup: 1
+  _oneTime: 1

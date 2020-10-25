@@ -294,10 +294,10 @@ GameObject:
   - component: {fileID: 318754281840338553}
   - component: {fileID: 5359046406866286649}
   - component: {fileID: 7780860659951604003}
-  - component: {fileID: 2972831314724627244}
-  - component: {fileID: 4872413416000513707}
+  - component: {fileID: 4074016651747860168}
+  - component: {fileID: 7262852202317213435}
   m_Layer: 5
-  m_Name: UnlockButton
+  m_Name: UnlockInteraction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2972831314724627244
+--- !u!114 &4074016651747860168
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -412,13 +412,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 2547539475395427950}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Script: {fileID: 11500000, guid: 547c59f4f4e24984b8e9d7ca60a04d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 1, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 0.1, y: 0.1}
-  m_UseGraphicAlpha: 1
---- !u!114 &4872413416000513707
+  onClick:
+    _PersistentCalls:
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.DisplayPrompt
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.PromptDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: d9e5c8a635e63184eaadd4e7cdfb8709, type: 2}
+--- !u!114 &7262852202317213435
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -427,9 +439,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 2547539475395427950}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 944a529c56597504a818bfb3c6e048f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 48a768567cd2aaa40bf31e8034353769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  _onSuccessDrop:
+    _PersistentCalls:
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.SetBoolean
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.BoolVariable, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: 07f8db7481f6f474c89246ad74773868, type: 2}
+      - _Type: 1
+        _Int: 1
+        _String: 
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 0}
+  _targetItem: {fileID: 11400000, guid: d5a24687311e54e49b8f1cb3bf79b0dd, type: 2}
+  _requiredQuantity: 1
+  _requiredItemScale: 1
+  _wrongItemPrompt: {fileID: 11400000, guid: 50e000cf2fdad184d8b3b038a7334492, type: 2}
+  _wrongQuantityOrScalePrompt: {fileID: 11400000, guid: 1c296729ac6238d4d8e846bbb265e1cd, type: 2}
 --- !u!1 &3624136594402198644
 GameObject:
   m_ObjectHideFlags: 0

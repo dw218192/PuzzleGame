@@ -24,18 +24,16 @@ namespace PuzzleGame.UI
 
         void OnInventoryChange(InventoryChangeEventData data)
         {
-            Assert.IsTrue( data.slotIndex >= 0 && data.slotIndex < _itemSlots.Length && data.curItemQuantity >= 0);
+            Assert.IsTrue( data.slotIndex >= 0 && data.slotIndex < _itemSlots.Length && data.itemIns.quantity >= 0);
 
-            //item not found
-            if (data.curItemQuantity == 0)
+            //item is used up
+            if (data.itemIns.quantity == 0)
             {
                 _itemSlots[data.slotIndex].UnSet();
             }
             else
             {
-                _itemSlots[data.slotIndex].Set(
-                    data.itemDef,
-                    data.curItemQuantity);
+                _itemSlots[data.slotIndex].Set(data.itemIns);
             }
         }
     }

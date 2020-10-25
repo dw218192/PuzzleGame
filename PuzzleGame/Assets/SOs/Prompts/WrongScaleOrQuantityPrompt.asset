@@ -10,10 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8faa4e3fd38fb2439de1ff2784fa3b9, type: 3}
-  m_Name: ClockUnlockFailPrompt
+  m_Name: WrongScaleOrQuantityPrompt
   m_EditorClassIdentifier: 
   title: Message
-  prompt: You need a key to unlock this.
+  prompt: 'This item is too large or too small in this room to perform the action
+
+    or
+
+    you
+    don''t have enough of it'
   promptImage: {fileID: 0}
   options: []
   backButtonName: OK

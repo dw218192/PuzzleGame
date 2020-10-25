@@ -17,7 +17,7 @@ namespace PuzzleGame
         //Note: we use 1-based indexing here, min=1, max=k_maxLocalSortingOrder
         const int k_maxLocalSortingOrder = 9;
 
-        LinkedList<Actor> _actors = null;
+        Actor[] _actors = null;
 
         [SerializeField] GameObject _paintingMask = null;
         [SerializeField] Transform _paintingTransform = null;
@@ -99,24 +99,18 @@ namespace PuzzleGame
             {
                 return _roomIndex;
             }
-            set
+            private set
             {
                 _roomIndex = value;
                 SetSpriteSortingOrder(value);
                 ConfigSpriteMask(value);
 
-                for(LinkedListNode<Actor> cur = _actors.First; cur != null; )
+                foreach(var actor in _actors)
                 {
-                    Actor actor = cur.Value;
-                    var next = cur.Next;
-
                     if (_roomIndex < actor.roomRange.x || _roomIndex > actor.roomRange.y)
                     {
-                        Destroy(actor.gameObject);
-                        _actors.Remove(cur);
+                        actor.Reduce();
                     }
-
-                    cur = next;
                 }
             }
         }
@@ -167,6 +161,9 @@ namespace PuzzleGame
 
             foreach (var actor in _actors)
             {
+                if (!actor)
+                    continue;
+
                 if (actor.spriteRenderer)
                 {
                     SetSortingOrder(actor.spriteRenderer, roomIdx);
@@ -199,6 +196,9 @@ namespace PuzzleGame
 
             foreach (var actor in _actors)
             {
+                if (!actor)
+                    continue;
+
                 if(actor.spriteRenderer)
                     actor.spriteRenderer.maskInteraction = interaction;
             }
@@ -224,11 +224,14 @@ namespace PuzzleGame
 
         private void Awake()
         {
-            _actors = new LinkedList<Actor>(GetComponentsInChildren<Actor>());
+            _actors = GetComponentsInChildren<Actor>();
 
+            int i = 0;
             foreach (var actor in _actors)
             {
                 actor.room = this;
+                actor.actorId = i;
+                i++;
             }
 
             //Note: painting mask is for the display of current room in the previous room
@@ -275,7 +278,7 @@ namespace PuzzleGame
             float rootRoomScale = Mathf.Pow(1/cur.paintingToVisibleAreaScale, identityRoomLevel);
             cur.transform.localScale = new Vector3(rootRoomScale, rootRoomScale, 1);
 
-            for(int level=0; level<numLevels; level++, cur = cur.next)
+            for(int level=0; level<numLevels-1; level++, cur = cur.next)
             {
                 cur.SpawnNext();
 
@@ -339,6 +342,9 @@ namespace PuzzleGame
         {
             foreach (var actor in _actors)
             {
+                if (!actor)
+                    continue;
+
                 if(actor.actorCollider)
                 {
                     actor.actorCollider.enabled = enable;
@@ -360,6 +366,9 @@ namespace PuzzleGame
             _roomTile.GetComponent<TilemapRenderer>().enabled = enable;
             foreach(var actor in _actors)
             {
+                if (!actor)
+                    continue;
+
                 if(actor.spriteRenderer)
                 {
                     actor.spriteRenderer.enabled = enable;
@@ -419,48 +428,19 @@ namespace PuzzleGame
             Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(prev));
         }
 
-        public void RemoveItemThisRoomOnly(InventoryItemDef itemDef)
+        public void DestroyActor(int actorId)
         {
-            Interactable interactable = null;
-
-            for(var it = _actors.First; it != null; it = it.Next)
+            Actor actor = _actors[actorId];
+            if(actor)
             {
-                if(it.Value is Interactable)
-                {
-                    Interactable inter = (Interactable)it.Value;
-                    if(ReferenceEquals(inter.itemDef, itemDef))
-                    {
-                        interactable = inter;
-                        _actors.Remove(it);
-                        break;
-                    }
-                }
-            }
-            if(interactable)
-            {
-                Destroy(interactable.gameObject);
+                _actors[actorId] = null;
+                actor.Destroy();
             }
         }
 
-        public void RemoveItemDownwards(InventoryItemDef itemDef)
+        public Actor GetActor(int actorId)
         {
-            RemoveItemThisRoomOnly(itemDef);
-            if(next)
-            {
-                next.RemoveItemDownwards(itemDef);
-            }
-        }
-
-        public void RemoveItemAll(InventoryItemDef itemDef)
-        {
-            RemoveItemDownwards(itemDef);
-
-            Room cur = prev;
-            while(cur)
-            {
-                cur.RemoveItemThisRoomOnly(itemDef);
-                cur = cur.prev;
-            }
+            return _actors[actorId];
         }
 
         private void OnDrawGizmos()

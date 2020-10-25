@@ -64,6 +64,17 @@ namespace PuzzleGame.UI
                 GameContext.s_UIMgr.OpenMenu(Instance);
             }
         }
+        void FinishDialogue(DialogueDef def)
+        {
+            GameContext.s_gameMgr.OnEndDialogue(def);
+            def.hasPlayed = true;
+        }
+        void FinishPrompt(PromptDef def)
+        {
+            GameContext.s_gameMgr.OnEndPrompt(def);
+            def.hasPlayed = true;
+        }
+
         void OnPressDialogueButton()
         {
             if (_curDialogue.cur == _curDialogue.def.dialogues.Length)
@@ -71,7 +82,10 @@ namespace PuzzleGame.UI
                 Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(true));
 
                 if (_bufferedDialogues.Count > 0)
+                {
+                    FinishDialogue(_curDialogue.def);
                     _curDialogue = _bufferedDialogues.Dequeue();
+                }
             }
 
             if (_curDialogue.cur < _curDialogue.def.dialogues.Length)
@@ -237,12 +251,56 @@ namespace PuzzleGame.UI
             _promptPanel.SetActive(false);
         }
 
+        public override void OnLeaveMenu()
+        {
+            //TODO: hotfix, brute force close everything, will come back to this if time permits
+
+            bool hasOngoingDialogue = false;
+
+            //clear current prompt
+            if(_curPrompt)
+            {
+                FinishPrompt(_curPrompt);
+                _curPrompt = null;
+            }
+            _promptPanel.SetActive(false);
+
+            //clear current dialogue
+            if(_curDialogue != null)
+            {
+                FinishDialogue(_curDialogue.def);
+                _curDialogue = null;
+
+                hasOngoingDialogue = true;
+            }
+            _dialoguePanel.SetActive(false);
+
+            //flush other buffered dialogues
+            if (_bufferedDialogues.Count > 0)
+            {
+                foreach(var buffer in _bufferedDialogues)
+                {
+                    FinishDialogue(buffer.def);
+                }
+                _bufferedDialogues.Clear();
+
+                hasOngoingDialogue = true;
+            }
+
+            //release control
+            if(hasOngoingDialogue)
+            {
+                Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(true));
+            }
+
+            base.OnLeaveMenu();
+        }
+
         public void ClosePrompt()
         {
             if(_curPrompt)
             {
-                GameContext.s_gameMgr.OnEndPrompt(_curPrompt);
-                _curPrompt.hasPlayed = true;
+                FinishPrompt(_curPrompt);
                 _curPrompt = null;
             }
 
@@ -255,8 +313,11 @@ namespace PuzzleGame.UI
         }
         public void CloseDialogue()
         {
-            GameContext.s_gameMgr.OnEndDialogue(_curDialogue.def);
-            _curDialogue.def.hasPlayed = true;
+            if (_curDialogue != null)
+            {
+                FinishDialogue(_curDialogue.def);
+                _curDialogue = null;
+            }
 
             _dialoguePanel.SetActive(false);
 

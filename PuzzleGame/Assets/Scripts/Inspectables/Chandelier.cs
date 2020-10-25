@@ -17,7 +17,6 @@ namespace PuzzleGame
             screen space canvas (any world-space independent UI)
     */
    
-    [RequireComponent(typeof(Animator))]
     public class Chandelier : Inspectable
     {
         [Header("Chandelier Puzzle")]
@@ -87,16 +86,11 @@ namespace PuzzleGame
             {
                 ResetAll();
             }
-
-            if (!_canInspect)
-            {
-                _successEvent?.Invoke();
-            }
         }
 
         void UserInput(int lightId)
         {
-            Debug.Assert(_canInspect);
+            Debug.Assert(canInspect);
 
             _lightButtons[lightId].image.sprite = _litSprite;
 
@@ -124,7 +118,8 @@ namespace PuzzleGame
                 {
                     SetSprites(_acceptedSprite);
                     _prompt.text = "<color=green>Unlocked</color>";
-                    _canInspect = false;
+                    canInspect = false;
+                    _successEvent?.Invoke();
                 }
             }
         }

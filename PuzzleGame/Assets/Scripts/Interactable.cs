@@ -27,9 +27,6 @@ namespace PuzzleGame
         [SerializeField] bool _animateArrow = false;
         [SerializeField] Transform _arrowIconTransform;
 
-        //for pick-ups only
-        [SerializeField] InventoryItemDef _itemDef = null;
-
         public bool canInteract { 
             get 
             {
@@ -38,7 +35,6 @@ namespace PuzzleGame
         }
 
         public Color outlineColor { get { return _outlineColor; } }
-        public InventoryItemDef itemDef { get { return _itemDef; } }
 
         protected override void Awake()
         {
@@ -50,7 +46,9 @@ namespace PuzzleGame
             base.Start();
 
             if (spriteRenderer && spriteRenderer.sprite)
+            {
                 SetOutline(false);
+            }
         }
 
         public void OnEnterRange()
