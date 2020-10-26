@@ -87,7 +87,7 @@ namespace PuzzleGame.UI
         }
         public void CloseCurrentMenu()
         {
-            if (_MenuStack.Count == 0)
+            if (_MenuStack.Count == 0 || ReferenceEquals(GetActiveMenu(), EndScreen.Instance))
             {
                 return;
             }

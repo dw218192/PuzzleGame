@@ -234,6 +234,9 @@ MonoBehaviour:
         _Z: 0
         _W: 0
         _Object: {fileID: 0}
+    - _Target: {fileID: 8487301148603538425}
+      _MethodName: OnBackPressed
+      _PersistentArguments: []
     - _Target: {fileID: 0}
       _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null.DisplayDialogue
@@ -255,7 +258,7 @@ MonoBehaviour:
   _clockHands: {fileID: 2481882042437466975}
   _lockedClock: {fileID: -9035044116731178127, guid: fb4bba664bdd9644182d2dea4b422b41, type: 3}
   _unlockedClock: {fileID: 8581363780399802525, guid: fb4bba664bdd9644182d2dea4b422b41, type: 3}
-  _maxRotation: 360
+  _maxRotation: 90
   _handsTrigger: {fileID: 6763670277712697734}
   _setSwitch: {fileID: 8904269164427958550, guid: 9e5b912c0a0e9034991af90c8f329e29, type: 3}
   _unsetSwitch: {fileID: 7429069284208039758, guid: 9e5b912c0a0e9034991af90c8f329e29, type: 3}

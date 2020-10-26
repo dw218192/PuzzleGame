@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: You may now interact with the painting near its corner
   promptImage: {fileID: 21300000, guid: d6682874f8ff01a44b721b73ce47ad0e, type: 3}
   options: []
+  hasBackButton: 1
   backButtonName: OK

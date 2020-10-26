@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -32,6 +33,7 @@ namespace PuzzleGame
         public Actor actor { get; private set; }
 
         InventoryItem[] _inventory = new InventoryItem[GameConst.k_playerInventorySize];
+        public ReadOnlyCollection<InventoryItem> inventory { get => Array.AsReadOnly(_inventory); }
 
         private void Awake()
         {

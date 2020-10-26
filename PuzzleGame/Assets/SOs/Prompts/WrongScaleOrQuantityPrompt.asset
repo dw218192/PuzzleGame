@@ -21,4 +21,5 @@ MonoBehaviour:
     don''t have enough of it'
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: OK

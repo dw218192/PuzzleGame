@@ -27,6 +27,8 @@ namespace PuzzleGame
         [SerializeField] bool _animateArrow = false;
         [SerializeField] Transform _arrowIconTransform;
 
+        public UltEvent interactionEvent { get => _interactionEvent; }
+
         public bool canInteract { 
             get 
             {

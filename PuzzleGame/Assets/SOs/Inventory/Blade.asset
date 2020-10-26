@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryDisplaySprite: {fileID: -419608134045260789, guid: bb52324f6ebb69143bf30e468d090d1a, type: 3}
   description: An electric fan blade that has an attachable joint.
+  draggingDisplayScale: 2.5

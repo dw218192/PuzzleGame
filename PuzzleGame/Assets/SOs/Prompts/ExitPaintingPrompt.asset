@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: You may now exit a painting by holding <color=#ff0000ff><size=27>Q</size></color>
   promptImage: {fileID: 21300000, guid: 455e2148fb9f2884abdf87a5dbe61eac, type: 3}
   options: []
+  hasBackButton: 1
   backButtonName: OK

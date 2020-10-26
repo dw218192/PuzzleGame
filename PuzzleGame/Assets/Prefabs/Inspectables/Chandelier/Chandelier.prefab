@@ -131,7 +131,7 @@ MonoBehaviour:
   _interactionEvent:
     _PersistentCalls: []
   _prerequisite: {fileID: 11400000, guid: f62a018fec0f0ab49a247ff5febef064, type: 2}
-  _outlineColor: {r: 1, g: 0, b: 0.203341, a: 1}
+  _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 1
   _arrowDef: {fileID: 0}
   _animateArrow: 0

@@ -86,7 +86,14 @@ namespace PuzzleGame
         }
         public static void ClosePrompt(bool condition)
         {
-            if(condition && ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), DialogueMenu.Instance))
+            if(condition)
+            {
+                ClosePrompt();
+            }
+        }
+        public static void ClosePrompt()
+        {
+            if (ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), DialogueMenu.Instance))
             {
                 DialogueMenu.Instance.ClosePrompt();
             }
@@ -101,11 +108,9 @@ namespace PuzzleGame
         }
         public static void PlayCutscene(bool condition, TimelineAsset timeline)
         {
-            Room curRoom = GameContext.s_gameMgr.curRoom;
-
-            if (condition)
+            if (GameContext.s_gameMgr && condition)
             {
-                curRoom.PlayCutScene(timeline);
+                GameContext.s_gameMgr.curRoom.PlayCutScene(timeline);
             }
         }
         public static void SetBoolean(BoolVariable variable, bool value)
@@ -114,7 +119,11 @@ namespace PuzzleGame
         }
         public static bool IsInRoom(int index)
         {
-            return GameContext.s_gameMgr.curRoom.roomIndex == index;
+            if(GameContext.s_gameMgr)
+            {
+                return GameContext.s_gameMgr.curRoom.roomIndex == index;
+            }
+            return false;
         }
         public static bool HasPlayed(DialogueDef dialogue)
         {
@@ -124,5 +133,45 @@ namespace PuzzleGame
         {
             return prompt.hasPlayed;
         }
+        public static void TriggerEnding(EGameEndingType type)
+        {
+            if (GameContext.s_gameMgr)
+            {
+                GameContext.s_gameMgr.TriggerEnding(type);
+            }
+        }
+
+        #region Alpha
+        public static void DoorInteraction(InventoryItemDef keyDef, PromptDef noKeyPrompt, PromptDef insufficientQuantityPrompt)
+        {
+            bool hasKey = false;
+            int quantity = 0;
+            var inventory = GameContext.s_player.inventory;
+            foreach(var item in inventory)
+            {
+                if(item != null && ReferenceEquals(item.def, keyDef))
+                {
+                    hasKey = true;
+                    quantity += item.quantity;
+                }
+            }
+
+            if(!hasKey)
+            {
+                DialogueMenu.Instance.DisplayPrompt(noKeyPrompt);
+            }
+            else
+            {
+                if (quantity < 3)
+                {
+                    DialogueMenu.Instance.DisplayPrompt(insufficientQuantityPrompt);
+                }
+                else
+                {
+                    GameContext.s_gameMgr.TriggerEnding(EGameEndingType.ESCAPE);
+                }
+            }
+        }
+        #endregion
     }
 }

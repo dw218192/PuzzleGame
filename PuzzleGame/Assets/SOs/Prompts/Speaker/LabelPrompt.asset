@@ -19,4 +19,5 @@ MonoBehaviour:
     number: 3142"'
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: Hmm

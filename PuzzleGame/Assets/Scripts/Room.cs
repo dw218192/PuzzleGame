@@ -438,9 +438,34 @@ namespace PuzzleGame
             }
         }
 
-        public Actor GetActor(int actorId)
+        public Actor GetActorByID(int actorId)
         {
             return _actors[actorId];
+        }
+
+        public Actor[] GetActorsByType<T>()
+        {
+            List<Actor> ret = new List<Actor>();
+            for(int i=0; i<_actors.Length; i++)
+            {
+                if(_actors[i] && _actors[i] is T)
+                {
+                    ret.Add(_actors[i]);
+                }
+            }
+            return ret.ToArray();
+        }
+
+        public Actor GetActorByName(string name)
+        {
+            for (int i = 0; i < _actors.Length; i++)
+            {
+                if (_actors[i] && _actors[i].name == name)
+                {
+                    return _actors[i];
+                }
+            }
+            return null;
         }
 
         private void OnDrawGizmos()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PuzzleGame.UI;
+using PuzzleGame.EventSystem;
 
 namespace PuzzleGame
 {
@@ -14,9 +15,22 @@ namespace PuzzleGame
         public static EffectManager s_effectMgr;
         public static UIManager s_UIMgr;
         public static AudioManager s_audioMgr;
+        public static InventoryItem s_curDraggingItem;
 
         public static Player s_player;
         public static Vector2 s_right = Vector2.right, s_up = Vector2.up;
+
+        public static void Flush()
+        {
+            s_gameMgr = null;
+            s_effectMgr = null;
+            s_UIMgr = null;
+            s_audioMgr = null;
+            s_curDraggingItem = null;
+            s_player = null;
+
+            Messenger.Cleanup();
+        }
     }
 
     /// <summary>
@@ -55,7 +69,7 @@ namespace PuzzleGame
         public static readonly int k_PlayerYSpeed_AnimParam = Animator.StringToHash("VerticalSpeed");
         public static readonly int k_PlayerWalking_AnimParam = Animator.StringToHash("Walking");
         public static readonly int k_PlayerAirborne_AnimParam = Animator.StringToHash("Airborne");
-
+        public static readonly int k_PlayerDeath_AnimParam = Animator.StringToHash("Death");
         public static readonly int k_DefaultSortingLayerId = SortingLayer.NameToID("Default");
         public static readonly int k_PropsSortingLayerId = SortingLayer.NameToID("Props");
         public static readonly int k_CharacterSortingLayerId = SortingLayer.NameToID("Character");

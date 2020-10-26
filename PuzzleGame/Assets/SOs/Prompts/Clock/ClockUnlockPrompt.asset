@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: This is one strange keyhole.
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: OK

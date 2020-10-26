@@ -70,11 +70,11 @@ namespace PuzzleGame.EventSystem
     public class InspectionEventData : MessengerEventData
     {
         private InspectionEventData() { }
-        public InspectionEventData(bool finished)
+        public InspectionEventData(Inspectable inspectable)
         {
-            this.finished = finished;
+            this.inspectable = inspectable;
         }
-        public bool finished;
+        public Inspectable inspectable;
     }
 
     public class PlayerControlEventData : MessengerEventData
@@ -87,11 +87,20 @@ namespace PuzzleGame.EventSystem
         public bool enable;
     }
 
+    public class GameEndEventData : MessengerEventData
+    {
+        private GameEndEventData() { }
+        public GameEndEventData(EGameEndingType type)
+        {
+            this.type = type;
+        }
+        public EGameEndingType type;
+    }
+
     public enum M_EventType
     {
         ON_BEFORE_ENTER_ROOM, //RoomEventData //ON_BEFORE_ENTER_ROOM will trigger ON_ENTER_ROOM
         ON_ENTER_ROOM, //RoomEventData
-        ON_EXIT_ROOM, //RoomEventData
 
         ON_INVENTORY_CHANGE, //InventoryChangeEventData
         ON_CUTSCENE_START, //CutSceneEventData
@@ -99,7 +108,13 @@ namespace PuzzleGame.EventSystem
         ON_CHANGE_PLAYER_CONTROL,  //PlayerControlEventData
 
         ON_GAME_PAUSED,
-        ON_GAME_RESUMED
+        ON_GAME_RESUMED,
+
+        ON_GAME_START,
+        ON_GAME_END,
+
+        ON_INSPECTION_START,
+        ON_INSPECTION_END
     }
     #endregion
 }

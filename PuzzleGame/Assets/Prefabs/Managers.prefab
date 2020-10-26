@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6044774712470159983}
   - component: {fileID: 593198061}
   - component: {fileID: 4661434470694945757}
+  - component: {fileID: 6906812218806258404}
+  - component: {fileID: 1755994661444053257}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -109,32 +111,7 @@ MonoBehaviour:
           _W: 0
           _Object: {fileID: 0}
   _promptEvents: []
-  _enterRoomEvents:
-  - isOneTime: 0
-    events:
-      _PersistentCalls:
-      - _Target: {fileID: 0}
-        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null.DisplayDialogue
-        _PersistentArguments:
-        - _Type: 13
-          _Int: 0
-          _String: PuzzleGame.Condition, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
-          _X: 0
-          _Y: 0
-          _Z: 0
-          _W: 0
-          _Object: {fileID: 11400000, guid: 909f607986a48e34195845cc4bacca2c, type: 2}
-        - _Type: 13
-          _Int: 0
-          _String: PuzzleGame.DialogueDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
-          _X: 0
-          _Y: 0
-          _Z: 0
-          _W: 0
-          _Object: {fileID: 11400000, guid: 98c62b64a9b27364da163eb09f09615b, type: 2}
+  _enterRoomEvents: []
 --- !u!114 &593198061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,3 +140,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _poolSize: 10
   _constSoundFadeDuration: 1.5
+--- !u!114 &6906812218806258404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6044774712470159982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 206138e912c3faa41bef7c9c0bf9a351, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inspectionPrompt:
+    condition: {fileID: 0}
+    prompt: {fileID: 11400000, guid: d20e2b02a42ce9b488fcc6bff1882480, type: 2}
+  _roomConnectionDialogue:
+    condition: {fileID: 11400000, guid: 909f607986a48e34195845cc4bacca2c, type: 2}
+    dialogue: {fileID: 11400000, guid: 98c62b64a9b27364da163eb09f09615b, type: 2}
+--- !u!114 &1755994661444053257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6044774712470159982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b45b444df65b4b149a9ca3a209fd0c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

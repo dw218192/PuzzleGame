@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: The blade is too large or too small to be attached to this joint.
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: OK

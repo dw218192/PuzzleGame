@@ -160,7 +160,7 @@ namespace PuzzleGame.UI
                 _optionButtons[i++].gameObject.SetActive(false);
             }
 
-            if (promptDef.backButtonName != null)
+            if (promptDef.hasBackButton && promptDef.backButtonName != null)
             {
                 _backButton.gameObject.SetActive(true);
                 _backButton.GetComponentInChildren<Text>().text = promptDef.backButtonName;

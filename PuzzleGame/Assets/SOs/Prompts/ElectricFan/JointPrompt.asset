@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: A sturdy joint to attach the blades.
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: OK

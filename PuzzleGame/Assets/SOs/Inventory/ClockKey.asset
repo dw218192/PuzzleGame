@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryDisplaySprite: {fileID: 21300000, guid: 5b2692d022c5c5b4981aaa68e51d769a, type: 3}
   description: A strange key with a cross at its end.
+  draggingDisplayScale: 1

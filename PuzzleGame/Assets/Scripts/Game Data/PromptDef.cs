@@ -17,12 +17,13 @@ namespace PuzzleGame
     [CreateAssetMenu(menuName = "PuzzleGame/Prompt")]
     public class PromptDef : ScriptableObject
     {
-        public string title;
+        public string title = "Message";
         [TextArea]
-        public string prompt;
+        public string prompt = "Message Content";
         public Sprite promptImage;
         public PromptOptionDesc[] options;
-        public string backButtonName;
+        public bool hasBackButton = true;
+        public string backButtonName = "OK";
 
         //runtime
         public bool hasPlayed { get; set; }

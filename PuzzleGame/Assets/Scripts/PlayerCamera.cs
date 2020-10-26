@@ -23,7 +23,6 @@ namespace PuzzleGame
             transform.position = pos;
 
             Messenger.AddListener<RoomEventData>(M_EventType.ON_BEFORE_ENTER_ROOM, OnBeforeEnterRoom);
-            Messenger.AddListener<RoomEventData>(M_EventType.ON_EXIT_ROOM, OnExitRoom);
         }
 
         private void Start()
@@ -87,11 +86,6 @@ namespace PuzzleGame
             }
 
             StartCoroutine(_enterRoutine());
-        }
-
-        void OnExitRoom(RoomEventData data)
-        {
-
         }
 
         private void OnDrawGizmos()

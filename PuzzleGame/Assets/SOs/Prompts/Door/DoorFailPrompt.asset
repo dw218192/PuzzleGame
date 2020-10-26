@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: DoorFailPrompt
   m_EditorClassIdentifier: 
   title: Message
-  prompt: You need 2 golden keys to escape from this room!
+  prompt: You need 3 golden keys to escape from this room!
   promptImage: {fileID: 0}
   options: []
-  backButtonName: Alright
+  hasBackButton: 1
+  backButtonName: OK

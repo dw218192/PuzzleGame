@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: I can't detach this blade, because it's fixed by the one below it.
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: OK

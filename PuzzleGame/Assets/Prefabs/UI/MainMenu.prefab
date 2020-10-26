@@ -401,7 +401,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'NO ESCAPE
 
-    PROTOTYPE BUILD'
+    <size=40>ALPHA</size>'
 --- !u!1 &8752747520579328044
 GameObject:
   m_ObjectHideFlags: 0

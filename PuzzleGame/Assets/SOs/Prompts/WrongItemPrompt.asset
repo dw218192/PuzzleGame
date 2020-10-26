@@ -16,4 +16,5 @@ MonoBehaviour:
   prompt: Not the correct item for this.
   promptImage: {fileID: 0}
   options: []
+  hasBackButton: 1
   backButtonName: Fine!

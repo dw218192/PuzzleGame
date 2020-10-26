@@ -15,4 +15,5 @@ MonoBehaviour:
   dialogues:
   - Wait a minute...
   - The key also disappeared in this room.
-  - Seems like it doesn't matter where I pick an item up.
+  - The rooms must be connected in some way.
+  - The actions I did in one room will be reflected in another.

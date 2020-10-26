@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +12,16 @@ using UnityEngine.Playables;
 using UnityEngine.UI;
 
 using UltEvents;
+using UnityEngine.SceneManagement;
 
 namespace PuzzleGame
 {
+    public enum EGameEndingType
+    {
+        DEATH,
+        ESCAPE
+    }
+
     public class GameManager : MonoBehaviour
     {
         enum EGameState
@@ -96,11 +105,92 @@ namespace PuzzleGame
 
             //play game theme
             GameContext.s_audioMgr.PlayConstantSound(_gameClip, _bgmVolume);
+
+            Messenger.Broadcast(M_EventType.ON_GAME_START);
+        }
+
+        public void RestartGame()
+        {
+            GameContext.Flush();
+            SceneManager.LoadScene(0, LoadSceneMode.Single);
         }
 
         public void QuitGame()
         {
             Application.Quit();
+        }
+
+        public void TriggerEnding(EGameEndingType type)
+        {
+            Messenger.Broadcast(M_EventType.ON_GAME_END, new GameEndEventData(type));
+        }
+
+        /// <summary>
+        /// return all instances of the same actor in each room
+        /// </summary>
+        /// <param name="actorId"></param>
+        /// <returns></returns>
+        public Actor[] GetAllActorsByID(int actorId)
+        {
+            Actor[] ret = new Actor[GameConst.k_totalNumRooms];
+            Room room = curRoom;
+
+            while (room.roomIndex != 0)
+            {
+                room = room.prev;
+            }
+
+            while (room != null)
+            {
+                ret[room.roomIndex] = room.GetActorByID(actorId);
+                room = room.next;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// returns all instances of an actor of type T, grouped by actor id (first dimension)
+        /// e.g. ret[i] contains all instances with id = i
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public IEnumerable<IGrouping<int, Actor>> GetAllActorsByType<T>()
+        {
+            Room room = curRoom;
+            List<Actor> result = new List<Actor>();
+
+            while (room.roomIndex != 0)
+            {
+                room = room.prev;
+            }
+
+            while (room != null)
+            {
+                result.AddRange(room.GetActorsByType<T>());
+                room = room.next;
+            }
+
+            return result.GroupBy(x => x.actorId);
+        }
+
+        public Actor[] GetAllActorsByName(string name)
+        {
+            Room room = curRoom;
+            Actor[] ret = new Actor[GameConst.k_totalNumRooms];
+
+            while (room.roomIndex != 0)
+            {
+                room = room.prev;
+            }
+
+            while (room != null)
+            {
+                ret[room.roomIndex] = room.GetActorByName(name);
+                room = room.next;
+            }
+
+            return ret;
         }
 
         #region Messenger Events
@@ -169,32 +259,6 @@ namespace PuzzleGame
                 room = room.next;
             }
         }
-
-        /// <summary>
-        /// return all instances of the same actor in each room
-        /// </summary>
-        /// <param name="actorId"></param>
-        /// <returns></returns>
-        public Actor[] GetAllActorsById(int actorId)
-        {
-            Actor[] ret = new Actor[GameConst.k_totalNumRooms];
-            Room room = curRoom;
-
-            while (room.roomIndex != 0)
-            {
-                room = room.prev;
-            }
-
-            while (room != null)
-            {
-                ret[room.roomIndex] = room.GetActor(actorId);
-                room = room.next;
-            }
-
-            return ret;
-        }
-
-
         public void DestroyActorRange(int actorId, int startRoomIdx, int endRoomIdx)
         {
             Debug.Assert(startRoomIdx <= endRoomIdx && startRoomIdx >= 0 && startRoomIdx <= GameConst.k_totalNumRooms-1);
@@ -247,6 +311,7 @@ namespace PuzzleGame
         Room _startRoom;
         private void OnGUI()
         {
+#if DEVELOPMENT_BUILD
             if(_gameState == EGameState.RUNNING)
             {
                 GUI.color = Color.red;
@@ -266,7 +331,8 @@ namespace PuzzleGame
                     curRoom.GoToNext();
                 }
             }
+#endif
         }
-        #endregion
+    #endregion
     }
 }

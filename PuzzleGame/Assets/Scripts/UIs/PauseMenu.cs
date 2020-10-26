@@ -25,6 +25,12 @@ namespace PuzzleGame.UI
             Messenger.Broadcast(M_EventType.ON_GAME_PAUSED);
         }
 
+        public override void OnLeaveMenu()
+        {
+            base.OnLeaveMenu();
+            Messenger.Broadcast(M_EventType.ON_GAME_RESUMED);
+        }
+
         void QuitGame()
         {
             GameContext.s_gameMgr.QuitGame();
@@ -32,7 +38,6 @@ namespace PuzzleGame.UI
 
         void ResumeGame()
         {
-            Messenger.Broadcast(M_EventType.ON_GAME_RESUMED);
             OnBackPressed();
         }
     }

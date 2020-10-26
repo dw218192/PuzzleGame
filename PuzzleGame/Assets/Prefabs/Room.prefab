@@ -4928,7 +4928,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7805414321864099981}
-  - component: {fileID: 1450517037486159649}
+  - component: {fileID: 6207603274526038942}
   - component: {fileID: 511575818779290545}
   - component: {fileID: 4397631391386821708}
   - component: {fileID: 713471436744106942}
@@ -4954,7 +4954,7 @@ Transform:
   m_Father: {fileID: 8121839023349861617}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1450517037486159649
+--- !u!114 &6207603274526038942
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4963,11 +4963,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 7457686904364731908}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fc39e3ad41037e479819fa8a82d5562, type: 3}
+  m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _animClips: []
-  _roomRange: {x: 0, y: 7}
+  _roomRange: {x: 0, y: 6}
+  _interactionEvent:
+    _PersistentCalls:
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.DisplayPrompt
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.PromptDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: 58a13cc4f66b53042890c664f831620c, type: 2}
+  _prerequisite: {fileID: 0}
+  _outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  _showOutline: 1
+  _arrowDef: {fileID: 0}
+  _animateArrow: 0
+  _arrowIconTransform: {fileID: 0}
 --- !u!212 &511575818779290545
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4987,7 +5008,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4a634e3076a8a6844bc7564679c0c80e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

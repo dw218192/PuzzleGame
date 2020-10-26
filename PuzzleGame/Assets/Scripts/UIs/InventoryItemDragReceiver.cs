@@ -21,7 +21,7 @@ namespace PuzzleGame.UI
 
         public virtual void OnDrop(PointerEventData eventData)
         {
-            InventoryItem draggingItem = InventorySlot.s_curDraggingItem;
+            InventoryItem draggingItem = GameContext.s_curDraggingItem;
             if (draggingItem != null && _isMouseOver)
             {
                 if (!ReferenceEquals(draggingItem.def, _targetItem))

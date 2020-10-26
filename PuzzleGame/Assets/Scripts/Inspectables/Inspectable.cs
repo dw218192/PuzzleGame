@@ -18,12 +18,12 @@ namespace PuzzleGame
         //screen space canvas
         [SerializeField] protected Canvas _screenInspectionCanvas;
         protected bool _canInspect = true;
-        protected bool canInspect
+        public bool canInspect
         {
             get => _canInspect;
-            set
+            protected set
             {
-                Actor[] actors = GameContext.s_gameMgr.GetAllActorsById(actorId);
+                Actor[] actors = GameContext.s_gameMgr.GetAllActorsByID(actorId);
                 foreach(var actor in actors)
                 {
                     Debug.Assert(actor is Inspectable);
@@ -74,6 +74,7 @@ namespace PuzzleGame
             }
 
             Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(false));
+            Messenger.Broadcast(M_EventType.ON_INSPECTION_START, new InspectionEventData(this));
         }
 
 
@@ -92,6 +93,7 @@ namespace PuzzleGame
 
             //enable player ctrl
             Messenger.Broadcast(M_EventType.ON_CHANGE_PLAYER_CONTROL, new PlayerControlEventData(true));
+            Messenger.Broadcast(M_EventType.ON_INSPECTION_END, new InspectionEventData(this));
         }
 
         protected virtual void Update()

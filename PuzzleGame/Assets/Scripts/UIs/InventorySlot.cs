@@ -9,7 +9,6 @@ namespace PuzzleGame.UI
     public class InventorySlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         const float s_itemDragScaleOffset = 7f;
-        public static InventoryItem s_curDraggingItem { get; private set; }
 
         [SerializeField] Image _itemImage;
         [SerializeField] Text _quantityText;
@@ -37,7 +36,7 @@ namespace PuzzleGame.UI
         {
             if(_itemImage.enabled)
             {
-                const string fmt = "0.#########################";
+                const string fmt = "0.######";
                 string description = $"{_item.def.description}\n\n\n<size=17>item scale in current room = <color=red>{(_item.GetRoomRelativeScale()).ToString(fmt)}x </color></size>";
                 DialogueMenu.Instance.DisplayPromptOneShot("Item Description", description, _itemImage.sprite, null, "Back");
             }
@@ -75,6 +74,13 @@ namespace PuzzleGame.UI
             }
             return isInside;
         }
+
+        private bool IsMouseInScreen(Vector2 mousePos)
+        {
+            Rect rect = new Rect(0, 0, Screen.width, Screen.height);
+            return rect.Contains(mousePos);
+        }
+
         void IDragHandler.OnDrag(PointerEventData eventData)
         {
             if (!_itemImage.enabled)
@@ -82,7 +88,7 @@ namespace PuzzleGame.UI
 
             _itemImgRect.position = eventData.position;
 
-            if (!IsRectTransformInsideSreen(_itemImgRect))
+            if (!IsMouseInScreen(eventData.position))
             {
                 _itemImgRect.localPosition = _originalItemImgPosLocal;
             }
@@ -91,7 +97,7 @@ namespace PuzzleGame.UI
         {
             _itemImgRect.localScale = _originalScale;
             _itemImgRect.localPosition = _originalItemImgPosLocal;
-            s_curDraggingItem = null;
+            GameContext.s_curDraggingItem = null;
         }
 
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
@@ -99,9 +105,9 @@ namespace PuzzleGame.UI
             if (!_itemImage.enabled)
                 return;
 
-            Debug.Assert(s_curDraggingItem == null);
-            _itemImgRect.localScale = Vector3.one * _item.GetRoomRelativeScale() * s_itemDragScaleOffset;
-            s_curDraggingItem = _item;
+            Debug.Assert(GameContext.s_curDraggingItem == null);
+            _itemImgRect.localScale = Vector3.one * _item.GetRoomRelativeScale() * s_itemDragScaleOffset * _item.def.draggingDisplayScale;
+            GameContext.s_curDraggingItem = _item;
         }
     }
 }

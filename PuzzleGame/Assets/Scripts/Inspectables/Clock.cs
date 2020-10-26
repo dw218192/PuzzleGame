@@ -95,8 +95,8 @@ namespace PuzzleGame
             _keyPickupButton.gameObject.SetActive(false);
             _keyPickupButton.onClick.AddListener(() =>
             {
-                _successEvent?.Invoke();
                 _isKeyPickedUp = true;
+                _successEvent?.Invoke();
             });
 
             //configure screen UI

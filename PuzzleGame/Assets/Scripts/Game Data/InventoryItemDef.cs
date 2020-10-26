@@ -9,5 +9,6 @@ namespace PuzzleGame
     {
         public Sprite inventoryDisplaySprite;
         public string description;
+        [Range(1,30)] public float draggingDisplayScale = 1;
     }
 }

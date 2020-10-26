@@ -52,6 +52,19 @@ MonoBehaviour:
     _PersistentCalls:
     - _Target: {fileID: 0}
       _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.DisplayDialogue
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.DialogueDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: 69dde2320c6e710498cd94be4ca2bf80, type: 2}
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null.SetBoolean
       _PersistentArguments:
       - _Type: 13
@@ -171,4 +184,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemToPickup: {fileID: 11400000, guid: 21fe2b2f661139044875389888f3ace2, type: 2}
   _quantityPerPickup: 1
+  _roomRelativeScale: 1
   _oneTime: 1

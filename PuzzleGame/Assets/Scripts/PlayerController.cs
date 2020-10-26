@@ -62,6 +62,7 @@ namespace PuzzleGame
         [SerializeField] BoolVariable _canExitStartingRoom;
         [SerializeField] BoolVariable _canExitSmallRoom;
         int _controlLockCnt = 0;
+        bool _dead = false;
         #endregion
         
         [Serializable]
@@ -153,6 +154,13 @@ namespace PuzzleGame
             {
                 SetControlEnabled(true);
             });
+            Messenger.AddListener(M_EventType.ON_GAME_END, (GameEndEventData data) =>
+            {
+                SetControlEnabled(false);
+
+                if(data.type == EGameEndingType.DEATH)
+                    _animator.SetTrigger(GameConst.k_PlayerDeath_AnimParam);
+            });
         }
 
         // Start is called before the first frame update
@@ -230,7 +238,7 @@ namespace PuzzleGame
             {
                 if(GameContext.s_UIMgr.GetOpenMenuCount() > 0)
                 {
-                    if (!ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), MainMenu.Instance))
+                    if(!ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), MainMenu.Instance))
                     {
                         GameContext.s_UIMgr.CloseCurrentMenu();
                     }
@@ -299,11 +307,23 @@ namespace PuzzleGame
 
         bool CheckGrounded()
         {
-            Collider2D collider = Physics2D.OverlapBox(_groundCheckAnchor.position, _groundCheckSize, 
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(_groundCheckAnchor.position, _groundCheckSize, 
                 Vector2.Angle(Vector2.up, GameContext.s_up),
                 1 << GameConst.k_boundaryLayer | 1 << GameConst.k_propLayer);
 
-            return collider && !collider.isTrigger && !Object.ReferenceEquals(collider, _collider);
+            if(colliders != null && colliders.Length > 0)
+            {
+                foreach (var collider in colliders)
+                {
+                    if (!collider.isTrigger && !Object.ReferenceEquals(collider, _collider))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+
+            return false;
         }
 
         void InteractionUpdate()
