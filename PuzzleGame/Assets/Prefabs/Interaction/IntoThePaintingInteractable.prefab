@@ -93,12 +93,12 @@ MonoBehaviour:
         _W: 0
         _Object: {fileID: 0}
   _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 8300000, guid: 63909a26a3b27344f8960e6611c6ad4d, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 0
   _arrowDef: {fileID: 11400000, guid: 4255ec0f1116224478e40c1b05397fb7, type: 2}
   _animateArrow: 1
   _arrowIconTransform: {fileID: 7366176035479790521}
-  _itemDef: {fileID: 0}
 --- !u!61 &548295120898815905
 BoxCollider2D:
   m_ObjectHideFlags: 0

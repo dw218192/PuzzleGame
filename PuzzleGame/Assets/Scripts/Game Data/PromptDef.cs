@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UltEvents;
+using PuzzleGame.EventSystem;
 
 namespace PuzzleGame
 {
@@ -24,10 +25,17 @@ namespace PuzzleGame
         public PromptOptionDesc[] options;
         public bool hasBackButton = true;
         public string backButtonName = "OK";
+        [Tooltip("if not null, this will be used as the popup sound")]
+        public AudioClip popUpSoundOverride = null;
 
         //runtime
         public bool hasPlayed { get; set; }
         private void OnEnable()
+        {
+            Messenger.AddPersistentListener(M_EventType.ON_GAME_RESTART, Init);
+            Init();
+        }
+        private void Init()
         {
             hasPlayed = false;
         }

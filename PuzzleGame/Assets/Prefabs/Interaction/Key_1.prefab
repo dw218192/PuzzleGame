@@ -87,7 +87,21 @@ MonoBehaviour:
     - _Target: {fileID: 8596801511880113391}
       _MethodName: PickupItem
       _PersistentArguments: []
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.PlaySounds
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: UnityEngine.AudioClip, UnityEngine.AudioModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 8300000, guid: e4b7d06867d842e419e92159258b0292, type: 3}
   _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 8300000, guid: e50cf1cc3677a714e88c2146a3b1ce5c, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 1
   _arrowDef: {fileID: 0}

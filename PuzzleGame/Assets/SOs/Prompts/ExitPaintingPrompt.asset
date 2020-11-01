@@ -18,3 +18,4 @@ MonoBehaviour:
   options: []
   hasBackButton: 1
   backButtonName: OK
+  popUpSoundOverride: {fileID: 8300000, guid: 671c03d73c3d3524f921a2f4ea1e68f0, type: 3}

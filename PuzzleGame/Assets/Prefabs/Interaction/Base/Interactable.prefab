@@ -46,22 +46,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animClips: []
+  _roomRange: {x: 0, y: 6}
   _interactionEvent:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent2, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  _prerequisite:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent2, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+    _PersistentCalls: []
+  _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 8300000, guid: e50cf1cc3677a714e88c2146a3b1ce5c, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 0
   _arrowDef: {fileID: 0}
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
-  _itemDef: {fileID: 0}
 --- !u!212 &1708184261622443355
 SpriteRenderer:
   m_ObjectHideFlags: 0

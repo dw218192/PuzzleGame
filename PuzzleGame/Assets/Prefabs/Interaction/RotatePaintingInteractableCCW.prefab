@@ -91,13 +91,26 @@ MonoBehaviour:
         _Z: 0
         _W: 0
         _Object: {fileID: 0}
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.PlaySounds
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: UnityEngine.AudioClip, UnityEngine.AudioModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 8300000, guid: 144cb040f9e60394dbe26f1b984e8e7c, type: 3}
   _prerequisite: {fileID: 11400000, guid: 38fb05fed1ae8f445a893954900ce7ba, type: 2}
+  _interactionCueSound: {fileID: 8300000, guid: 63909a26a3b27344f8960e6611c6ad4d, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 0
   _arrowDef: {fileID: 11400000, guid: ba58ce7ab3d61d646bcaa21ff3b83aac, type: 2}
   _animateArrow: 1
   _arrowIconTransform: {fileID: 7010796444125387318}
-  _itemDef: {fileID: 0}
 --- !u!61 &9188131837905688913
 BoxCollider2D:
   m_ObjectHideFlags: 0

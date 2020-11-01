@@ -110,6 +110,7 @@ namespace PuzzleGame.EventSystem
         ON_GAME_PAUSED,
         ON_GAME_RESUMED,
 
+        ON_GAME_RESTART,
         ON_GAME_START,
         ON_GAME_END,
 

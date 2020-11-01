@@ -217,10 +217,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _groundCheckAnchor: {fileID: 2090459526879984741}
+  _maxAllowedCheckGroundAngle: 75
   _interactionTrigger: {fileID: 2477844575106455296}
-  _exitPaintInteractTime: 2
+  _exitPaintInteractTime: 1
   _canExitStartingRoom: {fileID: 11400000, guid: 0b66ecf5abb88b649a9de576a2239fe0, type: 2}
   _canExitSmallRoom: {fileID: 11400000, guid: f6c1844f0f5287b4098bfc021cbef20b, type: 2}
+  _walkingSoundsInterval: 0.9
+  _walkingSounds: {fileID: 11400000, guid: 71b1ba7c0114568459de7a5c78d7ce0f, type: 2}
+  _jumpingSounds: {fileID: 11400000, guid: 951cf2a0080bef84f8c045992b824b95, type: 2}
+  _groundedSounds: {fileID: 11400000, guid: 29bac9079fe9aba4cb7e0f71451cc7d1, type: 2}
   _moveConfig:
     speed: 3
     jumpThrust: 5

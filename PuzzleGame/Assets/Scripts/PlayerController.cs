@@ -15,9 +15,13 @@ namespace PuzzleGame
     {
         #region Movement
         [SerializeField] Transform _groundCheckAnchor;
+        [SerializeField] float _maxAllowedCheckGroundAngle = 75; //allow to stand on a surface X degrees from (0, 1)
         Vector2 _groundCheckSize;
-        bool _grounded = false;
+        bool _grounded = false, _lastGrounded;
         float _groundCheckTimer;
+        Collider2D _curGroundCollider;
+        ContactFilter2D _propAndBoundaryfilter;
+        ContactPoint2D[] _contacts;
         #endregion
 
         #region Interaction
@@ -62,9 +66,16 @@ namespace PuzzleGame
         [SerializeField] BoolVariable _canExitStartingRoom;
         [SerializeField] BoolVariable _canExitSmallRoom;
         int _controlLockCnt = 0;
-        bool _dead = false;
         #endregion
-        
+
+        #region Audio
+        [SerializeField] float _walkingSoundsInterval;
+        [SerializeField] AudioCollection _walkingSounds;
+        [SerializeField] AudioCollection _jumpingSounds;
+        [SerializeField] AudioCollection _groundedSounds;
+        Vector2? _lastSoundPlayedPos = null;
+        #endregion
+
         [Serializable]
         public class MovementConfig
         {
@@ -172,13 +183,19 @@ namespace PuzzleGame
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _player = GetComponent<Player>();
 
-            _groundCheckSize = new Vector2(_collider.size.x * 0.9f, 0.2f);
+            _groundCheckSize = new Vector2(_collider.size.x * transform.localScale.x, 0.2f);
 
             _interactionTrigger.onTriggerEnter += OnTriggerEnterInteractable;
             _interactionTrigger.onTriggerStay += OnTriggerEnterInteractable;
             _interactionTrigger.onTriggerExit += OnTriggerExitInteractable;
 
             _interactionTriggerX = _interactionTrigger.transform.localPosition.x;
+
+            _propAndBoundaryfilter = new ContactFilter2D();
+            _propAndBoundaryfilter.useTriggers = false;
+            _propAndBoundaryfilter.SetLayerMask(1 << GameConst.k_propLayer | 1 << GameConst.k_boundaryLayer);
+
+            _contacts = new ContactPoint2D[20];
         }
 
         void OnTriggerEnterInteractable(Collider2D collider)
@@ -256,7 +273,13 @@ namespace PuzzleGame
 
             if(Mathf.Approximately(0, _groundCheckTimer))
             {
+                _lastGrounded = _grounded;
                 _grounded = CheckGrounded();
+
+                if(!_lastGrounded && _grounded)
+                {
+                    GameActions.PlaySounds(_groundedSounds);
+                }
             }
 
             float vertical = 0, horizontal = 0;
@@ -267,6 +290,8 @@ namespace PuzzleGame
                 {
                     if (Input.GetKeyDown(KeyCode.Space))
                     {
+                        GameActions.PlaySounds(_jumpingSounds);
+
                         vertical = _moveConfig.jumpThrust;
 
                         _grounded = false;
@@ -282,6 +307,15 @@ namespace PuzzleGame
                     }
 
                     _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * vertical;
+
+                    if (_rgbody.velocity != Vector2.zero)
+                    {
+                        if (_lastSoundPlayedPos == null || Vector2.Distance(_lastSoundPlayedPos.Value, transform.position) > _walkingSoundsInterval)
+                        {
+                            GameActions.PlaySounds(_walkingSounds);
+                            _lastSoundPlayedPos = transform.position;
+                        }
+                    }
                 }
                 else
                 {
@@ -295,34 +329,69 @@ namespace PuzzleGame
                     }
 
                     _rgbody.velocity = GameContext.s_right * horizontal + GameContext.s_up * Vector2.Dot(GameContext.s_up, _rgbody.velocity);
+
+                    _lastSoundPlayedPos = null;
                 }
             }
             TurnAround(horizontal);
 
+            int numContacts = Physics2D.GetContacts(_rgbody, _propAndBoundaryfilter, _contacts);
+
+            float correctedHorizontalVel = horizontal;
+            if (numContacts > 0)
+            {
+                for(int i=0; i<numContacts; i++)
+                {
+                    if (ReferenceEquals(_contacts[i].collider, _curGroundCollider))
+                        continue;
+
+                    //if either of these two conds are true, something is in our way
+                    if (horizontal > 0 && _contacts[i].point.x > transform.position.x)
+                    {
+                        correctedHorizontalVel = 0;
+                        break;
+                    }
+                    else if (horizontal < 0 && _contacts[i].point.x < transform.position.x)
+                    {
+                        correctedHorizontalVel = 0;
+                        break;
+                    }
+                }
+            }
+
             _animator.SetBool(GameConst.k_PlayerAirborne_AnimParam, !_grounded);
-            _animator.SetBool(GameConst.k_PlayerWalking_AnimParam, !Mathf.Approximately(0, horizontal));
-            _animator.SetFloat(GameConst.k_PlayerXSpeed_AnimParam, horizontal);
+            _animator.SetBool(GameConst.k_PlayerWalking_AnimParam, !Mathf.Approximately(0, correctedHorizontalVel));
+            _animator.SetFloat(GameConst.k_PlayerXSpeed_AnimParam, correctedHorizontalVel);
             _animator.SetFloat(GameConst.k_PlayerYSpeed_AnimParam, _rgbody.velocity.y);
         }
 
         bool CheckGrounded()
         {
-            Collider2D[] colliders = Physics2D.OverlapBoxAll(_groundCheckAnchor.position, _groundCheckSize, 
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(
+                _groundCheckAnchor.position, 
+                _groundCheckSize, 
                 Vector2.Angle(Vector2.up, GameContext.s_up),
-                1 << GameConst.k_boundaryLayer | 1 << GameConst.k_propLayer);
+                Vector2.down,
+                0,
+                1 << GameConst.k_boundaryLayer | 1 << GameConst.k_propLayer | 1 << GameConst.k_groundLayer);
 
-            if(colliders != null && colliders.Length > 0)
+            if(hits != null && hits.Length > 0)
             {
-                foreach (var collider in colliders)
+                foreach (var hit in hits)
                 {
+                    if (Vector2.Angle(hit.normal, Vector2.up) > _maxAllowedCheckGroundAngle)
+                        continue;
+
+                    var collider = hit.collider;
                     if (!collider.isTrigger && !Object.ReferenceEquals(collider, _collider))
                     {
+                        _curGroundCollider = collider;
                         return true;
                     }
                 }
             }
 
-
+            _curGroundCollider = null;
             return false;
         }
 
@@ -394,14 +463,12 @@ namespace PuzzleGame
 
         private void OnGUI()
         {
-#if DEVELOPMENT_BUILD
             GUI.color = Color.green;
             GUI.Label(new Rect(10, 50, 200, 32), $"velocity: {_rgbody.velocity.ToString()}");
-            GUI.Label(new Rect(10, 80, 200, 32), $"is grounded: {CheckGrounded().ToString()}");
+            GUI.Label(new Rect(10, 80, 200, 32), !_curGroundCollider ? "not grounded" : $"cur ground collider : {_curGroundCollider.name}, angle : ");
 
             if(_curInteractable)
-                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}, can pickup = {((bool)_curInteractable.itemDef).ToString()}");
-#endif
+                GUI.Label(new Rect(10, 110, 400, 32), $"cur interactable: {_curInteractable.gameObject.name}");
         }
     }
 }

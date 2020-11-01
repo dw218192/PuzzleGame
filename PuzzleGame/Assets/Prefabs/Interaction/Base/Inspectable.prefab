@@ -49,12 +49,12 @@ MonoBehaviour:
   _interactionEvent:
     _PersistentCalls: []
   _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 8300000, guid: e50cf1cc3677a714e88c2146a3b1ce5c, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 0
   _arrowDef: {fileID: 0}
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
-  _itemDef: {fileID: 0}
   _firstEncounterDialogue: {fileID: 0}
   _worldInspectionCanvas: {fileID: 0}
   _screenInspectionCanvas: {fileID: 0}

@@ -33,6 +33,11 @@ namespace PuzzleGame.UI
         Button _backButton;
         Button[] _optionButtons;
 
+        #region Audio
+        [SerializeField] AudioClip _promptPopupSound;
+        [SerializeField] AudioClip _dialoguePopupSound;
+        #endregion
+
         //buffered dialogues
         PromptDef _curPrompt = null;
         DialogueBufferEntry _curDialogue = null;
@@ -62,6 +67,7 @@ namespace PuzzleGame.UI
                 }
 
                 GameContext.s_UIMgr.OpenMenu(Instance);
+                GameActions.PlaySounds(_dialoguePopupSound);
             }
         }
         void FinishDialogue(DialogueDef def)
@@ -171,6 +177,11 @@ namespace PuzzleGame.UI
             }
 
             GameContext.s_UIMgr.OpenMenu(Instance);
+
+            if (promptDef.popUpSoundOverride)
+                GameActions.PlaySounds(promptDef.popUpSoundOverride);
+            else
+                GameActions.PlaySounds(_promptPopupSound);
         }
 
         public void DisplayPromptOneShot(string title, string prompt, Sprite image, (string, Button.ButtonClickedEvent)[] options, string back)
@@ -225,6 +236,7 @@ namespace PuzzleGame.UI
             }
 
             GameContext.s_UIMgr.OpenMenu(Instance);
+            GameActions.PlaySounds(_promptPopupSound);
         }
         protected override void Awake()
         {
@@ -245,7 +257,6 @@ namespace PuzzleGame.UI
             //dialogue button
             _dialogueButtonText = _dialogueButton.GetComponentInChildren<Text>();
             _dialogueButton.onClick.AddListener(OnPressDialogueButton);
-
             //start with nothing
             _dialoguePanel.SetActive(false);
             _promptPanel.SetActive(false);

@@ -195,6 +195,7 @@ MonoBehaviour:
   _interactionEvent:
     _PersistentCalls: []
   _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 8300000, guid: e50cf1cc3677a714e88c2146a3b1ce5c, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 1
   _arrowDef: {fileID: 0}
@@ -228,6 +229,14 @@ MonoBehaviour:
         _Object: {fileID: 0}
       - _Type: 3
         _Int: 1
+        _String: 
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 0}
+      - _Type: 1
+        _Int: 0
         _String: 
         _X: 0
         _Y: 0

@@ -60,7 +60,7 @@ namespace PuzzleGame
         public const int k_playerLayer = 8;
         public const int k_playerJumpingLayer = 9; //not used for now
         public const int k_propLayer = 10;
-        public const int k_wallLayer = 11;
+        public const int k_wallLayer = 11;   //not used for now
         public const int k_groundLayer = 12; //not used for now
         public const int k_boundaryLayer = 13;
 

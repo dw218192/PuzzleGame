@@ -127,7 +127,7 @@ namespace PuzzleGame
             }
         }
 
-        // strip everything excep sprite renderers
+        // strip everything except sprite renderers and myself
         void ReduceInternal(Transform cur, List<Behaviour> delList)
         {
             Behaviour[] comps = cur.GetComponents<Behaviour>();

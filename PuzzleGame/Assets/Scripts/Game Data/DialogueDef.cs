@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PuzzleGame.EventSystem;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,11 @@ namespace PuzzleGame
         public bool hasPlayed { get; set; }
 
         private void OnEnable()
+        {
+            Messenger.AddPersistentListener(M_EventType.ON_GAME_RESTART, Init);
+            Init();
+        }
+        private void Init()
         {
             hasPlayed = false;
         }

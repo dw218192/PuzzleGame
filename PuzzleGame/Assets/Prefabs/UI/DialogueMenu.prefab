@@ -814,6 +814,8 @@ MonoBehaviour:
   _promptImageText: {fileID: 2820947186829886926}
   _promptImage: {fileID: 4770677151676783688}
   _promptLayoutGroup: {fileID: 7683650397857505149}
+  _promptPopupSound: {fileID: 8300000, guid: 6ae208b6fcec91945910a1afb80f2769, type: 3}
+  _dialoguePopupSound: {fileID: 8300000, guid: 844d002186db1814eb0edb7713a00ef8, type: 3}
 --- !u!1 &9107065835661289678
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,6 +1106,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1964387984864907237}
     m_Modifications:
+    - target: {fileID: 4539022446839624504, guid: 5f5d1e4822e09ab429abe7640cb2dc44, type: 3}
+      propertyPath: onClick._PersistentCalls.Array.data[0]._PersistentArguments.Array.data[0]._Object
+      value: 
+      objectReference: {fileID: 8300000, guid: 4cf29b9610301844f8f1cff3a65e8cdf, type: 3}
     - target: {fileID: 5097367692259732178, guid: 5f5d1e4822e09ab429abe7640cb2dc44, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1188,6 +1194,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5262046747751631989, guid: 5f5d1e4822e09ab429abe7640cb2dc44, type: 3}
+      propertyPath: _clickSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 4cf29b9610301844f8f1cff3a65e8cdf, type: 3}
     - target: {fileID: 8201096943689532746, guid: 5f5d1e4822e09ab429abe7640cb2dc44, type: 3}
       propertyPath: m_Name
       value: Button

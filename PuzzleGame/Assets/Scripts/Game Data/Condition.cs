@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PuzzleGame.EventSystem;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,11 +64,11 @@ namespace PuzzleGame
         //serialized
         [SerializeField] bool _oneTime;
         [SerializeField] List<Token> _expression;
-        
+
         //runtime
-        Stack<bool> _evaluationStack = new Stack<bool>();
-        List<Token> _postfixExpr = null;
-        bool _isValid = true;
+        Stack<bool> _evaluationStack;
+        List<Token> _postfixExpr;
+        bool _isValid;
 
         void Invalidate()
         {
@@ -168,8 +169,15 @@ namespace PuzzleGame
 
         private void OnEnable()
         {
+            Messenger.AddPersistentListener(M_EventType.ON_GAME_RESTART, Init);
+            Init();
+        }
+
+        private void Init()
+        {
             _postfixExpr = null;
             _isValid = true;
+            _evaluationStack = new Stack<bool>();
         }
 
         public bool Evaluate()

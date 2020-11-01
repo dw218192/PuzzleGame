@@ -37,6 +37,7 @@ namespace PuzzleGame
         protected override void Awake()
         {
             base.Awake();
+
             _interactionEvent.AddPersistentCall((Action)BeginInspect);
         }
 

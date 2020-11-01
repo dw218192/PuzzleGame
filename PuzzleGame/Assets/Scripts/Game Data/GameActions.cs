@@ -35,10 +35,13 @@ namespace PuzzleGame
             Room curRoom = GameContext.s_gameMgr.curRoom;
             curRoom.RotateNext(clockwise);
         }
-        public static void AddToInventory(InventoryItemDef inventoryItem, float relativeScale, int quantity)
+        public static void AddToInventory(InventoryItemDef inventoryItem, float scale, int quantity, bool useGlobalScale)
         {
             Debug.Assert(GameContext.s_player);
-            GameContext.s_player.AddToInventory(inventoryItem, quantity, relativeScale, GameContext.s_gameMgr.curRoom);
+            if(useGlobalScale)
+                GameContext.s_player.AddToInventory(inventoryItem, quantity, scale, GameContext.s_gameMgr.curRoom);
+            else
+                GameContext.s_player.AddToInventory(inventoryItem, quantity, scale);
         }
         public static void DisplayDialogue(DialogueDef dialogue)
         {
@@ -140,7 +143,20 @@ namespace PuzzleGame
                 GameContext.s_gameMgr.TriggerEnding(type);
             }
         }
-
+        public static void PlaySounds(AudioCollection collection)
+        {
+            if (collection && GameContext.s_audioMgr)
+            {
+                GameContext.s_audioMgr.PlayOneShotSound(collection.GetClip(), GameContext.s_audioMgr.transform.position, 1);
+            }
+        }
+        public static void PlaySounds(AudioClip clip)
+        {
+            if (clip && GameContext.s_audioMgr)
+            {
+                GameContext.s_audioMgr.PlayOneShotSound(clip, GameContext.s_audioMgr.transform.position, 1);
+            }
+        }
         #region Alpha
         public static void DoorInteraction(InventoryItemDef keyDef, PromptDef noKeyPrompt, PromptDef insufficientQuantityPrompt)
         {

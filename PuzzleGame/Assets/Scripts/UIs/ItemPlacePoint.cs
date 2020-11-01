@@ -44,11 +44,7 @@ namespace PuzzleGame.UI
             {
                 hasItem = true;
             }));
-        }
 
-        private void Start()
-        {
-            //start empty
             hasItem = false;
         }
 

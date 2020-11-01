@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PuzzleGame.EventSystem;
 
 namespace PuzzleGame
 {
@@ -36,7 +37,8 @@ namespace PuzzleGame
 
         private void OnEnable()
         {
-            val = defaultValue;
+            Messenger.AddPersistentListener(M_EventType.ON_GAME_RESTART, Init);
+            Init();
         }
 
         public static implicit operator T(Variable<T> variable)
@@ -46,6 +48,12 @@ namespace PuzzleGame
                 return default(T);
             }
             return variable.val;
+        }
+
+        private void Init()
+        {
+            _val = defaultValue;
+            valueChanged = null;
         }
     }
 }

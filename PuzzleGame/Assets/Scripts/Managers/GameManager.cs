@@ -41,9 +41,12 @@ namespace PuzzleGame
 
         #region Game Audio
         [Header("Audio Configuration")]
+        [SerializeField] float _bgmVolume;
         [SerializeField] AudioClip _mainMenuClip;
         [SerializeField] AudioClip _gameClip;
-        [SerializeField] float _bgmVolume;
+        [SerializeField] AudioClip _enterRoomClip;
+        [SerializeField] AudioClip _leaveRoomClip;
+        [SerializeField] AudioClip _initRoomClip;
         #endregion
 
         #region Game Logic
@@ -79,6 +82,7 @@ namespace PuzzleGame
 
         EGameState _gameState = EGameState.NONE;
         public Room curRoom { get; set; } = null;
+        Room _prevRoom = null;
 
         private void Awake()
         {
@@ -87,7 +91,8 @@ namespace PuzzleGame
             else
                 GameContext.s_gameMgr = this;
 
-            Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);            
+            Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
+            Messenger.AddListener<RoomEventData>(M_EventType.ON_BEFORE_ENTER_ROOM, OnBeforeEnterRoom);
         }
 
         private void Start()
@@ -99,12 +104,11 @@ namespace PuzzleGame
         public void StartGame()
         {
             curRoom = Room.SpawnChain(GameConst.k_totalNumRooms, GameConst.k_startingRoomIndex);
-            _startRoom = curRoom;
-
             _gameState = EGameState.RUNNING;
 
             //play game theme
             GameContext.s_audioMgr.PlayConstantSound(_gameClip, _bgmVolume);
+            GameContext.s_audioMgr.PlayOneShotSound(_initRoomClip, transform.position, 1);
 
             Messenger.Broadcast(M_EventType.ON_GAME_START);
         }
@@ -112,6 +116,8 @@ namespace PuzzleGame
         public void RestartGame()
         {
             GameContext.Flush();
+
+            Messenger.Broadcast(M_EventType.ON_GAME_RESTART);
             SceneManager.LoadScene(0, LoadSceneMode.Single);
         }
 
@@ -194,10 +200,25 @@ namespace PuzzleGame
         }
 
         #region Messenger Events
+        private void OnBeforeEnterRoom(RoomEventData data)
+        {
+            if (curRoom)
+            {
+                if (curRoom.roomIndex < data.room.roomIndex)
+                {
+                    GameContext.s_audioMgr.PlayOneShotSound(_enterRoomClip, transform.position, 1);
+                }
+                else
+                {
+                    GameContext.s_audioMgr.PlayOneShotSound(_leaveRoomClip, transform.position, 1);
+                }
+            }
+
+            curRoom = data.room;
+        }
+
         private void OnEnterRoom(RoomEventData data)
         {
-            curRoom = data.room;
-
             if (!GameContext.s_player)
                 GameContext.s_player = Instantiate(playerPrefab, curRoom.playerSpawnPos, Quaternion.identity);
             else
@@ -212,6 +233,7 @@ namespace PuzzleGame
                     evts.events.Clear();
                 }
             }
+
         }
         public void OnEndCutScene(TimelineAsset cutScene)
         {
@@ -290,7 +312,6 @@ namespace PuzzleGame
         }
         #endregion
 
-        #region DEBUG
         void TestRoomTransition()
         {
             Room outermost = curRoom.prev.prev.prev.prev;
@@ -307,32 +328,5 @@ namespace PuzzleGame
 
             StartCoroutine(_gotoRoomRoutine());
         }
-
-        Room _startRoom;
-        private void OnGUI()
-        {
-#if DEVELOPMENT_BUILD
-            if(_gameState == EGameState.RUNNING)
-            {
-                GUI.color = Color.red;
-                GUI.contentColor = Color.red;
-                GUI.Label(new Rect(Screen.width - 150f, 20f, 100f, 20f), "Debug Menu");
-
-                if (GUI.Button(new Rect(Screen.width - 150f, 50f, 150f, 50f), "Quit Game"))
-                {
-                    Application.Quit();
-                }
-                if (GUI.Button(new Rect(Screen.width - 150f, 110f, 150f, 50f), "Teleport To\nStarting Room\nNOTE:may cause bugs"))
-                {
-                    Messenger.Broadcast(M_EventType.ON_BEFORE_ENTER_ROOM, new RoomEventData(_startRoom));
-                }
-                if (GUI.Button(new Rect(Screen.width - 150f, 170f, 150f, 50f), "Go to Next Room"))
-                {
-                    curRoom.GoToNext();
-                }
-            }
-#endif
-        }
-    #endregion
     }
 }

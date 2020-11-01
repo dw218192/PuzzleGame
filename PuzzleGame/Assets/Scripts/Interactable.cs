@@ -19,6 +19,7 @@ namespace PuzzleGame
         /// Prerequites for interaction
         /// </summary>
         [SerializeField] Condition _prerequisite;
+        [SerializeField] AudioClip _interactionCueSound;
 
         //for arrow/outline effects
         [SerializeField] Color _outlineColor = Color.red;
@@ -70,6 +71,8 @@ namespace PuzzleGame
                 GameContext.s_effectMgr.ShowArrow(_arrowDef, _animateArrow, _arrowIconTransform.position,
                     Quaternion.LookRotation(_arrowIconTransform.forward, _arrowIconTransform.up), _arrowDef.flipX, _arrowDef.flipY);
             }
+
+            GameActions.PlaySounds(_interactionCueSound);
         }
 
         public void OnInteract()

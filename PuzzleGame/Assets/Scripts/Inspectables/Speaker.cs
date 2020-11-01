@@ -21,6 +21,7 @@ namespace PuzzleGame
             }
         }
 
+        /*
         class State
         {
             private State() { }
@@ -78,6 +79,10 @@ namespace PuzzleGame
             public List<Speaker> speakers = new List<Speaker>();
         }
         static State s_State = null;
+        */
+
+        static Speaker[] s_allSpeakers = null;
+        static Vector2[] s_initNodePositions = null;
 
         [Header("Speaker Puzzle Config")]
         [SerializeField] UltEvent _successEvent;
@@ -94,13 +99,6 @@ namespace PuzzleGame
         {
             base.Awake();
 
-            if(s_State == null)
-            {
-                s_State = new State(this);
-            }
-
-            s_State.Register(this);
-
             _middleNodes = new Collider2D[10];
 
             _filter = new ContactFilter2D();
@@ -111,13 +109,48 @@ namespace PuzzleGame
         protected override void Start()
         {
             base.Start();
+
+            if (s_allSpeakers == null)
+            {
+                var actors = GameContext.s_gameMgr.GetAllActorsByID(actorId);
+                List<Speaker> filtered = new List<Speaker>();
+                foreach(var actor in actors)
+                {
+                    if (actor)
+                        filtered.Add((Speaker)actor);
+                }
+                s_allSpeakers = filtered.ToArray();
+
+                s_initNodePositions = new Vector2[_nodes.Length];
+
+                for (int i = 0; i < _nodes.Length; i++)
+                {
+                    s_initNodePositions[i] = _nodes[i].transform.localPosition;
+                }
+            }
         }
 
         public void SyncState()
         {
-            s_State.SyncState(this);
+            foreach(var speaker in s_allSpeakers)
+            {
+                if(speaker && !ReferenceEquals(speaker, this))
+                {
+                    for (int i = 0; i < _nodes.Length; i++)
+                    {
+                        speaker._nodes[i].transform.localPosition = _nodes[i].transform.localPosition;
+                    }
+
+                    for (int i = 0; i < _blades.Length; i++)
+                    {
+                        speaker._blades[i].zRotation = _blades[i].zRotation;
+                        speaker._blades[i].SetBladeActive(_blades[i].isActive);
+                    }
+                }
+            }
         }
 
+        /*
         public void UpdateState()
         {
             for (int i = 0; i < _nodes.Length; i++)
@@ -131,15 +164,7 @@ namespace PuzzleGame
                 _blades[i].SetBladeActive(s_State.bladeActiveStates[i]);
             }
         }
-
-        public void DebugMode()
-        {
-            for (int i = 0; i < _blades.Length; i++)
-            {
-                _blades[i].zRotation = s_State.bladeRotations[i];
-                _blades[i].SetBladeActive(true);
-            }
-        }
+        */
 
         public void ResetPuzzle()
         {
@@ -147,7 +172,7 @@ namespace PuzzleGame
 
             for (int i = 0; i < _nodes.Length; i++)
             {
-                _nodes[i].transform.localPosition = s_State.initNodePositions[i];
+                _nodes[i].transform.localPosition = s_initNodePositions[i];
             }
 
             for (int i = 0; i < _blades.Length; i++)

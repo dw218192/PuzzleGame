@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 964712052465420760}
-  - component: {fileID: 676977241720769161}
   - component: {fileID: 8825552134398201334}
   - component: {fileID: 3234670594721202899}
   - component: {fileID: 5165526246386760314}
@@ -19,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &964712052465420760
 Transform:
   m_ObjectHideFlags: 0
@@ -34,29 +33,6 @@ Transform:
   m_Father: {fileID: 3764821047444257654}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &676977241720769161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 81836394344307592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0390c4e8fc0333946a8bc83e23507b9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animClips:
-  - {fileID: 7400000, guid: fbb47c08739e5ee4aa8244bfce11a4f1, type: 2}
-  _roomRange: {x: 0, y: 5}
-  _interactionEvent:
-    _PersistentCalls: []
-  _prerequisite: {fileID: 0}
-  _outlineColor: {r: 1, g: 0, b: 0, a: 1}
-  _showOutline: 0
-  _arrowDef: {fileID: 0}
-  _animateArrow: 0
-  _arrowIconTransform: {fileID: 0}
 --- !u!212 &8825552134398201334
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -97,15 +73,15 @@ SpriteRenderer:
   m_SortingLayerID: -386479613
   m_SortingLayer: 1
   m_SortingOrder: 2
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 8795366620419746748, guid: a706e5b3cc6889c499d80ee12faf8bb0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.9, y: 1.15}
+  m_Size: {x: 0.395, y: 0.49}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &3234670594721202899
@@ -126,7 +102,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.395, y: 0.49}
-    newSize: {x: 0.9, y: 1.15}
+    newSize: {x: 0.395, y: 0.49}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -497,13 +473,15 @@ PlayableDirector:
   - key: {fileID: 3049696168557809585, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
     value: {fileID: 5989129489192500146}
   - key: {fileID: -7829287937512977577, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
-    value: {fileID: 3616538722071803755}
+    value: {fileID: 9135472204281654191}
   - key: {fileID: 5117193874396602719, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
     value: {fileID: 662177298017614256}
   - key: {fileID: 3358741722194027937, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
     value: {fileID: 4236584197852171910}
   - key: {fileID: 5292046057563551558, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
     value: {fileID: 5165526246386760314}
+  - key: {fileID: -4623127398291084197, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
+    value: {fileID: 81836394344307592}
   m_ExposedReferences:
     m_References: []
 --- !u!1 &2525727095327367125
@@ -590,8 +568,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7195503164708117276}
   - component: {fileID: 3927815213173337841}
-  - component: {fileID: 3616538722071803755}
+  - component: {fileID: 9135472204281654191}
   - component: {fileID: 6851565470763826135}
+  - component: {fileID: 5568984738035981544}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -677,7 +656,20 @@ MonoBehaviour:
         _Z: 0
         _W: 0
         _Object: {fileID: 11400000, guid: a190f0c0c73df2a4d8d42c01693a4343, type: 2}
---- !u!114 &3616538722071803755
+    - _Target: {fileID: 0}
+      _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null.DisplayDialogue
+      _PersistentArguments:
+      - _Type: 13
+        _Int: 0
+        _String: PuzzleGame.DialogueDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        _X: 0
+        _Y: 0
+        _Z: 0
+        _W: 0
+        _Object: {fileID: 11400000, guid: 3e6a77510812dde4bba6003f477dbe0d, type: 2}
+--- !u!114 &9135472204281654191
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -690,23 +682,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Events:
-    m_Signals:
-    - {fileID: 11400000, guid: 69bb0e34e66bc8946a07b32871f49395, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 3927815213173337841}
-          m_TargetAssemblyTypeName: PuzzleGame.Room, Assembly-CSharp
-          m_MethodName: RotateNext
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+    m_Signals: []
+    m_Events: []
 --- !u!114 &6851565470763826135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -736,6 +713,62 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &5568984738035981544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2953377597608634547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ab5a38fb961b8e439514d98261d96f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetSignalAssets:
+  - signalAsset: {fileID: 11400000, guid: 844e511511a4d024797bfdf4d72bfb31, type: 2}
+    events:
+      _PersistentCalls:
+      - _Target: {fileID: 0}
+        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null.PlaySounds
+        _PersistentArguments:
+        - _Type: 13
+          _Int: 0
+          _String: UnityEngine.AudioClip, UnityEngine.AudioModule, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+          _X: 0
+          _Y: 0
+          _Z: 0
+          _W: 0
+          _Object: {fileID: 8300000, guid: 70acd576b15c8db438273f136b1bfa39, type: 3}
+  - signalAsset: {fileID: 11400000, guid: 69bb0e34e66bc8946a07b32871f49395, type: 2}
+    events:
+      _PersistentCalls:
+      - _Target: {fileID: 0}
+        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null.PlaySounds
+        _PersistentArguments:
+        - _Type: 13
+          _Int: 0
+          _String: UnityEngine.AudioClip, UnityEngine.AudioModule, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+          _X: 0
+          _Y: 0
+          _Z: 0
+          _W: 0
+          _Object: {fileID: 8300000, guid: 5b3101be067d54b42949c1ee9e306765, type: 3}
+      - _Target: {fileID: 3927815213173337841}
+        _MethodName: RotateNext
+        _PersistentArguments:
+        - _Type: 1
+          _Int: 0
+          _String: 
+          _X: 0
+          _Y: 0
+          _Z: 0
+          _W: 0
+          _Object: {fileID: 0}
 --- !u!1 &3105149999681976115
 GameObject:
   m_ObjectHideFlags: 0
@@ -3603,7 +3636,7 @@ GameObject:
   - component: {fileID: 1117117565916321813}
   - component: {fileID: 3584689056987435651}
   - component: {fileID: 7393361618289842638}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: EdgeCollider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3709,7 +3742,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6133428338510267311}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: GroundCeilingColliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3780,7 +3813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2267227321374015055
 Transform:
   m_ObjectHideFlags: 0
@@ -3924,6 +3957,7 @@ MonoBehaviour:
   _interactionEvent:
     _PersistentCalls: []
   _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 0}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 0
   _arrowDef: {fileID: 0}
@@ -4984,6 +5018,7 @@ MonoBehaviour:
         _W: 0
         _Object: {fileID: 11400000, guid: 58a13cc4f66b53042890c664f831620c, type: 2}
   _prerequisite: {fileID: 0}
+  _interactionCueSound: {fileID: 8300000, guid: e50cf1cc3677a714e88c2146a3b1ce5c, type: 3}
   _outlineColor: {r: 1, g: 0, b: 0, a: 1}
   _showOutline: 1
   _arrowDef: {fileID: 0}
@@ -5151,7 +5186,7 @@ GameObject:
   - component: {fileID: 2032503087109618584}
   - component: {fileID: 805962009213717585}
   - component: {fileID: 2237425752844557977}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: EdgeCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5945,14 +5980,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb661791998df6844be7caf849f0be9d, type: 3}
---- !u!95 &5989129489192500146 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 878493440068965830, guid: cb661791998df6844be7caf849f0be9d, type: 3}
-  m_PrefabInstance: {fileID: 6858032980253798004}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2562257342063750779 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8980837169961123855, guid: cb661791998df6844be7caf849f0be9d, type: 3}
+  m_PrefabInstance: {fileID: 6858032980253798004}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5989129489192500146 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 878493440068965830, guid: cb661791998df6844be7caf849f0be9d, type: 3}
   m_PrefabInstance: {fileID: 6858032980253798004}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8639673798967039561

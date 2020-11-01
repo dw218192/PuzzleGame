@@ -52,6 +52,9 @@ MonoBehaviour:
   _mainMenuClip: {fileID: 8300000, guid: 92d7d8cf03007d14faa273d0f1251a43, type: 3}
   _gameClip: {fileID: 8300000, guid: 5a0b36d4974a2214ca7046a13f6fdddb, type: 3}
   _bgmVolume: 0.3
+  _enterRoomClip: {fileID: 8300000, guid: 23078c0c3dda35d44bac72e8e4f89140, type: 3}
+  _leaveRoomClip: {fileID: 8300000, guid: debad1e3f9426974bac33edc3d20fcad, type: 3}
+  _initRoomClip: {fileID: 8300000, guid: ac83e2a391560084999aad7f287c6c86, type: 3}
   _dialogueEvents:
   - objectRef: {fileID: 11400000, guid: 69dde2320c6e710498cd94be4ca2bf80, type: 2}
     events:
