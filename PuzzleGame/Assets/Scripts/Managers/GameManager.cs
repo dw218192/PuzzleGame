@@ -52,37 +52,19 @@ namespace PuzzleGame
         #region Game Logic
         [Serializable]
         class DialogueEvents : ObjectEvents<DialogueDef> { }
-
         [Serializable]
         class CutSceneEvents : ObjectEvents<TimelineAsset> { }
-
         [Serializable]
         class PromptEvents : ObjectEvents<PromptDef> { }
-
-        [Serializable]
-        class RoomEvents
-        {
-            public bool isOneTime;
-            public UltEvent events;
-        }
-
+        
         [Header("Game Logic Configuration")]
-        [SerializeField]
-        DialogueEvents[] _dialogueEvents;
+        [SerializeField] CutSceneEvents[] _cutSceneEvents;
+        [SerializeField] UltEvent _enterRoomEvents;
 
-        [SerializeField]
-        CutSceneEvents[] _cutSceneEvents;
-
-        [SerializeField]
-        PromptEvents[] _promptEvents;
-
-        [SerializeField]
-        RoomEvents[] _enterRoomEvents;
         #endregion
 
         EGameState _gameState = EGameState.NONE;
         public Room curRoom { get; set; } = null;
-        Room _prevRoom = null;
 
         private void Awake()
         {
@@ -101,6 +83,14 @@ namespace PuzzleGame
             GameContext.s_audioMgr.PlayConstantSound(_mainMenuClip, _bgmVolume);
         }
 
+        private void Update()
+        {
+            if(_gameState == EGameState.RUNNING)
+            {
+                curRoom.UpdateRoom();
+            }
+        }
+
         public void StartGame()
         {
             curRoom = Room.SpawnChain(GameConst.k_totalNumRooms, GameConst.k_startingRoomIndex);
@@ -115,6 +105,7 @@ namespace PuzzleGame
 
         public void RestartGame()
         {
+            _gameState = EGameState.NONE;
             GameContext.Flush();
 
             Messenger.Broadcast(M_EventType.ON_GAME_RESTART);
@@ -123,6 +114,7 @@ namespace PuzzleGame
 
         public void QuitGame()
         {
+            _gameState = EGameState.NONE;
             Application.Quit();
         }
 
@@ -213,8 +205,6 @@ namespace PuzzleGame
                     GameContext.s_audioMgr.PlayOneShotSound(_leaveRoomClip, transform.position, 1);
                 }
             }
-
-            curRoom = data.room;
         }
 
         private void OnEnterRoom(RoomEventData data)
@@ -223,43 +213,15 @@ namespace PuzzleGame
                 GameContext.s_player = Instantiate(playerPrefab, curRoom.playerSpawnPos, Quaternion.identity);
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
-
-            foreach(var evts in _enterRoomEvents)
-            {
-                evts.events?.Invoke();
-
-                if(evts.isOneTime)
-                {
-                    evts.events.Clear();
-                }
-            }
-
+            
+            curRoom = data.room;
+            _enterRoomEvents?.Invoke();
         }
         public void OnEndCutScene(TimelineAsset cutScene)
         {
             foreach (var eventlist in _cutSceneEvents)
             {
                 if (ReferenceEquals(cutScene, eventlist.objectRef))
-                {
-                    eventlist.events?.Invoke();
-                }
-            }
-        }
-        public void OnEndDialogue(DialogueDef dialogue)
-        {
-            foreach (var eventlist in _dialogueEvents)
-            {
-                if (ReferenceEquals(dialogue, eventlist.objectRef))
-                {
-                    eventlist.events?.Invoke();
-                }
-            }
-        }
-        public void OnEndPrompt(PromptDef prompt)
-        {
-            foreach (var eventlist in _promptEvents)
-            {
-                if (ReferenceEquals(prompt, eventlist.objectRef))
                 {
                     eventlist.events?.Invoke();
                 }

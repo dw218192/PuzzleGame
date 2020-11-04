@@ -22,7 +22,7 @@ namespace PuzzleGame
 
             if (curRoom.roomIndex == GameConst.k_maxRoomIndex - 1)
             {
-                DialogueMenu.Instance.DisplayPromptOneShot("Message", "I am too large to fit into this room", null, null, "Ok then");
+                DialogueMenu.Instance.DisplaySimplePrompt("Message", "I am too large to fit into this room", null, "Ok then");
             }
             else
             {
@@ -38,7 +38,7 @@ namespace PuzzleGame
         public static void AddToInventory(InventoryItemDef inventoryItem, float scale, int quantity, bool useGlobalScale)
         {
             Debug.Assert(GameContext.s_player);
-            if(useGlobalScale)
+            if(!useGlobalScale)
                 GameContext.s_player.AddToInventory(inventoryItem, quantity, scale, GameContext.s_gameMgr.curRoom);
             else
                 GameContext.s_player.AddToInventory(inventoryItem, quantity, scale);

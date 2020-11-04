@@ -12,6 +12,7 @@ namespace PuzzleGame
 {
     public class MetricManager : MonoBehaviour
     {
+#if !UNITY_EDITOR
         class PuzzleMetrics
         {
             public PuzzleMetrics(string puzzleName, float timeSpent, bool solved)
@@ -248,5 +249,6 @@ namespace PuzzleGame
 
             _gameMetrics.gameTime += Time.deltaTime;
         }
+#endif
     }
 }

@@ -38,7 +38,7 @@ namespace PuzzleGame.UI
             {
                 const string fmt = "0.######";
                 string description = $"{_item.def.description}\n\n\n<size=17>item scale in current room = <color=red>{(_item.GetRoomRelativeScale()).ToString(fmt)}x </color></size>";
-                DialogueMenu.Instance.DisplayPromptOneShot("Item Description", description, _itemImage.sprite, null, "Back");
+                DialogueMenu.Instance.DisplaySimplePrompt("Item Description", description, _itemImage.sprite, "Back");
             }
         }
         public void Set(InventoryItem item)

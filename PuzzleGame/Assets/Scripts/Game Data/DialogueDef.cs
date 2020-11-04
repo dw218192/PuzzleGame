@@ -1,6 +1,7 @@
 ﻿using PuzzleGame.EventSystem;
 using System.Collections;
 using System.Collections.Generic;
+using UltEvents;
 using UnityEngine;
 
 namespace PuzzleGame
@@ -9,6 +10,8 @@ namespace PuzzleGame
     public class DialogueDef : ScriptableObject
     {
         public string[] dialogues;
+        public UltEvent onDialogueFinishEvents;
+
         //runtime
         public bool hasPlayed { get; set; }
 

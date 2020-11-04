@@ -41,8 +41,6 @@ namespace PuzzleGame
         [SerializeField] float _paintingRotationStep;
         [SerializeField] float _maxPaintingRotation;
 
-        [SerializeField] UltEvent _roomEvents;
-
         float _paintingRotationAngle = 0;
 
         //conversion methods
@@ -256,9 +254,9 @@ namespace PuzzleGame
             _paintingMask.transform.position = pos;
         }
 
-        private void Update()
+        public void UpdateRoom()
         {
-            _roomEvents.Invoke();
+            _roomCutsceneMgr.CheckCutScenes();
         }
 
         /// <summary>

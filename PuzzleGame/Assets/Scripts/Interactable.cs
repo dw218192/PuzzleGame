@@ -30,7 +30,7 @@ namespace PuzzleGame
 
         public UltEvent interactionEvent { get => _interactionEvent; }
 
-        public bool canInteract { 
+        public virtual bool canInteract { 
             get 
             {
                 return _prerequisite == null || _prerequisite.Evaluate(); 

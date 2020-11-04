@@ -17,7 +17,7 @@ namespace PuzzleGame.Editor
 
         public override void OnInspectorGUI()
         {
-            if(_target)
+            if(_target && _target.expression != null)
                 EditorGUILayout.LabelField("expression: " + string.Join(" ", _target.expression));
 
             DrawDefaultInspector();

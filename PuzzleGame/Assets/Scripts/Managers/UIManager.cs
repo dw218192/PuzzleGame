@@ -127,5 +127,21 @@ namespace PuzzleGame.UI
         {
             _cutSceneFrame.SetActive(false);
         }
+
+#if UNITY_EDITOR
+        private void OnGUI()
+        {
+            GUILayout.BeginArea(new Rect(0, 150, 400, 400));
+            GUI.color = Color.green;
+            GUILayout.Label("===========UIManager===========");
+            GUILayout.Label("\tmenu stack:");
+
+            for(var node = _MenuStack.Last; node != null; node = node.Previous)
+            {
+                GUILayout.Label($"\t\t{node.Value.GetType().Name}");
+            }
+            GUILayout.EndArea();
+        }
+#endif
     }
 }

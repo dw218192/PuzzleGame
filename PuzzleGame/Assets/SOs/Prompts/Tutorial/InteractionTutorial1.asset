@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8faa4e3fd38fb2439de1ff2784fa3b9, type: 3}
   m_Name: InteractionTutorial1
   m_EditorClassIdentifier: 
-  title: Item Inspection
+  title: 'Tutorial: Item Inspection'
   prompt: Some items in the level can be inspected. They are particularly important
     in helping you escape.
   promptImage: {fileID: 0}
@@ -39,3 +39,4 @@ MonoBehaviour:
           _Object: {fileID: 11400000, guid: cc6553d70f912ca499418887062be9d4, type: 2}
   hasBackButton: 0
   backButtonName: 
+  popUpSoundOverride: {fileID: 0}

@@ -29,13 +29,13 @@ MonoBehaviour:
       _PersistentArguments:
       - _Type: 13
         _Int: 0
-        _String: PuzzleGame.DialogueDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        _String: PuzzleGame.PromptDef, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
           PublicKeyToken=null
         _X: 0
         _Y: 0
         _Z: 0
         _W: 0
-        _Object: {fileID: 11400000, guid: 98c62b64a9b27364da163eb09f09615b, type: 2}
+        _Object: {fileID: 11400000, guid: 4acb2ae89d9bcc64e82036a6dec56401, type: 2}
   - type: 3
     variable: {fileID: 0}
     boolPredicate:

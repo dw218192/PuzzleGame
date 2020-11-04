@@ -47,7 +47,6 @@ MonoBehaviour:
   m_Markers:
     m_Objects:
     - {fileID: -5721840378400228284}
-    - {fileID: -5000337766662737483}
     - {fileID: -6925338611463788539}
 --- !u!114 &-6925338611463788539
 MonoBehaviour:
@@ -93,23 +92,6 @@ MonoBehaviour:
   m_Retroactive: 0
   m_EmitOnce: 1
   m_Asset: {fileID: 11400000, guid: 69bb0e34e66bc8946a07b32871f49395, type: 2}
---- !u!114 &-5000337766662737483
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18fd9e62337ae7b498c15136bfe689a4, type: 3}
-  m_Name: Dialogue Signal Emitter
-  m_EditorClassIdentifier: 
-  m_Time: 4.3
-  m_Retroactive: 0
-  m_EmitOnce: 1
-  m_Asset: {fileID: 11400000, guid: f6e63c1eccecf3045956a401afc5257e, type: 2}
-  dialogueDef: {fileID: 11400000, guid: 072fe037a2c4892409129bad7ab82b19, type: 2}
 --- !u!114 &-4623127398291084197
 MonoBehaviour:
   m_ObjectHideFlags: 1

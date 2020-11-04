@@ -90,7 +90,8 @@ namespace PuzzleGame
 
         void UserInput(int lightId)
         {
-            Debug.Assert(canInspect);
+            if (!canInspect)
+                return;
 
             _lightButtons[lightId].image.sprite = _litSprite;
 

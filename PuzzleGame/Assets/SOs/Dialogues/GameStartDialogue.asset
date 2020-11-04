@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: GameStartDialogue
   m_EditorClassIdentifier: 
   dialogues:
-  - This better not be one of those dreams again.
-  - But everything seems so real...
+  - How did I get here?
+  - Better not be one of those dreams again.
+  onDialogueFinishEvents:
+    _PersistentCalls: []

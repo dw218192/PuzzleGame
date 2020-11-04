@@ -39,7 +39,7 @@ namespace PuzzleGame.UI
         #endregion
 
         //buffered dialogues
-        PromptDef _curPrompt = null;
+        Stack<PromptDef> _prompts;
         DialogueBufferEntry _curDialogue = null;
         Queue<DialogueBufferEntry> _bufferedDialogues = new Queue<DialogueBufferEntry>();
 
@@ -72,12 +72,11 @@ namespace PuzzleGame.UI
         }
         void FinishDialogue(DialogueDef def)
         {
-            GameContext.s_gameMgr.OnEndDialogue(def);
+            def.onDialogueFinishEvents?.Invoke();
             def.hasPlayed = true;
         }
         void FinishPrompt(PromptDef def)
         {
-            GameContext.s_gameMgr.OnEndPrompt(def);
             def.hasPlayed = true;
         }
 
@@ -116,11 +115,30 @@ namespace PuzzleGame.UI
 
         public void DisplayPrompt(PromptDef promptDef)
         {
-            if(_curPrompt)
-                ClosePrompt();
-
-            _curPrompt = promptDef;
+            _prompts.Push(promptDef);
             _promptPanel.SetActive(true);
+            DisplayPromptInternal(promptDef);
+            GameContext.s_UIMgr.OpenMenu(Instance);
+
+            if (promptDef.popUpSoundOverride)
+                GameActions.PlaySounds(promptDef.popUpSoundOverride);
+            else
+                GameActions.PlaySounds(_promptPopupSound);
+        }
+
+        public void DisplaySimplePrompt(string title, string prompt, Sprite image, string back)
+        {
+            var ins = ScriptableObject.CreateInstance<PromptDef>();
+            ins.title = title;
+            ins.prompt = prompt;
+            ins.backButtonName = back;
+            ins.promptImage = image;
+
+            DisplayPrompt(ins);
+        }
+
+        private void DisplayPromptInternal(PromptDef promptDef)
+        {
             _promptTitleText.text = promptDef.title;
             Sprite image = promptDef.promptImage;
             string prompt = promptDef.prompt;
@@ -154,7 +172,7 @@ namespace PuzzleGame.UI
                     button.GetComponentInChildren<Text>().text = optionDesc.optionName;
 
                     button.onClick = new Button.ButtonClickedEvent();
-                    button.onClick.AddListener(()=> 
+                    button.onClick.AddListener(() =>
                     {
                         optionDesc.optionEvents?.Invoke();
                     });
@@ -175,72 +193,13 @@ namespace PuzzleGame.UI
             {
                 _backButton.gameObject.SetActive(false);
             }
-
-            GameContext.s_UIMgr.OpenMenu(Instance);
-
-            if (promptDef.popUpSoundOverride)
-                GameActions.PlaySounds(promptDef.popUpSoundOverride);
-            else
-                GameActions.PlaySounds(_promptPopupSound);
         }
 
-        public void DisplayPromptOneShot(string title, string prompt, Sprite image, (string, Button.ButtonClickedEvent)[] options, string back)
-        {
-            if (_curPrompt)
-                ClosePrompt();
-
-            _curPrompt = null;
-            _promptPanel.SetActive(true);
-            _promptTitleText.text = title;
-            _textPromptContentRoot.SetActive(!image);
-            _picturePromptContentRoot.SetActive(image);
-
-            if (!image)
-            {
-                _promptText.text = prompt;
-            }
-            else
-            {
-                _promptImage.sprite = image;
-                _promptImageText.text = prompt;
-            }
-
-            int i = 0;
-            if (options != null)
-            {
-                Debug.Assert(options.Length + 1 <= _optionButtons.Length);
-
-                for (; i < options.Length; i++)
-                {
-                    var button = _optionButtons[i];
-                    button.gameObject.SetActive(true);
-                    button.transform.parent.SetParent(_promptLayoutGroup.transform, false);
-                    button.GetComponentInChildren<Text>().text = options[i].Item1;
-                    button.onClick = options[i].Item2;
-                }
-            }
-
-            while (i < _optionButtons.Length)
-            {
-                _optionButtons[i++].gameObject.SetActive(false);
-            }
-             
-            if(back != null)
-            {
-                _backButton.gameObject.SetActive(true);
-                _backButton.GetComponentInChildren<Text>().text = back;
-            }
-            else
-            {
-                _backButton.gameObject.SetActive(false);
-            }
-
-            GameContext.s_UIMgr.OpenMenu(Instance);
-            GameActions.PlaySounds(_promptPopupSound);
-        }
         protected override void Awake()
         {
             base.Awake();
+
+            _prompts = new Stack<PromptDef>();
 
             //prompt button pool
             _optionButtons = _promptLayoutGroup.GetComponentsInChildren<Button>();
@@ -268,12 +227,12 @@ namespace PuzzleGame.UI
 
             bool hasOngoingDialogue = false;
 
-            //clear current prompt
-            if(_curPrompt)
+            //clear all prompts
+            while (_prompts.Count > 0)
             {
-                FinishPrompt(_curPrompt);
-                _curPrompt = null;
+                FinishPrompt(_prompts.Pop());
             }
+            
             _promptPanel.SetActive(false);
 
             //clear current dialogue
@@ -309,13 +268,19 @@ namespace PuzzleGame.UI
 
         public void ClosePrompt()
         {
-            if(_curPrompt)
+            if(_prompts.Count > 0)
             {
-                FinishPrompt(_curPrompt);
-                _curPrompt = null;
+                FinishPrompt(_prompts.Pop());
             }
 
-            _promptPanel.SetActive(false);
+            if(_prompts.Count == 0)
+            {
+                _promptPanel.SetActive(false);
+            }
+            else
+            {
+                DisplayPromptInternal(_prompts.Peek());
+            }
 
             if (!_promptPanel.activeSelf && !_dialoguePanel.activeSelf)
             {
