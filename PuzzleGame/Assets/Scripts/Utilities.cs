@@ -15,6 +15,33 @@ namespace PuzzleGame
     public static class TransformExtension
     {
     }
+
+    [DisallowMultipleComponent]
+    public abstract class SingletonBehavior<T> : MonoBehaviour where T : SingletonBehavior<T>
+    {
+        private static T _Instance;
+        public static T Instance { get { return _Instance; } }
+
+        protected virtual void Awake()
+        {
+            if (_Instance != null)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                _Instance = (T)this;
+            }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (_Instance == this)
+            {
+                _Instance = null;
+            }
+        }
+    }
 }
 
 namespace PuzzleGame.EventSystem

@@ -87,10 +87,14 @@ namespace PuzzleGame
         [Header("Speaker Puzzle Config")]
         [SerializeField] UltEvent _successEvent;
         [SerializeField] float _successSeqStepTime;
-        [Header("World Canvas Config")]
+        
+        [Header("Inspection Canvas Config")]
         [SerializeField] SpeakerPuzzleNode[] _nodes;
         [SerializeField] SpeakerBlade[] _blades;
         [SerializeField] EdgeCollider2D _goalCheckCollider;
+
+        [Header("Screen Canvas Config")]
+        [SerializeField] Button _resetButton;
 
         Collider2D[] _middleNodes;
         ContactFilter2D _filter;
@@ -104,6 +108,8 @@ namespace PuzzleGame
             _filter = new ContactFilter2D();
             _filter.useTriggers = true;
             _filter.layerMask = 1 << GameConst.k_UILayer;
+
+            _resetButton.onClick.AddListener(ResetPuzzle);
         }
 
         protected override void Start()

@@ -325,9 +325,9 @@ GameObject:
   - component: {fileID: 8132934452312141216}
   - component: {fileID: 4887002264228723304}
   - component: {fileID: 3053250913044617936}
-  - component: {fileID: 2036138626094625763}
+  - component: {fileID: 7568629132540799192}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: WorldCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -417,7 +417,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &2036138626094625763
+--- !u!114 &7568629132540799192
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -426,12 +426,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6444592738538370854}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5119d4fed187c3740983a66994dc74a4, type: 3}
+  m_Script: {fileID: 11500000, guid: 04bf8b77551af144786abdf90f3429a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _enableInspectCamRot: 0
-  _inspectCamera: {fileID: 0}
-  _inspectable: {fileID: 0}
 --- !u!1 &7384552200416783437
 GameObject:
   m_ObjectHideFlags: 0

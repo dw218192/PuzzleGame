@@ -24,11 +24,11 @@ namespace PuzzleGame
         [SerializeField] AnimationClip _codeClip;
         [SerializeField] string _correctSequence = "3142";
 
-        [Header("world space canvas setting")]
+        [Header("Inspection Canvas setting")]
         [SerializeField] Sprite _litSprite, _unlitSprite, _acceptedSprite;
         [SerializeField] Button _light1, _light2, _light3, _light4;
 
-        [Header("screen space canvas setting")]
+        [Header("Screen canvas setting")]
         [SerializeField] Text _prompt;
         StringBuilder _userSequence = new StringBuilder();
 

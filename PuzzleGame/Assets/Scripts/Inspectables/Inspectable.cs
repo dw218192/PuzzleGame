@@ -12,11 +12,16 @@ namespace PuzzleGame
     public class Inspectable : Interactable
     {
         [Header("Inspectable Config")]
+        [SerializeField] protected Camera _inspectionCamera;
+        public Camera inspectionCamera { get => _inspectionCamera; }
+        
         [SerializeField] protected DialogueDef _firstEncounterDialogue;
-        //world space canvas for details on the object
-        [SerializeField] protected InspectionCanvas _worldInspectionCanvas;
+        //canvas for details on the object
+        [SerializeField] protected InspectionCanvas _inspectionCanvas;
         //screen space canvas
-        [SerializeField] protected Canvas _screenInspectionCanvas;
+        [SerializeField] protected Canvas _screenCanvas;
+        [SerializeField] protected Button _screenBackButton;
+
         protected bool _canInspect = true;
         public virtual bool canInspect
         {
@@ -34,7 +39,7 @@ namespace PuzzleGame
         }
         public override bool canInteract
         {
-            get => _canInspect && base.canInteract;
+            get => _inspectionCanvas && _canInspect && base.canInteract;
         }
 
         protected override void Awake()
@@ -42,16 +47,22 @@ namespace PuzzleGame
             base.Awake();
 
             _interactionEvent.AddPersistentCall((Action)BeginInspect);
+            _screenBackButton.onClick.AddListener(_inspectionCanvas.OnBackPressed);
         }
 
         protected override void Start()
         {
             base.Start();
 
-            if(_screenInspectionCanvas)
+            if(_screenCanvas)
             {
-                _screenInspectionCanvas.transform.SetParent(null);
-                _screenInspectionCanvas.gameObject.SetActive(false);
+                _screenCanvas.transform.SetParent(null);
+                _screenCanvas.gameObject.SetActive(false);
+            }
+
+            if(_inspectionCanvas)
+            {
+                _inspectionCanvas.Init(this);
             }
         }
 
@@ -62,13 +73,13 @@ namespace PuzzleGame
             spriteRenderer.enabled = false;
             
             //open screen space canvas (which are not managed by the UIManager for now)
-            if(_screenInspectionCanvas)
+            if(_screenCanvas)
             {
-                _screenInspectionCanvas.gameObject.SetActive(true);
+                _screenCanvas.gameObject.SetActive(true);
             }
 
             //open world space canvas
-            GameContext.s_UIMgr.OpenMenu(_worldInspectionCanvas);
+            GameContext.s_UIMgr.OpenMenu(_inspectionCanvas);
 
             //display first dialogue
             if (_firstEncounterDialogue && !_firstEncounterDialogue.hasPlayed)
@@ -89,9 +100,9 @@ namespace PuzzleGame
             spriteRenderer.enabled = true;
 
             //disable screen space
-            if(_screenInspectionCanvas)
+            if(_screenCanvas)
             {
-                _screenInspectionCanvas.gameObject.SetActive(false);
+                _screenCanvas.gameObject.SetActive(false);
             }
 
             //enable player ctrl
@@ -102,6 +113,11 @@ namespace PuzzleGame
         protected virtual void Update()
         {
 
+        }
+
+        private void OnDrawGizmos()
+        {
+            
         }
     }
 }

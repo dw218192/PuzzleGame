@@ -5,49 +5,63 @@ using UnityEngine.UI;
 
 namespace PuzzleGame.UI
 {
-    public class InspectionCanvas : MonoBehaviour, IGameMenu
+    [RequireComponent(typeof(Canvas))]
+    public abstract class InspectionCanvas : MonoBehaviour, IGameMenu
     {
         /// <summary>
         /// UI elements that do not rotate with the canvas
         /// </summary>
         [SerializeField] bool _enableInspectCamRot = false;
-        [SerializeField] Camera _inspectCamera;
-        [SerializeField] Inspectable _inspectable;
-
-        public bool enableInspectCamRotation 
+        public virtual bool enableInspectCamRotation 
         { 
-            get => _enableInspectCamRot; 
-            set 
+            get 
             { 
-                if(value != _enableInspectCamRot)
+                return _enableInspectCamRot; 
+            }
+            set
+            {
+                if (value)
                 {
-                    if(value)
-                    {
-                        _inspectCamera.transform.localRotation = Quaternion.identity;
-                    }
-                    else
-                    {
-                        _inspectCamera.transform.rotation = Quaternion.identity;
-                    }
-
-                    _enableInspectCamRot = value;
+                    _inspectCamera.transform.localRotation = Quaternion.identity;
                 }
-            } 
+                else
+                {
+                    _inspectCamera.transform.rotation = Quaternion.identity;
+                }
+                _enableInspectCamRot = value;
+            }
+        }
+
+        protected Camera _inspectCamera;
+        protected Inspectable _inspectable;
+
+        public virtual void Init(Inspectable inspectable)
+        {
+            _inspectable = inspectable;
+
+            _inspectCamera = inspectable.inspectionCamera;
+            _inspectCamera.gameObject.SetActive(false);
+
+            _inspectCamera.orthographic = true;
+            _inspectCamera.cullingMask = ~(1 << GameConst.k_playerLayer);
+
+            _inspectCamera.orthographicSize *= inspectable.room.roomScale;
+
+            gameObject.SetActive(false);
+            GameContext.s_UIMgr.RegisterMenu(this);
+        }
+
+        protected virtual void Awake()
+        {
+
         }
 
         protected virtual void Start()
         {
-            _inspectCamera.gameObject.SetActive(false);
-            gameObject.SetActive(false);
 
-            _inspectCamera.orthographic = true;
-            _inspectCamera.orthographicSize *= _inspectable.room.roomScale;
-            _inspectCamera.cullingMask = ~(1 << GameConst.k_playerLayer);
-
-            GameContext.s_UIMgr.RegisterMenu(this);
         }
 
-        public void OnBackPressed()
+        public virtual void OnBackPressed()
         {
             if (GameContext.s_UIMgr != null && ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), this))
             {
@@ -55,22 +69,15 @@ namespace PuzzleGame.UI
             }
         }
 
-        public void OnEnterMenu()
+        public virtual void OnEnterMenu()
         {
+            enableInspectCamRotation = _enableInspectCamRot;
+
             _inspectCamera.gameObject.SetActive(true);
             gameObject.SetActive(true);
-
-            if(!_enableInspectCamRot)
-            {
-                _inspectCamera.transform.rotation = Quaternion.identity;
-            }
-            else
-            {
-                _inspectCamera.transform.localRotation = Quaternion.identity;
-            }
         }
 
-        public void OnLeaveMenu()
+        public virtual void OnLeaveMenu()
         {
             _inspectCamera.gameObject.SetActive(false);
             gameObject.SetActive(false);

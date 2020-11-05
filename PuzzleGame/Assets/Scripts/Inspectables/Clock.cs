@@ -44,7 +44,7 @@ namespace PuzzleGame
 
         [Header("screen space canvas setting")]
         [SerializeField] Text _gravityButtonText;
-        [SerializeField] Button _resetButton, _gravityButton, _backButton;
+        [SerializeField] Button _resetButton, _gravityButton;
 
         Image[] _switches;
         Dictionary<EdgeCollider2D, int> _switchCollider2SwitchIdx;
@@ -100,10 +100,9 @@ namespace PuzzleGame
             });
 
             //configure screen UI
-            _gravityButtonText.text = _worldInspectionCanvas.enableInspectCamRotation ? "Enable\nGravity View" : "Disable\nGravity View";
+            _gravityButtonText.text = _inspectionCanvas.enableInspectCamRotation ? "Enable\nGravity View" : "Disable\nGravity View";
             _resetButton.onClick.AddListener(ResetPuzzle);
             _gravityButton.onClick.AddListener(ToggleCamRotation);
-            _backButton.onClick.AddListener(_worldInspectionCanvas.OnBackPressed);
         }
 
         private void ExtendHands()
@@ -158,7 +157,7 @@ namespace PuzzleGame
             {
                 _resetButton.gameObject.SetActive(true);
                 _gravityButton.gameObject.SetActive(true);
-                _backButton.gameObject.SetActive(true);
+                _screenBackButton.gameObject.SetActive(true);
 
                 _clockHands.gameObject.SetActive(true);
                 spriteRenderer.sprite = _unlockedClock;
@@ -168,7 +167,7 @@ namespace PuzzleGame
                 _clockHands.gameObject.SetActive(false);
                 _resetButton.gameObject.SetActive(false);
                 _gravityButton.gameObject.SetActive(false);
-                _backButton.gameObject.SetActive(true);
+                _screenBackButton.gameObject.SetActive(true);
 
                 _clockHands.gameObject.SetActive(false);
                 spriteRenderer.sprite = _lockedClock;
@@ -176,8 +175,8 @@ namespace PuzzleGame
         }
         public void ToggleCamRotation()
         {
-            _worldInspectionCanvas.enableInspectCamRotation = !_worldInspectionCanvas.enableInspectCamRotation;
-            _gravityButtonText.text = _worldInspectionCanvas.enableInspectCamRotation ? "Enable\nGravity View" : "Disable\nGravity View";
+            _inspectionCanvas.enableInspectCamRotation = !_inspectionCanvas.enableInspectCamRotation;
+            _gravityButtonText.text = _inspectionCanvas.enableInspectCamRotation ? "Enable\nGravity View" : "Disable\nGravity View";
         }
         public void RotateHandsCW()
         {

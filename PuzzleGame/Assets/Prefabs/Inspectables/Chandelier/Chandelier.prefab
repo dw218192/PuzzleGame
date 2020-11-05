@@ -137,9 +137,11 @@ MonoBehaviour:
   _arrowDef: {fileID: 0}
   _animateArrow: 0
   _arrowIconTransform: {fileID: 0}
+  _inspectionCamera: {fileID: 5789735374126141754}
   _firstEncounterDialogue: {fileID: 11400000, guid: 1f0f544645caa1c4a8844cb7307f2742, type: 2}
-  _worldInspectionCanvas: {fileID: 5261604366450969563}
-  _screenInspectionCanvas: {fileID: 8076638564333719518}
+  _inspectionCanvas: {fileID: 4344852246645854432}
+  _screenCanvas: {fileID: 8076638564333719518}
+  _screenBackButton: {fileID: 5454056324204065836}
   _successEvent:
     _PersistentCalls:
     - _Target: {fileID: 0}
@@ -426,22 +428,23 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 5789735374126141754}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2036138626094625763, guid: ed7872c7392ee6044a8aa648f924ea70, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ed7872c7392ee6044a8aa648f924ea70, type: 3}
 --- !u!224 &6383511756311790725 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 996388566782753981, guid: ed7872c7392ee6044a8aa648f924ea70, type: 3}
   m_PrefabInstance: {fileID: 6144361254248396856}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5261604366450969563 stripped
+--- !u!114 &4344852246645854432 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2036138626094625763, guid: ed7872c7392ee6044a8aa648f924ea70, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7568629132540799192, guid: ed7872c7392ee6044a8aa648f924ea70, type: 3}
   m_PrefabInstance: {fileID: 6144361254248396856}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5119d4fed187c3740983a66994dc74a4, type: 3}
+  m_Script: {fileID: 11500000, guid: 04bf8b77551af144786abdf90f3429a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6106923308325467496 stripped
@@ -526,7 +529,7 @@ PrefabInstance:
     - target: {fileID: 2831160850640994648, guid: baad93d30caba1c488a3c62a62a342e2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 5261604366450969563}
+      objectReference: {fileID: 0}
     - target: {fileID: 2831160850640994648, guid: baad93d30caba1c488a3c62a62a342e2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PuzzleGame.UI.InspectionCanvas, Assembly-CSharp
@@ -648,5 +651,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5454056324204065836 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2831160850640994648, guid: baad93d30caba1c488a3c62a62a342e2, type: 3}
+  m_PrefabInstance: {fileID: 7852868860625876340}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

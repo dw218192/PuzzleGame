@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3483995006498530952}
   - component: {fileID: 240450678498816320}
   - component: {fileID: 7699763053996593656}
-  - component: {fileID: 7571889581080495111}
+  - component: {fileID: 4856591499962204052}
   m_Layer: 5
   m_Name: WorldCanvas
   m_TagString: Untagged
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7571889581080495111
+--- !u!114 &4856591499962204052
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,12 +110,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1867750056865152014}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5119d4fed187c3740983a66994dc74a4, type: 3}
+  m_Script: {fileID: 11500000, guid: 04bf8b77551af144786abdf90f3429a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enableInspectCamRot: 1
-  _inspectCamera: {fileID: 0}
-  _inspectable: {fileID: 0}
+  _enableInspectCamRot: 0
 --- !u!1 &2003610287198777925
 GameObject:
   m_ObjectHideFlags: 0
