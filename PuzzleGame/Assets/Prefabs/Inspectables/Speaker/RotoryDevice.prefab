@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6520732581718241794}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &6520732581718241794
 Transform:
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000610067373142555}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.36000013, z: 0}
+  m_LocalPosition: {x: 0, y: 122.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3935191967540469925}
@@ -42,12 +42,12 @@ GameObject:
   - component: {fileID: 8348120938481746583}
   - component: {fileID: 933977965322917199}
   - component: {fileID: 1577252954959951320}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: RotationRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!224 &3935191967540469925
 RectTransform:
@@ -67,7 +67,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.7, y: 0.7}
+  m_SizeDelta: {x: 240, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8348120938481746583
 CanvasRenderer:
@@ -124,15 +124,15 @@ MonoBehaviour:
     _PersistentCalls: []
   _targetItem: {fileID: 11400000, guid: 45fa9d30ba6b9774b8f1dc635c6ce9ca, type: 2}
   _requiredQuantity: 1
-  _requiredItemScale: 1
+  _requiredItemScale: 0.5
   _wrongItemPrompt: {fileID: 11400000, guid: 50e000cf2fdad184d8b3b038a7334492, type: 2}
   _wrongQuantityOrScalePrompt: {fileID: 11400000, guid: 33cc6c4131f656a43909697f7fcc24cf, type: 2}
   _onPickupItem:
     _PersistentCalls: []
   _placedSprite: {fileID: -419608134045260789, guid: bb52324f6ebb69143bf30e468d090d1a, type: 3}
   _emptySprite: {fileID: 237478007086554720, guid: bb52324f6ebb69143bf30e468d090d1a, type: 3}
-  _emptySpriteSize: {x: 0.1, y: 0.1}
-  _placedSpriteSize: {x: 0.7, y: 0.7}
+  _emptySpriteSize: {x: 34.285713, y: 34.285713}
+  _placedSpriteSize: {x: 240, y: 240}
   _inspectionPrompt: {fileID: 11400000, guid: c52a21e0a60a86143a9e07fc65ec4346, type: 2}
 --- !u!1 &3369886617314896056
 GameObject:
@@ -144,12 +144,12 @@ GameObject:
   m_Component:
   - component: {fileID: 5861599620379417037}
   - component: {fileID: 1021614752948136932}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: RotoryDevice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!224 &5861599620379417037
 RectTransform:
@@ -158,7 +158,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3369886617314896056}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -184,13 +184,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ef9cd0f78baaf4d9ec5e500e45b970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _parentSpeaker: {fileID: 0}
   _cwRotButton: {fileID: 1917716241383080450}
   _ccwRotButton: {fileID: 5991398777532269878}
   _bladePlacePoint: {fileID: 1577252954959951320}
   _radiusAnchor: {fileID: 6520732581718241794}
   _rotationStep: 90
   _rotationTime: 1.2
+  _rotationSound: {fileID: 11400000, guid: e236380727225b64d85ff956caf6d261, type: 2}
 --- !u!1 &7671138318507222839
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,7 +207,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!224 &4341084478788723221
 RectTransform:
@@ -249,7 +249,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 1389035605
-  m_SortingOrder: 999
+  m_SortingOrder: -99
   m_TargetDisplay: 0
 --- !u!114 &214462293050809336
 MonoBehaviour:
@@ -321,7 +321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6526469940647716324, guid: 93d26fc0c9d0f7d48ac52720c4ab8810, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.05
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6526469940647716324, guid: 93d26fc0c9d0f7d48ac52720c4ab8810, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -329,11 +329,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6526469940647716324, guid: 93d26fc0c9d0f7d48ac52720c4ab8810, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0.06
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6526469940647716324, guid: 93d26fc0c9d0f7d48ac52720c4ab8810, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.1
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6526469940647716324, guid: 93d26fc0c9d0f7d48ac52720c4ab8810, type: 3}
       propertyPath: m_AnchorMin.x
@@ -434,7 +434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039768919527286600, guid: f7c866c90635cac4497748a447c33f60, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.05
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 2039768919527286600, guid: f7c866c90635cac4497748a447c33f60, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -442,11 +442,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039768919527286600, guid: f7c866c90635cac4497748a447c33f60, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0.06
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2039768919527286600, guid: f7c866c90635cac4497748a447c33f60, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.1
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2039768919527286600, guid: f7c866c90635cac4497748a447c33f60, type: 3}
       propertyPath: m_AnchorMin.x

@@ -63,6 +63,11 @@ namespace PuzzleGame.UI
                 return;
             }
 
+            if (!menuInstance.CanOpen())
+            {
+                return;
+            }
+
             if (_MenuStack.Count > 0)
             {
                 for(var curNode = _MenuStack.First; curNode != null; curNode = curNode.Next)
@@ -74,12 +79,11 @@ namespace PuzzleGame.UI
                         break;
                     }
                 }
-                /*
+
                 if (_MenuStack.Count > 0)
                 {
-                    _MenuStack.First.Value.OnLeaveMenu();
+                    _MenuStack.First.Value.OnLoseFocus();
                 }
-                */
             }
 
             menuInstance.OnEnterMenu();
@@ -87,7 +91,7 @@ namespace PuzzleGame.UI
         }
         public void CloseCurrentMenu()
         {
-            if (_MenuStack.Count == 0 || ReferenceEquals(GetActiveMenu(), EndScreen.Instance))
+            if (_MenuStack.Count == 0 || !GetActiveMenu().CanClose())
             {
                 return;
             }
@@ -99,7 +103,7 @@ namespace PuzzleGame.UI
             if (_MenuStack.Count > 0)
             {
                 IGameMenu nextMenu = _MenuStack.First.Value;
-                nextMenu.OnEnterMenu();
+                nextMenu.OnFocus();
             }
         }
         public IGameMenu GetActiveMenu()

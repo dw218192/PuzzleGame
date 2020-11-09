@@ -221,6 +221,23 @@ namespace PuzzleGame.UI
             _promptPanel.SetActive(false);
         }
 
+        public override bool CanClose()
+        {
+            foreach(var prompt in _prompts)
+            {
+                if (!prompt.skippable)
+                    return false;
+            }
+
+            foreach(var dialogueBuffer in _bufferedDialogues)
+            {
+                if (!dialogueBuffer.def.skippable)
+                    return false;
+            }
+
+            return true;
+        }
+
         public override void OnLeaveMenu()
         {
             //TODO: hotfix, brute force close everything, will come back to this if time permits

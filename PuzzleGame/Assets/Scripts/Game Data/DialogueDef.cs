@@ -9,6 +9,7 @@ namespace PuzzleGame
     [CreateAssetMenu(menuName = "PuzzleGame/Dialogue")]
     public class DialogueDef : ScriptableObject
     {
+        public bool skippable = true;
         public string[] dialogues;
         public UltEvent onDialogueFinishEvents;
 

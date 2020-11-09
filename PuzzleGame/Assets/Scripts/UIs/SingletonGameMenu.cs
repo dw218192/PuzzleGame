@@ -10,10 +10,27 @@ namespace PuzzleGame.UI
         void OnEnterMenu();
         void OnLeaveMenu();
         void OnBackPressed();
+        void OnFocus();
+        void OnLoseFocus();
+        bool CanClose();
+        bool CanOpen();
     }
 
     public abstract class GameMenu : MonoBehaviour, IGameMenu
     {
+        List<Graphic> _raycastTargets;
+
+        protected virtual void Awake()
+        {
+            _raycastTargets = new List<Graphic>();
+            Graphic[] graphics = GetComponentsInChildren<Graphic>();
+            foreach(var graphic in graphics)
+            {
+                if (graphic.raycastTarget)
+                    _raycastTargets.Add(graphic);
+            }
+        }
+
         protected virtual void Start()
         {
             gameObject.SetActive(false);
@@ -23,6 +40,21 @@ namespace PuzzleGame.UI
         public virtual void OnEnterMenu()
         {
             gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+        }
+
+        public virtual void OnFocus()
+        {
+            foreach (var target in _raycastTargets)
+                target.raycastTarget = true;
+
+            transform.SetAsLastSibling();
+        }
+
+        public virtual void OnLoseFocus()
+        {
+            foreach (var target in _raycastTargets)
+                target.raycastTarget = false;
         }
 
         public virtual void OnLeaveMenu()
@@ -37,6 +69,16 @@ namespace PuzzleGame.UI
                 GameContext.s_UIMgr.CloseCurrentMenu();
             }
         }
+
+        public virtual bool CanOpen()
+        {
+            return true;
+        }
+
+        public virtual bool CanClose()
+        {
+            return true;
+        }
     }
 
     [DisallowMultipleComponent]
@@ -45,8 +87,10 @@ namespace PuzzleGame.UI
         private static MenuType _Instance;
         public static MenuType Instance { get { return _Instance; } }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             if (_Instance != null)
             {
                 Destroy(gameObject);

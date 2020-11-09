@@ -24,6 +24,7 @@ namespace PuzzleGame
         public Sprite promptImage;
         public PromptOptionDesc[] options;
         public bool hasBackButton = true;
+        public bool skippable = true;
         public string backButtonName = "OK";
         [Tooltip("if not null, this will be used as the popup sound")]
         public AudioClip popUpSoundOverride = null;

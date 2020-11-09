@@ -7,15 +7,32 @@ using UltEvents;
 
 namespace PuzzleGame.UI
 {
-    public class GameButton : MonoBehaviour, IPointerClickHandler
+    public class GameButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] AudioClip _clickSound;
         [SerializeField] UltEvent _additionalOnClickEvents;
+        [SerializeField] UltEvent _pointerEnterEvents, _pointerExitEvents;
+
+        public UltEvent onPointerEnter { get => _pointerEnterEvents; set => _pointerEnterEvents = value; }
+        public UltEvent onPointerExit { get => _pointerExitEvents; set => _pointerExitEvents = value; }
+        public UltEvent onClick { get => _additionalOnClickEvents; set => _additionalOnClickEvents = value; }
+
 
         void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
         {
-            GameActions.PlaySounds(_clickSound);
+            if(_clickSound)
+                GameActions.PlaySounds(_clickSound);
             _additionalOnClickEvents?.Invoke();
+        }
+
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
+        {
+            _pointerEnterEvents?.Invoke();
+        }
+
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
+        {
+            _pointerExitEvents?.Invoke();
         }
     }
 }

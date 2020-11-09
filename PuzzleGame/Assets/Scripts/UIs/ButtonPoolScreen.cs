@@ -5,18 +5,20 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+using UltEvents;
+
 namespace PuzzleGame.UI
 {
     [Serializable]
     public class ButtonDesc
     {
-        public ButtonDesc(string text, Button.ButtonClickedEvent onClick)
+        public ButtonDesc(string text, UltEvent onClick)
         {
             this.text = text;
             this.onClick = onClick;
         }
         public string text;
-        public Button.ButtonClickedEvent onClick;
+        public UltEvent onClick;
     }
 
     /// <summary>
@@ -55,7 +57,8 @@ namespace PuzzleGame.UI
             {
                 _buttons[i].gameObject.SetActive(true);
                 _buttons[i].GetComponentInChildren<Text>().text = options[i].text;
-                _buttons[i].onClick = options[i].onClick;
+                _buttons[i].onClick = new Button.ButtonClickedEvent();
+                _buttons[i].onClick.AddListener(() => { options[i].onClick?.Invoke(); });
             }
 
             for(; i<_buttons.Length; i++)

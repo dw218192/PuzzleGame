@@ -12,10 +12,8 @@ namespace PuzzleGame.UI
     [RequireComponent(typeof(RectTransform), typeof(Image))]
     public class DraggableWindow : MonoBehaviour, 
         IBeginDragHandler, 
-        IDragHandler, 
-        IPointerClickHandler
+        IDragHandler
     {
-        public UnityEvent onClick;
         public RectTransform boundingRect;
 
         RectTransform _rect;
@@ -42,12 +40,6 @@ namespace PuzzleGame.UI
                 Mathf.Clamp(_rect.position.y, _minCorner.y, _maxCorner.y));
             _rect.position = pos;
         }
-
-        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
-        {
-            onClick?.Invoke();
-        }
-
 
         private void OnScreenResize()
         {

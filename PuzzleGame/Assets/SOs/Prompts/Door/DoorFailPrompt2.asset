@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: DoorFailPrompt2
   m_EditorClassIdentifier: 
   title: Message
-  prompt: You don't have enough golden keys to escape!
+  prompt: 'You don''t have enough golden keys to escape!
+
+    You need 3 golden keys
+    of any size to escape.'
   promptImage: {fileID: 0}
   options: []
   hasBackButton: 1
+  skippable: 1
   backButtonName: OK
+  popUpSoundOverride: {fileID: 0}

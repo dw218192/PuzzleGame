@@ -9,6 +9,7 @@ namespace PuzzleGame.UI
     public class PauseMenu : SingletonGameMenu<PauseMenu>
     {
         [SerializeField] Button _resumeButton;
+        [SerializeField] Button _settingButton;
         [SerializeField] Button _quitGameButton;
 
         protected override void Start()
@@ -16,6 +17,7 @@ namespace PuzzleGame.UI
             base.Start();
 
             _resumeButton.onClick.AddListener(ResumeGame);
+            _settingButton.onClick.AddListener(OpenSettingMenu);
             _quitGameButton.onClick.AddListener(QuitGame);
         }
 
@@ -39,6 +41,11 @@ namespace PuzzleGame.UI
         void ResumeGame()
         {
             OnBackPressed();
+        }
+
+        void OpenSettingMenu()
+        {
+            GameContext.s_UIMgr.OpenMenu(SettingMenu.Instance);
         }
     }
 }

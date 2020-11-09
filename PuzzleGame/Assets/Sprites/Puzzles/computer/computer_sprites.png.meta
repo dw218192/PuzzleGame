@@ -8,6 +8,12 @@ TextureImporter:
   - first:
       213: -2673634558755525939
     second: computer_sprites_1
+  - first:
+      213: 8544848304693313470
+    second: computer_sprites_0
+  - first:
+      213: -8597683945491310551
+    second: computer_sprites_1
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -38,7 +44,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
+    filterMode: 0
     aniso: -1
     mipBias: -100
     wrapU: 1
@@ -52,7 +58,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -98,8 +104,8 @@ TextureImporter:
       name: computer_sprites_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 1
+        y: 2
         width: 41
         height: 30
       alignment: 0
@@ -109,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e05ba2d81c1d14900800000000000000
-      internalID: 667044849054823694
+      spriteID: ebff7d4b246659670800000000000000
+      internalID: 8544848304693313470
       vertices: []
       indices: 
       edges: []
@@ -119,8 +125,8 @@ TextureImporter:
       name: computer_sprites_1
       rect:
         serializedVersion: 2
-        x: 46
-        y: 0
+        x: 47
+        y: 2
         width: 41
         height: 30
       alignment: 0
@@ -130,8 +136,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dca2b2ac88755ead0800000000000000
-      internalID: -2673634558755525939
+      spriteID: 92859e90104eea880800000000000000
+      internalID: -8597683945491310551
       vertices: []
       indices: 
       edges: []

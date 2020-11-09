@@ -209,12 +209,13 @@ namespace PuzzleGame
 
         private void OnEnterRoom(RoomEventData data)
         {
+            curRoom = data.room;
+
             if (!GameContext.s_player)
                 GameContext.s_player = Instantiate(playerPrefab, curRoom.playerSpawnPos, Quaternion.identity);
             else
                 GameContext.s_player.transform.position = curRoom.playerSpawnPos;
             
-            curRoom = data.room;
             _enterRoomEvents?.Invoke();
         }
         public void OnEndCutScene(TimelineAsset cutScene)

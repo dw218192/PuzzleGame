@@ -157,9 +157,29 @@ namespace PuzzleGame
                 GameContext.s_audioMgr.PlayOneShotSound(clip, GameContext.s_audioMgr.transform.position, 1);
             }
         }
-        #region Alpha
-        public static void DoorInteraction(InventoryItemDef keyDef, PromptDef noKeyPrompt, PromptDef insufficientQuantityPrompt)
+        #region Beta
+        public static void DespawnPlayer()
         {
+            GameContext.s_player.gameObject.SetActive(false);
+        }
+
+        public static bool DoorInteraction(InventoryItemDef keyDef,
+            PromptDef playerTooLargePrompt,
+            PromptDef playerTooSmallPrompt,
+            PromptDef noKeyPrompt, 
+            PromptDef insufficientQuantityPrompt)
+        {
+            if(GameContext.s_gameMgr.curRoom.roomIndex > GameConst.k_startingRoomIndex)
+            {
+                DialogueMenu.Instance.DisplayPrompt(playerTooLargePrompt);
+                return false;
+            }
+            else if(GameContext.s_gameMgr.curRoom.roomIndex < GameConst.k_startingRoomIndex)
+            {
+                DialogueMenu.Instance.DisplayPrompt(playerTooSmallPrompt);
+                return false;
+            }
+
             bool hasKey = false;
             int quantity = 0;
             var inventory = GameContext.s_player.inventory;
@@ -184,9 +204,11 @@ namespace PuzzleGame
                 }
                 else
                 {
-                    GameContext.s_gameMgr.TriggerEnding(EGameEndingType.ESCAPE);
+                    return true;
                 }
             }
+
+            return false;
         }
         #endregion
     }

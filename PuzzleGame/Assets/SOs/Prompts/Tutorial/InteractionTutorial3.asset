@@ -41,5 +41,6 @@ MonoBehaviour:
           _W: 0
           _Object: {fileID: 11400000, guid: edb4e29a52c110e449e30b0e2fe66023, type: 2}
   hasBackButton: 0
+  skippable: 0
   backButtonName: 
   popUpSoundOverride: {fileID: 0}

@@ -11,6 +11,7 @@ namespace PuzzleGame
         //this is used for one shot sounds
         private class AudioPoolItem
         {
+            public float unscaledVolume = 1;
             public GameObject gameObj = null;
             public Transform transform = null;
             public AudioSource audioSrc = null;
@@ -22,6 +23,23 @@ namespace PuzzleGame
 
         [SerializeField] int _poolSize = 10;
         [SerializeField] float _constSoundFadeDuration = 1.5f;
+        float _volumeScale = 1;
+        public float volumeScale 
+        {
+            get => _volumeScale; 
+            set
+            {
+                _volumeScale = Mathf.Clamp(value, 0, 1);
+                
+                if (_constantAudioSrc.isPlaying)
+                    _constantAudioSrc.audioSrc.volume = _constantAudioSrc.unscaledVolume * value;
+
+                foreach(var poolItem in _activePool.Values)
+                {
+                    poolItem.audioSrc.volume = poolItem.unscaledVolume * value;
+                }
+            }
+        }
         ulong _nextId = 0;
 
         AudioPoolItem _constantAudioSrc;
@@ -60,13 +78,16 @@ namespace PuzzleGame
             }
 
             _constantAudioSrc = new AudioPoolItem();
-            _constantAudioSrc.gameObj = new GameObject("Constant Audio Source");
-            _constantAudioSrc.audioSrc = _constantAudioSrc.gameObj.AddComponent<AudioSource>();
+            go = new GameObject("Constant Audio Source");
+            src = go.AddComponent<AudioSource>();
+            go.transform.parent = transform;
+            _constantAudioSrc.gameObj = go;
+            _constantAudioSrc.audioSrc = src;
             _constantAudioSrc.audioSrc.loop = true;
             _constantAudioSrc.audioSrc.spatialBlend = 0;
-            _constantAudioSrc.transform = _constantAudioSrc.gameObj.transform;
+            _constantAudioSrc.transform = go.transform;
             _constantAudioSrc.isPlaying = false;
-            _constantAudioSrc.gameObj.SetActive(false);
+            go.SetActive(false);
         }
 
         #region Messenger Events
@@ -119,12 +140,13 @@ namespace PuzzleGame
             // Configure the audio source's position and colume
             AudioSource source = poolItem.audioSrc;
             source.clip = clip;
-            source.volume = volume;
+            source.volume = volume * volumeScale;
 
             // Position source at requested position
             source.transform.position = position;
 
             // Enable GameObject and record that it is now playing
+            poolItem.unscaledVolume = volume;
             poolItem.isPlaying = true;
             poolItem.unImportance = unimportance;
             poolItem.id = _nextId++;
@@ -163,9 +185,10 @@ namespace PuzzleGame
                     t += Time.deltaTime;
                 }
             }
-
+            _constantAudioSrc.isPlaying = true;
+            _constantAudioSrc.unscaledVolume = volume;
             src.clip = clip;
-            src.volume = volume;
+            src.volume = volume * volumeScale;
             src.Play();
         }
         #region public API

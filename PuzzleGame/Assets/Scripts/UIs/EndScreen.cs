@@ -38,6 +38,11 @@ namespace PuzzleGame.UI
             SetTextAlpha(0);
         }
 
+        public override bool CanClose()
+        {
+            return false;
+        }
+
         public void OnGameEnd(GameEndEventData data)
         {
             switch(data.type)
@@ -46,7 +51,7 @@ namespace PuzzleGame.UI
                     _endText.text = "You Died";
                     break;
                 case EGameEndingType.ESCAPE:
-                    _endText.text = "More to Come ...";
+                    _endText.text = "You Escaped";
                     break;
             }
 

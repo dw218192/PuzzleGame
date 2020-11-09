@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,62 +7,78 @@ using UnityEngine.UI;
 namespace PuzzleGame.UI
 {
     [RequireComponent(typeof(Canvas))]
-    public abstract class InspectionCanvas : MonoBehaviour, IGameMenu
+    public abstract class InspectionCanvas : GameMenu, IAnimationClipSource
     {
-        /// <summary>
-        /// UI elements that do not rotate with the canvas
-        /// </summary>
-        [SerializeField] bool _enableInspectCamRot = false;
-        public virtual bool enableInspectCamRotation 
-        { 
-            get 
-            { 
-                return _enableInspectCamRot; 
-            }
-            set
-            {
-                if (value)
-                {
-                    _inspectCamera.transform.localRotation = Quaternion.identity;
-                }
-                else
-                {
-                    _inspectCamera.transform.rotation = Quaternion.identity;
-                }
-                _enableInspectCamRot = value;
-            }
-        }
-
-        protected Camera _inspectCamera;
+        [Tooltip("for things that rotate with the inspectable")]
+        [SerializeField] protected Transform _rotationRoot;
+        [SerializeField] protected Button _backButton;
+        protected Canvas _canvas;
+        protected RectTransform _rectTransform;
         protected Inspectable _inspectable;
 
-        public virtual void Init(Inspectable inspectable)
+        public void GetAnimationClips(List<AnimationClip> results)
+        {
+            FieldInfo[] objMember = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            foreach(var info in objMember)
+            {
+                if (info.FieldType == typeof(AnimationClip))
+                {
+                    results.Add((AnimationClip)info.GetValue(this));
+                }
+            }
+        }
+
+        public virtual void Open(Inspectable inspectable)
+        {
+            SetInspectable(inspectable);
+            GameContext.s_UIMgr.OpenMenu(this);
+        }
+
+        /// <summary>
+        /// set per inspectable instance data here
+        /// </summary>
+        /// <param name="inspectable"></param>
+        protected virtual void SetInspectable(Inspectable inspectable)
         {
             _inspectable = inspectable;
+            
+            Vector2 offset = _inspectable.inspectionCamera.transform.localPosition;
+            _rotationRoot.localPosition = -offset;
 
-            _inspectCamera = inspectable.inspectionCamera;
-            _inspectCamera.gameObject.SetActive(false);
-
-            _inspectCamera.orthographic = true;
-            _inspectCamera.cullingMask = ~(1 << GameConst.k_playerLayer);
-
-            _inspectCamera.orthographicSize *= inspectable.room.roomScale;
-
-            gameObject.SetActive(false);
-            GameContext.s_UIMgr.RegisterMenu(this);
+            UpdateRotation();
         }
 
-        protected virtual void Awake()
+        protected void UpdateRotation()
         {
-
+            //camera rotates with the inspectable, so canvas should not rotate (because from the camera's view, the inspectable is not rotated)
+            if (_inspectable.enableInspectCamRotation)
+            {
+                _rotationRoot.localRotation = Quaternion.identity;
+            }
+            //camera has no rotation, canvas should rotate (because it represents the inspectable)
+            else
+            {
+                _rotationRoot.localRotation = Quaternion.Euler(0, 0, _inspectable.transform.eulerAngles.z);
+            }
         }
 
-        protected virtual void Start()
+        protected override void Awake()
         {
-
+            base.Awake();
+            _canvas = GetComponent<Canvas>();
+            _rectTransform = GetComponent<RectTransform>();
         }
 
-        public virtual void OnBackPressed()
+        protected override void Start()
+        {
+            base.Start();
+            if (_backButton)
+            {
+                _backButton.onClick.AddListener(OnBackPressed);
+            }
+        }
+
+        public override void OnBackPressed()
         {
             if (GameContext.s_UIMgr != null && ReferenceEquals(GameContext.s_UIMgr.GetActiveMenu(), this))
             {
@@ -69,17 +86,13 @@ namespace PuzzleGame.UI
             }
         }
 
-        public virtual void OnEnterMenu()
+        public override void OnEnterMenu()
         {
-            enableInspectCamRotation = _enableInspectCamRot;
-
-            _inspectCamera.gameObject.SetActive(true);
             gameObject.SetActive(true);
         }
 
-        public virtual void OnLeaveMenu()
+        public override void OnLeaveMenu()
         {
-            _inspectCamera.gameObject.SetActive(false);
             gameObject.SetActive(false);
             _inspectable.EndInspect();
         }

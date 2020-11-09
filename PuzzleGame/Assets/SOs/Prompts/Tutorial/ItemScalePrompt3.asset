@@ -18,5 +18,6 @@ MonoBehaviour:
   promptImage: {fileID: 0}
   options: []
   hasBackButton: 1
+  skippable: 0
   backButtonName: OK
   popUpSoundOverride: {fileID: 0}
