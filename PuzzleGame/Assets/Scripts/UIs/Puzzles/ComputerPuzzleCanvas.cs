@@ -25,6 +25,7 @@ namespace PuzzleGame.UI
         }
 
         [Header("Computer Puzzle Config")]
+        [SerializeField] BoolVariable _isComputerOn;
         [SerializeField] PasswordMappingDef[] _mappings;
         [SerializeField] ComputerDesktop _desktop;
         [SerializeField] string _password = "NOESCAPE";
@@ -83,6 +84,7 @@ namespace PuzzleGame.UI
             _desktop.OpenSuccessWindow();
             yield return new WaitForSeconds(1f);
             _desktop.CloseWindow();
+            _isComputerOn.val = false;
             OnBackPressed();
         }
     }

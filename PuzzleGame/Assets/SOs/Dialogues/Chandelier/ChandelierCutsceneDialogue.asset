@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8656ac0360b21054da01d8e3727573d4, type: 3}
   m_Name: ChandelierCutsceneDialogue
   m_EditorClassIdentifier: 
+  skippable: 0
   dialogues:
   - What happened?
   - Looks like the painting was hit by something.

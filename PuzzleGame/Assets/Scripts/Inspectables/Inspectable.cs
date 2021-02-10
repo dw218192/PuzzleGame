@@ -15,7 +15,7 @@ namespace PuzzleGame
 {
     public class Inspectable : Interactable
     {
-        static Dictionary<int, InspectionCanvas> s_InspectionCanvasDict = new Dictionary<int, InspectionCanvas>();
+        static Dictionary<int, InspectionCanvas> s_InspectionCanvasDict = null;
 
         [Header("Inspectable Config")]
         [SerializeField] protected Camera _inspectionCamera = null;
@@ -145,6 +145,14 @@ namespace PuzzleGame
         private void OnDrawGizmos()
         {
             
+        }
+
+        private void OnDestroy()
+        {
+            if(s_InspectionCanvasDict != null)
+            {
+                s_InspectionCanvasDict = null;
+            }
         }
     }
 }

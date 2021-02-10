@@ -23,6 +23,8 @@ namespace PuzzleGame.UI
         [SerializeField] EdgeCollider2D _goalCheckCollider;
         [SerializeField] Button _resetButton;
 
+        SpeakerPuzzleNode[] _nodes;
+
         Collider2D[] _middleNodes;
         ContactFilter2D _filter;
 
@@ -42,6 +44,8 @@ namespace PuzzleGame.UI
             {
                 blade.puzzleCanvas = this;
             }
+
+            _nodes = GetComponentsInChildren<SpeakerPuzzleNode>();
         }
 
         public void CheckGoalState()
@@ -74,6 +78,11 @@ namespace PuzzleGame.UI
             for (int i = 0; i < _blades.Length; i++)
             {
                 _blades[i].zRotation = 0;
+            }
+
+            foreach(var node in _nodes)
+            {
+                node.ResetNode();
             }
         }
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8656ac0360b21054da01d8e3727573d4, type: 3}
   m_Name: ItemDialogue
   m_EditorClassIdentifier: 
+  skippable: 0
   dialogues:
   - Interesting. I was able to travel between the paintings with the key.
   - Wait a minute... The key also disappeared in this room.

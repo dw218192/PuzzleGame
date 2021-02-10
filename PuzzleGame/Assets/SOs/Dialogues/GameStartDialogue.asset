@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8656ac0360b21054da01d8e3727573d4, type: 3}
   m_Name: GameStartDialogue
   m_EditorClassIdentifier: 
+  skippable: 1
   dialogues:
   - How did I get here?
   - Better not be one of those dreams again.

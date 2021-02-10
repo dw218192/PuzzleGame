@@ -108,19 +108,6 @@ MonoBehaviour:
           _Z: 0
           _W: 0
           _Object: {fileID: 0}
-      - _Target: {fileID: 0}
-        _MethodName: PuzzleGame.GameActions, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null.PlaySounds
-        _PersistentArguments:
-        - _Type: 13
-          _Int: 0
-          _String: UnityEngine.AudioClip, UnityEngine.AudioModule, Version=0.0.0.0,
-            Culture=neutral, PublicKeyToken=null
-          _X: 0
-          _Y: 0
-          _Z: 0
-          _W: 0
-          _Object: {fileID: 8300000, guid: ac83e2a391560084999aad7f287c6c86, type: 3}
   _enterRoomEvents:
     _PersistentCalls:
     - _Target: {fileID: 0}

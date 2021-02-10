@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Reflection;
+using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,11 +9,12 @@ using PuzzleGame.EventSystem;
 using System;
 using System.IO;
 
+using PuzzleGame.UI;
+
 namespace PuzzleGame
 {
     public class MetricManager : MonoBehaviour
     {
-#if !UNITY_EDITOR
         class PuzzleMetrics
         {
             public PuzzleMetrics(string puzzleName, float timeSpent, bool solved)
@@ -72,19 +74,14 @@ namespace PuzzleGame
         }
 
         private Dictionary<string, PuzzleMetrics> _puzzleMetricDict = new Dictionary<string, PuzzleMetrics>();
-        private Type[] _puzzleTypes =
-        {
-            typeof(Clock),
-            typeof(Chandelier),
-            typeof(Speaker)
-        };
 
         PaintingMetrics _paintingMetrics = new PaintingMetrics();
         GameMetrics _gameMetrics = new GameMetrics();
 
-
         PuzzleMetrics _activePuzzle;
         int _prevRoom = -1;
+
+        Dictionary<int, InspectionCanvas>.ValueCollection _allPuzzles = null;
 
         private void Awake()
         {
@@ -94,16 +91,20 @@ namespace PuzzleGame
             Messenger.AddListener<RoomEventData>(M_EventType.ON_ENTER_ROOM, OnEnterRoom);
             Messenger.AddListener(M_EventType.ON_GAME_START, OnGameStart);
 
-            foreach (var type in _puzzleTypes)
-            {
-                _puzzleMetricDict.Add(type.Name, new PuzzleMetrics(type.Name, 0, false));
-            }
             _activePuzzle = null;
         }
 
+        private void Start()
+        {
+
+        }
 
         private void OnGameStart()
         {
+            var fieldInfo = typeof(Inspectable).GetField("s_InspectionCanvasDict", BindingFlags.Static | BindingFlags.NonPublic);
+            var dict = (Dictionary<int, InspectionCanvas>)fieldInfo.GetValue(null);
+            _allPuzzles = dict.Values;
+
             Actor[] rotateCWInteractables = GameContext.s_gameMgr.GetAllActorsByName("RotatePaintingInteractableCW");
             Actor[] rotateCCWInteractables = GameContext.s_gameMgr.GetAllActorsByName("RotatePaintingInteractableCCW");
             foreach(var actor in rotateCWInteractables)
@@ -158,23 +159,30 @@ namespace PuzzleGame
         }
         private void OnInspectionStart(InspectionEventData data)
         {
-            Type type = data.inspectable.GetType();
-            if (_puzzleTypes.Contains(type))
+            foreach(var canvas in _allPuzzles)
             {
-                _activePuzzle = _puzzleMetricDict[type.Name];
+                if(canvas.gameObject.activeSelf)
+                {
+                    string name = canvas.name;
+                    if(!_puzzleMetricDict.ContainsKey(name))
+                    {
+                        _puzzleMetricDict.Add(name, new PuzzleMetrics(name, 0, false));
+                    }
+
+                    _activePuzzle = _puzzleMetricDict[name];
+
+                    break;
+                }
             }
         }
         private void OnInspectionEnd(InspectionEventData data)
         {
-            if(_activePuzzle != null && _activePuzzle.puzzleName == data.inspectable.GetType().Name)
+            if (!data.inspectable.canInspect)
             {
-                if(!data.inspectable.canInspect)
-                {
-                    _activePuzzle.solved = true;
-                }
-
-                _activePuzzle = null;
+                _activePuzzle.solved = true;
             }
+
+            _activePuzzle = null;
         }
         // Converts all metrics tracked in this script to their string representation
         // so they look correct when printing to a file.
@@ -215,6 +223,7 @@ namespace PuzzleGame
         // Generate the report that will be saved out to a file.
         private void WriteMetricsToFile()
         {
+#if !UNITY_EDITOR
             string totalReport = "Report generated on " + System.DateTime.Now + "\n\n";
             totalReport += "Total Report:\n";
             totalReport += ConvertMetricsToStringRepresentation();
@@ -223,6 +232,7 @@ namespace PuzzleGame
 
 #if !UNITY_WEBPLAYER
             File.WriteAllText(reportFile, totalReport);
+#endif
 #endif
         }
 
@@ -249,6 +259,5 @@ namespace PuzzleGame
 
             _gameMetrics.gameTime += Time.deltaTime;
         }
-#endif
     }
 }

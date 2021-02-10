@@ -58,7 +58,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1
+  orthographic size: 0.80968046
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -202,7 +202,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.42499974}
+  m_Offset: {x: -0.028696686, y: 0.42499974}
   m_SpriteTilingProperty:
     border: {x: 0.4375, y: 0, z: 0.5, w: 0.0625}
     pivot: {x: 0.5, y: 0.5}
@@ -213,7 +213,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.9618289}
+  m_Size: {x: 0.9426066, y: 0.9618289}
   m_EdgeRadius: 0
 --- !u!95 &6860311996356992184
 Animator:

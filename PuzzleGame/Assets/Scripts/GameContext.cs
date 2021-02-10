@@ -16,6 +16,7 @@ namespace PuzzleGame
         public static UIManager s_UIMgr;
         public static AudioManager s_audioMgr;
         public static InventoryItem s_curDraggingItem;
+        public static ELanguageType s_curLanguage;
 
         public static Player s_player;
         public static Vector2 s_right = Vector2.right, s_up = Vector2.up;

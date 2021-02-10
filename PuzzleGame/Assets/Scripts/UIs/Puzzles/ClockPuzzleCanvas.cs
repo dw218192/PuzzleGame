@@ -41,8 +41,7 @@ namespace PuzzleGame.UI
         [SerializeField] GameObject _unlockedGameRoot;
         [SerializeField] GameObject _lockedGameRoot;
         [SerializeField] Button _keyPickupButton;
-        [SerializeField] Text _gravityButtonText;
-        [SerializeField] Button _resetButton, _gravityButton, _CWButton, _CCWButton;
+        [SerializeField] Button _resetButton, _CWButton, _CCWButton;
 
         int _state;
         int state
@@ -66,7 +65,6 @@ namespace PuzzleGame.UI
             _isGameUnlocked.valueChanged += UpdatePuzzleLockState;
 
             _resetButton.onClick.AddListener(ResetPuzzle);
-            _gravityButton.onClick.AddListener(ToggleCamRotation);
             _handsTrigger.onClick.AddListener(ExtendHands);
             _CWButton.onClick.AddListener(RotateHandsCW);
             _CCWButton.onClick.AddListener(RotateHandsCCW);
@@ -110,24 +108,14 @@ namespace PuzzleGame.UI
             UpdatePuzzleLockState(false);
         }
 
-        private void Update()
-        {
-            _handsTrigger.transform.rotation = Quaternion.Euler(0, 0, _handsRotation);
-        }
-
         protected override void SetInspectable(Inspectable inspectable)
         {
             base.SetInspectable(inspectable);
+            _handsTrigger.transform.rotation = Quaternion.Euler(0, 0, _handsRotation);
         }
         public override void OnLeaveMenu()
         {
             base.OnLeaveMenu();
-        }
-        public void ToggleCamRotation()
-        {
-            _inspectable.enableInspectCamRotation = !_inspectable.enableInspectCamRotation;
-            UpdateRotation();
-            _gravityButtonText.text = _inspectable.enableInspectCamRotation ? "Enable\nGravity View" : "Disable\nGravity View";
         }
         /// <summary>
         /// which switches will be triggered given the room's global orientation?
@@ -270,13 +258,11 @@ namespace PuzzleGame.UI
                 DialogueMenu.Instance.DisplayDialogue(_clockUnlockDialogue);
 
                 _resetButton.gameObject.SetActive(true);
-                _gravityButton.gameObject.SetActive(true);
                 _backButton.gameObject.SetActive(true);
             }
             else
             {
                 _resetButton.gameObject.SetActive(false);
-                _gravityButton.gameObject.SetActive(false);
                 _backButton.gameObject.SetActive(true);
             }
         }

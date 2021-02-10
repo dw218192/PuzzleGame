@@ -18,9 +18,6 @@ namespace PuzzleGame
         [SerializeField] float _maxAllowedCheckGroundAngle = 75; //allow to stand on a surface X degrees from (0, 1)
         Vector2 _groundCheckSize;
         bool _grounded = false, _lastGrounded;
-        float _groundCheckTimer;
-
-        RaycastHit2D[] _curGroundRaycastHits;
 
         ContactFilter2D _groundColliderFilter;
         ContactFilter2D _propAndBoundaryfilter;
@@ -193,7 +190,6 @@ namespace PuzzleGame
             _player = GetComponent<Player>();            
 
             _groundCheckSize = new Vector2(_collider.size.x * transform.localScale.x * 1.1f, 0.2f);
-            _curGroundRaycastHits = new RaycastHit2D[20];
 
             _interactionTrigger.onTriggerEnter += OnTriggerEnterInteractable;
             _interactionTrigger.onTriggerStay += OnTriggerEnterInteractable;
@@ -283,9 +279,7 @@ namespace PuzzleGame
 
         void MovementUpdate()
         {
-            _groundCheckTimer = Mathf.Max(_groundCheckTimer - Time.deltaTime, 0);
-
-            if(Mathf.Approximately(0, _groundCheckTimer))
+            if(Vector2.Dot(GameContext.s_up, _rgbody.velocity) <= 0)
             {
                 _lastGrounded = _grounded;
                 _grounded = CheckGrounded();
@@ -309,7 +303,6 @@ namespace PuzzleGame
                         vertical = _moveConfig.jumpThrust;
 
                         _grounded = false;
-                        _groundCheckTimer = Time.deltaTime * 10f;
                     }
                     if (Input.GetKey(KeyCode.A))
                     {
@@ -492,7 +485,15 @@ namespace PuzzleGame
             GUI.color = Color.green;
             GUILayout.Label("===========PlayerController===========");
             GUILayout.Label($"\tvelocity: {_rgbody.velocity.ToString()}");
-            GUILayout.Label(_grounded ? $"\tcur ground collider : {_curGroundCollider.name}" : "\tnot grounded");
+            GUILayout.Label(_grounded ? $"\tcur ground collider: {_curGroundCollider.name}" : "\tnot grounded");
+
+            string contactInfo = "";
+            foreach(var contact in _DEBUG_allGroundHits)
+            {
+                contactInfo += contact.collider.gameObject.name + ", ";
+            }
+            GUILayout.Label($"\tcur contacts: {contactInfo}");
+
             if (_curInteractable)
                 GUILayout.Label($"\tcur interactable: {_curInteractable.gameObject.name}");
         }

@@ -223,6 +223,8 @@ namespace PuzzleGame.UI
 
         public override bool CanClose()
         {
+            return _prompts.Count == 0 && _curDialogue == null && _bufferedDialogues.Count == 0;
+            /*
             foreach(var prompt in _prompts)
             {
                 if (!prompt.skippable)
@@ -234,8 +236,11 @@ namespace PuzzleGame.UI
                 if (!dialogueBuffer.def.skippable)
                     return false;
             }
+            if (_curDialogue != null && !_curDialogue.def.skippable)
+                return false;
 
             return true;
+            */
         }
 
         public override void OnLeaveMenu()
